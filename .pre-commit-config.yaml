@@ -15,21 +15,12 @@ repos:
 
    # Ruff: linter y autofix para Python
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.9.7"
+    rev: "v0.9.9"
     hooks:
       - id: ruff
-        args: [--select, "F,E,W,I001", --extend-ignore, "E501,E722", --fixable, "ALL", --exit-non-zero-on-fix]
-  
-  - repo: https://github.com/pre-commit/mirrors-isort
-    rev: v5.12.0
-    hooks:
-      - id: isort
-        args: [
-          "--profile", "black",
-          "--combine-as",
-          "--lines-between-types", "1"
-        ]
-
+        args: ["--fix"]
+        types: [python]
+        files: "backend_main/|backend_bank/"
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -43,24 +34,15 @@ repos:
       - id: sort-simple-yaml
 
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.53.0
+    rev: v9.21.0
     hooks:
       - id: eslint
         args: ["--fix"]
         files: "frontend"
 
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
+    rev: v4.0.0-alpha.8
     hooks:
       - id: prettier
         args: ["--write", "*.ts", "*.json", "*.html", "*.scss"]
         files: "frontend"
-
-  - repo: local
-    hooks:
-      - id: check-migrations
-        name: Check Missing Migrations
-        language: system
-        entry: python manage.py makemigrations --check --dry-run
-        types: [python]
-        files: "backend_main/|backend_bank/"

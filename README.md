@@ -3,10 +3,10 @@ Web application for peer-to-peer microtransactions
 
 ## Structure
 ```
-📂 .    
+📂 .
     ├──── 📂 backend_bank
-    ├──── 📂 backend_main  
-    └──── 📄 README.md 
+    ├──── 📂 backend_main
+    └──── 📄 README.md
 ```
 * `backend_bank` - contains the credit card backend to simulate a bank
 * `backend_main` - contains the main backend with core functionality for the application
