@@ -134,3 +134,15 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DJANGO_SUPERUSER_USERNAME = os.getenv("DJANGO_SUPERUSER_USERNAME")
 DJANGO_SUPERUSER_PASSWORD = os.getenv("DJANGO_SUPERUSER_PASSWORD")
 DJANGO_SUPERUSER_EMAIL = os.getenv("DJANGO_SUPERUSER_EMAIL")
+
+# Rest Framework
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": (
+        "rest_framework.throttling.UserRateThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
+    ),
+    "DEFAULT_THROTTLE_RATES": {
+        "user": "5/day",
+        "anon": "40/hour",
+    },
+}

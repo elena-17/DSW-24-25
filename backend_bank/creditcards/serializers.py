@@ -18,6 +18,8 @@ class CreditCardSerializer(serializers.Serializer):
     def validate(self, data):
         # if len(data['number']) != 16:
         #     raise serializers.ValidationError("Credit card number must have 16 digits.")
+        if not data:
+            raise serializers.ValidationError("Data is empty")
         if len(data["cvv"]) != 3:
             raise serializers.ValidationError("CVV must have 3 digits.")
         return data
