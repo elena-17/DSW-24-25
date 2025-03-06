@@ -13,21 +13,36 @@ class CreditCardTestCase(APITestCase):
         self.url = reverse("creditcards:validate_credit_card")
 
     def test_valid_card_should_return_true(self):
-        """Prueba que una tarjeta válida"""
+        """valid card should return true"""
         data = {"number": "123456789", "owner_name": "John Doe", "expiration_date": "2025-12-31", "cvv": "123"}
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {"valid": True})
 
     def test_invalid_card_should_return_false(self):
-        """Prueba que una no es valida en cualquiera de sus campos (fecha)"""
+        """Card data is not valid (ex. date)"""
         data = {"number": "123456789", "owner_name": "John Doe", "expiration_date": "2026-11-30", "cvv": "123"}
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, {"valid": False})
 
     def test_invalid_payload_should_return_400(self):
-        """Prueba que si falta un campo, se devuelva error 400."""
+        """Invalid payload should return 400"""
         data = {"number": "1234567812345678", "owner_name": "John Doe", "expiration_date": "2025-12-31"}  # Falta el CVV
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("cvv", response.data)
+
+    def test_valid_expiration_date(self) -> None:
+        """Expiration date is in a valid format"""
+        data = {"number": "123456789", "owner_name": "John Doe", "expiration_date": "2025-12-31", "cvv": "123"}
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {"valid": True})
+
+    def test_invalid_expiration_date(self) -> None:
+        """Expiration date is in an invalid format"""
+        data = {"number": "123456789", "owner_name": "John Doe", "expiration_date": "31-12-2025", "cvv": "123"}
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("expiration_date", response.data)
