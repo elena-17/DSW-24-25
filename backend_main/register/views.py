@@ -1,13 +1,13 @@
 import requests
 
+from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .serializers import RegisterSerializer
 
-CREDIT_CARD_VALIDATE_URL = "http://yours/creditscards/validate"
-
+CREDIT_CARD_VALIDATE_URL = settings.BANK_API_URL + "/validate"
 
 @api_view(["POST"])
 def register_user(request):
