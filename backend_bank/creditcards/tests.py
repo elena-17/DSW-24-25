@@ -46,3 +46,16 @@ class CreditCardTestCase(APITestCase):
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("expiration_date", response.data)
+
+    def test_amount_exceeds_limit(self) -> None:
+        """Transaction amount exceeds the limit"""
+        data = {
+            "number": "123456789",
+            "owner_name": "John Doe",
+            "expiration_date": "2025-12-31",
+            "cvv": "123",
+            "amount": 2001,
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {"valid": False, "message": "Transaction amount exceeds the limit"})

@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import serializers
 
 from creditcards.models import CreditCard
@@ -14,13 +16,7 @@ class CreditCardSerializer(serializers.Serializer):
     owner_name = serializers.CharField(max_length=100)
     expiration_date = serializers.DateField()
     cvv = serializers.CharField(max_length=3)
-
-    def validate(self, data):
-        # if len(data['number']) != 16:
-        #     raise serializers.ValidationError("Credit card number must have 16 digits.")
-        if len(data["cvv"]) != 3:
-            raise serializers.ValidationError("CVV must have 3 digits.")
-        return data
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal("0.01"))
 
     def create(self, validated_data):
         return super().create(validated_data)
