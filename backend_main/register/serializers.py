@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from .models import User
@@ -15,6 +16,7 @@ class RegisterSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     id_number = serializers.CharField(max_length=20)
     rol = serializers.IntegerField(default=0)
+    password = serializers.CharField(write_only=True, min_length=8)
 
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -32,4 +34,5 @@ class RegisterSerializer(serializers.Serializer):
         return value
 
     def create(self, validated_data):
+        validated_data["password"] = make_password(validated_data["password"])
         return User.objects.create(**validated_data)
