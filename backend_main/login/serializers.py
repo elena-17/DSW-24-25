@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from register.models import User
 from django.contrib.auth.hashers import check_password
+from register.models import User
+from rest_framework import serializers
+
 
 class LoginSerializer(serializers.Serializer):
     email_or_id_number = serializers.CharField()
@@ -11,7 +12,10 @@ class LoginSerializer(serializers.Serializer):
         password = data.get("password")
 
         # Check if the user exists with the provided email or ID number
-        user = User.objects.filter(email=email_or_id_number).first() or User.objects.filter(id_number=email_or_id_number).first()
+        user = (
+            User.objects.filter(email=email_or_id_number).first()
+            or User.objects.filter(id_number=email_or_id_number).first()
+        )
 
         if user is None:
             raise serializers.ValidationError("User with provided email or ID number does not exist.")
@@ -21,6 +25,4 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid password.")
 
         # Give the user object to the view
-        return {
-            "user": user
-        }
+        return {"user": user}
