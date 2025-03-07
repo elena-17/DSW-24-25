@@ -14,10 +14,22 @@ class RegisterSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=15)
     name = serializers.CharField(max_length=100)
     id_number = serializers.CharField(max_length=20)
-    credit_card = serializers.IntegerField(required=False)
-    rol = serializers.IntegerField(default=0)  
-    
-    def create(self, validated_data):
-        validated_data["credit_card_number"] = validated_data.pop("credit_card", None)
-        return User.objects.create(**validated_data)
+    rol = serializers.IntegerField(default=0)
 
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("The email is already in use.")
+        return value
+
+    def validate_phone_number(self, value):
+        if User.objects.filter(phone_number=value).exists():
+            raise serializers.ValidationError("The number is already in use.")
+        return value
+
+    def validate_id_number(self, value):
+        if User.objects.filter(id_number=value).exists():
+            raise serializers.ValidationError("The ID number is already in use.")
+        return value
+
+    def create(self, validated_data):
+        return User.objects.create(**validated_data)
