@@ -15,6 +15,9 @@ class RegisterSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=100)
     id_number = serializers.CharField(max_length=20)
     credit_card = serializers.IntegerField(required=False)
-
+    rol = serializers.IntegerField(default=0)  
+    
     def create(self, validated_data):
+        validated_data["credit_card_number"] = validated_data.pop("credit_card", None)
         return User.objects.create(**validated_data)
+
