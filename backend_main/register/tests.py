@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import check_password
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -14,6 +15,7 @@ class UserTestCase(TestCase):
             name="Test User",
             id_number="12345678X",
             rol=0,
+            password="securepassword123",
         )
 
     def test_user_creation(self) -> None:
@@ -32,12 +34,27 @@ class RegisterUserTests(APITestCase):
             "phone_number": "123456789",
             "name": "New User",
             "id_number": "87654321X",
-            "rol": 0,  # Usuario normal
+            "rol": 0,
+            "password": "securepassword123",
         }
 
     def test_register_user_successful(self) -> None:
+        # POST request to register a new user
         response = self.client.post(self.url, data=self.valid_data, format="json")
+
+        # Verify correct response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn("message", response.data)
+
+        # Verify that the user was created in the database
+        user = User.objects.get(email=self.valid_data["email"])
+        self.assertEqual(user.phone_number, self.valid_data["phone_number"])
+        self.assertEqual(user.name, self.valid_data["name"])
+        self.assertEqual(user.id_number, self.valid_data["id_number"])
+        self.assertEqual(user.rol, self.valid_data["rol"])
+
+        # First argument is the password, second argument is the hashed password
+        self.assertTrue(check_password(self.valid_data["password"], user.password))
 
     def test_register_user_duplicate_email(self) -> None:
         User.objects.create(**self.valid_data)
