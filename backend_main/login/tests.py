@@ -22,19 +22,51 @@ class LoginUserTests(APITestCase):
         url = reverse("login_user")
         data = {"email_or_id_number": self.user.email, "password": "securepassword123"}
 
+        #Initial login
         response = self.client.post(url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("message", response.data)
         self.assertEqual(response.data["message"], "Login successful")
+
+        # Verify that the token was set after the first login
+        self.user.refresh_from_db()  # Refresh the user instance to get updated data
+        self.assertIsNotNone(self.user.token)
+        token_after_first_login = self.user.token
+
+        # Attempt login again with the same credentials
+        response = self.client.post(url, data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("message", response.data)
+        self.assertEqual(response.data["message"], "Login successful")
+
+        # Verify that the token changed after the second login
+        self.user.refresh_from_db()  
+        self.assertNotEqual(self.user.token, token_after_first_login)  # Token should be different
 
     def test_login_user_with_id_number(self):
         url = reverse("login_user")
         data = {"email_or_id_number": self.user.id_number, "password": "securepassword123"}
 
+        #Initial login
         response = self.client.post(url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("message", response.data)
         self.assertEqual(response.data["message"], "Login successful")
+
+        # Verify that the token was set after the first login
+        self.user.refresh_from_db()  # Refresh the user instance to get updated data
+        self.assertIsNotNone(self.user.token)
+        token_after_first_login = self.user.token
+
+        # Attempt login again with the same credentials
+        response = self.client.post(url, data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("message", response.data)
+        self.assertEqual(response.data["message"], "Login successful")
+
+        # Verify that the token changed after the second login
+        self.user.refresh_from_db()  
+        self.assertNotEqual(self.user.token, token_after_first_login)  # Token should be different
 
     def test_login_user_invalid_password(self):
         url = reverse("login_user")

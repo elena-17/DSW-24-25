@@ -9,6 +9,7 @@ class User(models.Model):
     id_number = models.CharField(max_length=20, unique=True)
     rol = models.IntegerField(default=0)  # 0: User, 1: Admin
     password = models.CharField(max_length=128, null=True, blank=True, default="")
+    token = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = "users"
