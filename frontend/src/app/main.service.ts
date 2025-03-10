@@ -8,8 +8,8 @@ export class MainService {
   private baseApiUrl = "http://localhost:8000";
 
   // TODO: change the urls to match the backend
-  private urlRegister = `${this.baseApiUrl}/register`;
-  private urlLogin = `${this.baseApiUrl}/login`;
+  private urlRegister = `${this.baseApiUrl}/register/`;
+  private urlLogin = `${this.baseApiUrl}/login/`;
 
   constructor(private http: HttpClient) {}
 
