@@ -43,11 +43,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "corsheaders",
     "register",
     "login",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -136,3 +139,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # BANK API
 BANK_API_URL = os.getenv("BANK_API_URL", "http://localhost:8080")
+
+
+# Si usas credenciales (cookies, autenticación)
+CORS_ALLOW_CREDENTIALS = True
+
+# Origenes permitidos
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
