@@ -16,6 +16,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 
+import { MainService } from "../main.service";
+import e from "express";
+
 @Component({
   selector: "app-login",
   standalone: true,
@@ -37,7 +40,10 @@ export class LoginComponent {
   password: string = "";
   hidePassword = true;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private mainService: MainService,
+  ) {
     this.loginForm = this.formBuilder.group({
       email_id: ["", [Validators.required, emailIdValidator()]],
       password: [
@@ -52,11 +58,19 @@ export class LoginComponent {
   }
 
   onLogin() {
-    if (this.loginForm.valid) {
-      console.log("Form Submitted", this.loginForm.value);
-    } else {
-      console.log("Form is invalid");
+    if (this.loginForm.invalid) {
+      return;
     }
+    this.mainService
+      .login(this.loginForm.value.email_id, this.loginForm.value.password)
+      .subscribe({
+        next: (response) => {
+          console.log("Login successful:", response);
+        },
+        error: (error) => {
+          console.error("Login failed:", error);
+        },
+      });
   }
 
   getErrorMessage(controlName: string): string {
