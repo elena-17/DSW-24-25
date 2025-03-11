@@ -33,11 +33,12 @@
 /* 🔹 RESPONSIVE DESIGN 🔹 */
 @media (max-width: 480px) {
   .login-card {
-    width: 90%; 
+    width: 90%;
     padding: 15px;
   }
 
-  .forgot-password, .sign-up {
-    text-align: center; 
+  .forgot-password,
+  .sign-up {
+    text-align: center;
   }
 }
