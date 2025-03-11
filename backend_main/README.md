@@ -28,3 +28,8 @@ To create a new app (a new module), use:
 ```bash
 python manage.py startapp <app_name>
 ```
+
+To delete rows from the database, use:
+```bash
+python manage.py flush
+```

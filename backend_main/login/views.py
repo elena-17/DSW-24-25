@@ -1,4 +1,5 @@
 import uuid
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -18,6 +19,12 @@ def login_user(request):
         user.save()
 
         return Response(
-            {"message": "Login successful", "user_id": user.id, "email": user.email, "token": user.token,}, status=status.HTTP_200_OK
+            {
+                "message": "Login successful",
+                "user_id": user.id,
+                "email": user.email,
+                "token": user.token,
+            },
+            status=status.HTTP_200_OK,
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -56,7 +56,7 @@ class RegisterUserTests(APITestCase):
         # First argument is the password, second argument is the hashed password
         self.assertTrue(check_password(self.valid_data["password"], user.password))
 
-        #Verify that the token field exists and is null
+        # Verify that the token field exists and is null
         self.assertIsNone(user.token)
 
     def test_register_user_duplicate_email(self) -> None:
