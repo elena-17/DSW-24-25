@@ -1,0 +1,43 @@
+.login_form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #d9afd9;
+  background-image: linear-gradient(0deg, #d9afd9 0%, #97d9e1 100%);
+  padding: 20px;
+}
+
+.login-card {
+  width: 350px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.sign-up {
+  margin-top: 10px;
+}
+
+/* 🔹 RESPONSIVE DESIGN 🔹 */
+@media (max-width: 480px) {
+  .login-card {
+    width: 90%; 
+    padding: 15px;
+  }
+
+  .forgot-password, .sign-up {
+    text-align: center; 
+  }
+}
