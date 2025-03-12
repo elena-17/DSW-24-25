@@ -9,11 +9,14 @@
 }
 
 .login-card {
-  width: 350px;
-  padding: 20px;
+  width: 500px;
+  padding: 30px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
 .full-width {
@@ -33,11 +36,12 @@
 /* 🔹 RESPONSIVE DESIGN 🔹 */
 @media (max-width: 480px) {
   .login-card {
-    width: 90%; 
+    width: 90%;
     padding: 15px;
   }
 
-  .forgot-password, .sign-up {
-    text-align: center; 
+  .forgot-password,
+  .sign-up {
+    text-align: center;
   }
 }

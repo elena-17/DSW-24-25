@@ -13,11 +13,20 @@ export class MainService {
 
   constructor(private http: HttpClient) {}
 
-  register(email: string, pwd1: string, pwd2: string) {
+  register(
+    email: string,
+    phone_number: string,
+    name: string,
+    id_number: string,
+    pwd1: string,
+  ) {
     let info = {
       email: email,
-      pwd1: pwd1,
-      pwd2: pwd2,
+      phone_number: phone_number,
+      name: name,
+      id_number: id_number,
+      password: pwd1,
+      //pwd2: pwd2,
     };
     return this.http.post<any>(this.urlRegister, info);
   }
