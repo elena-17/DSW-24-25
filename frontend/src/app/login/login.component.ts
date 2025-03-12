@@ -15,10 +15,10 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
-
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MainService } from "../main.service";
-
-import { PasswordValidators } from "../password.validators"; // Importar validadores
+import { PasswordValidators } from "../password.validators";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-login",
@@ -30,6 +30,7 @@ import { PasswordValidators } from "../password.validators"; // Importar validad
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
+    MatSnackBarModule,
     CommonModule,
   ],
   templateUrl: "./login.component.html",
@@ -44,9 +45,11 @@ export class LoginComponent {
   constructor(
     private formBuilder: FormBuilder,
     private mainService: MainService,
+    private snackBar: MatSnackBar,
+    private router: Router,
   ) {
     this.loginForm = this.formBuilder.group({
-      email_id: ["", [Validators.required, emailIdValidator()]],
+      email_id: ["", [Validators.required, this.emailIdValidator()]],
       password: [
         "",
         [
@@ -60,18 +63,30 @@ export class LoginComponent {
 
   onLogin() {
     if (this.loginForm.invalid) {
+      this.snackBar.open("Please fill all required fields.", "Close", {
+        duration: 3000,
+        panelClass: ["error-snackbar"],
+      });
       return;
     }
     this.mainService
       .login(this.loginForm.value.email_id, this.loginForm.value.password)
       .subscribe({
         next: (response) => {
-          console.log("Login successful:", response);
-          console.log("Token:", response.token);
           sessionStorage.setItem("userToken", response.token);
+          this.snackBar.open("Login successful!", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+          this.router.navigate(["homepage"]);
         },
-        error: (error) => {
-          console.error("Login failed:", error);
+        error: () => {
+          this.snackBar.open("Login failed. Check your credentials.", "Close", {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
         },
       });
   }
@@ -94,37 +109,21 @@ export class LoginComponent {
     }
     return "";
   }
-}
 
-///////////////////////////////////////////////////////////////////
-export function createPasswordStrengthValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    if (!value) {
+  emailIdValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+      const emailIdValid =
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+      const idNumberValid = /^[0-9]{8}[a-zA-Z]$/.test(value);
+
+      if (!emailIdValid && !idNumberValid) {
+        return { email: true };
+      }
       return null;
-    }
-    const hasUpperCase = /[A-Z]+/.test(value);
-    const hasLowerCase = /[a-z]+/.test(value);
-    const hasNumeric = /[0-9]+/.test(value);
-    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric;
-
-    return !passwordValid ? { passwordStrength: true } : null;
-  };
-}
-
-export function emailIdValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    if (!value) {
-      return null;
-    }
-    const emailIdValid =
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
-    const idNumberValid = /^[0-9]{8}[a-zA-Z]$/.test(value);
-
-    if (!emailIdValid && !idNumberValid) {
-      return { email: true };
-    }
-    return null;
-  };
+    };
+  }
 }
