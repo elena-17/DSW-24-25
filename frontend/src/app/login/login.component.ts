@@ -15,9 +15,10 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
-
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MainService } from "../main.service";
-import e from "express";
+import { PasswordValidators } from "../password.validators";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-login",
@@ -29,6 +30,7 @@ import e from "express";
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
+    MatSnackBarModule,
     CommonModule,
   ],
   templateUrl: "./login.component.html",
@@ -43,15 +45,17 @@ export class LoginComponent {
   constructor(
     private formBuilder: FormBuilder,
     private mainService: MainService,
+    private snackBar: MatSnackBar,
+    private router: Router,
   ) {
     this.loginForm = this.formBuilder.group({
-      email_id: ["", [Validators.required, emailIdValidator()]],
+      email_id: ["", [Validators.required, this.emailIdValidator()]],
       password: [
         "",
         [
           Validators.required,
           Validators.minLength(8),
-          createPasswordStrengthValidator(),
+          PasswordValidators.passwordStrengthValidator,
         ],
       ],
     });
@@ -59,67 +63,67 @@ export class LoginComponent {
 
   onLogin() {
     if (this.loginForm.invalid) {
+      this.snackBar.open("Please fill all required fields.", "Close", {
+        duration: 3000,
+        panelClass: ["error-snackbar"],
+      });
       return;
     }
     this.mainService
       .login(this.loginForm.value.email_id, this.loginForm.value.password)
       .subscribe({
         next: (response) => {
-          console.log("Login successful:", response);
+          sessionStorage.setItem("userToken", response.token);
+          this.snackBar.open("Login successful!", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+          this.router.navigate(["homepage"]);
         },
-        error: (error) => {
-          console.error("Login failed:", error);
+        error: () => {
+          this.snackBar.open("Login failed. Check your credentials.", "Close", {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
         },
       });
   }
 
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
+  }
+
   getErrorMessage(controlName: string): string {
     const control = this.loginForm.get(controlName);
-    // if (control?.hasError('required')) {
-    //   return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required`;
-    // }
-    if (control?.hasError("email")) {
-      return "Invalid email or ID number";
-    }
+
     if (control?.hasError("minlength")) {
-      return "Password must be at least 8 characters long";
+      return "Password must be at least 8 characters long.";
     }
     if (control?.hasError("passwordStrength")) {
-      return "Password must include uppercase, lowercase, and numbers";
+      return "Password must contain at least one number and one uppercase letter.";
+    }
+    if (controlName === "password") {
+      return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required.`;
     }
     return "";
   }
-}
 
-///////////////////////////////////////////////////////////////////
-export function createPasswordStrengthValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    if (!value) {
+  emailIdValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) {
+        return null;
+      }
+      const emailIdValid =
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
+      const idNumberValid = /^[0-9]{8}[a-zA-Z]$/.test(value);
+
+      if (!emailIdValid && !idNumberValid) {
+        return { email: true };
+      }
       return null;
-    }
-    const hasUpperCase = /[A-Z]+/.test(value);
-    const hasLowerCase = /[a-z]+/.test(value);
-    const hasNumeric = /[0-9]+/.test(value);
-    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric;
-
-    return !passwordValid ? { passwordStrength: true } : null;
-  };
-}
-
-export function emailIdValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = control.value;
-    if (!value) {
-      return null;
-    }
-    const emailIdValid =
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value);
-    const idNumberValid = /^[0-9]{8}[a-zA-Z]$/.test(value);
-
-    if (!emailIdValid && !idNumberValid) {
-      return { email: true };
-    }
-    return null;
-  };
+    };
+  }
 }
