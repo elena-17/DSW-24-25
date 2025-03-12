@@ -16,6 +16,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { MainService } from "../main.service";
+import { PasswordValidators } from "../password.validators";
 
 @Component({
   selector: "app-register",
@@ -61,10 +62,17 @@ export class RegisterComponent {
           [
             Validators.required,
             Validators.minLength(8),
-            this.passwordStrengthValidator,
+            PasswordValidators.passwordStrengthValidator,
           ],
         ],
-        pwd2: ["", [Validators.required, Validators.minLength(8)]],
+        pwd2: [
+          "",
+          [
+            Validators.required,
+            Validators.minLength(8),
+            PasswordValidators.passwordStrengthValidator,
+          ],
+        ],
       },
       // Custom validator for password matching
       { validators: this.passwordMatchValidator },

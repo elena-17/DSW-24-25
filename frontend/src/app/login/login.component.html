@@ -16,13 +16,8 @@
             placeholder="Enter email or ID number"
             required
           />
-          <mat-error
-            *ngIf="
-              loginForm.get('email_id')?.invalid &&
-              loginForm.get('email_id')?.touched
-            "
-          >
-            {{ getErrorMessage("email_id") }}
+          <mat-error *ngIf="loginForm.get('email_id')?.hasError('required')">
+            Email or ID number is required.
           </mat-error>
         </mat-form-field>
 
@@ -39,19 +34,14 @@
           <button
             mat-icon-button
             matSuffix
-            (click)="hidePassword = !hidePassword"
+            (click)="togglePasswordVisibility()"
             type="button"
           >
             <mat-icon>{{
               hidePassword ? "visibility_off" : "visibility"
             }}</mat-icon>
           </button>
-          <mat-error
-            *ngIf="
-              loginForm.get('password')?.invalid &&
-              loginForm.get('password')?.touched
-            "
-          >
+          <mat-error *ngIf="loginForm.get('password')?.invalid">
             {{ getErrorMessage("password") }}
           </mat-error>
         </mat-form-field>

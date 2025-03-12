@@ -17,7 +17,8 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 
 import { MainService } from "../main.service";
-import e from "express";
+
+import { PasswordValidators } from "../password.validators"; // Importar validadores
 
 @Component({
   selector: "app-login",
@@ -51,7 +52,7 @@ export class LoginComponent {
         [
           Validators.required,
           Validators.minLength(8),
-          createPasswordStrengthValidator(),
+          PasswordValidators.passwordStrengthValidator,
         ],
       ],
     });
@@ -66,6 +67,7 @@ export class LoginComponent {
       .subscribe({
         next: (response) => {
           console.log("Login successful:", response);
+          sessionStorage.setItem("userToken", response.token);
         },
         error: (error) => {
           console.error("Login failed:", error);
@@ -73,19 +75,21 @@ export class LoginComponent {
       });
   }
 
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
+  }
+
   getErrorMessage(controlName: string): string {
     const control = this.loginForm.get(controlName);
-    // if (control?.hasError('required')) {
-    //   return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required`;
-    // }
-    if (control?.hasError("email")) {
-      return "Invalid email or ID number";
-    }
+
     if (control?.hasError("minlength")) {
-      return "Password must be at least 8 characters long";
+      return "Password must be at least 8 characters long.";
     }
     if (control?.hasError("passwordStrength")) {
-      return "Password must include uppercase, lowercase, and numbers";
+      return "Password must contain at least one number and one uppercase letter.";
+    }
+    if (controlName === "password") {
+      return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required.`;
     }
     return "";
   }
