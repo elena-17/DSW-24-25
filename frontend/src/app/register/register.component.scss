@@ -1,0 +1,80 @@
+.register_form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #d9afd9;
+  background-size: cover;
+  background-image: linear-gradient(0deg, #d9afd9 0%, #97d9e1 100%);
+  padding: 20px;
+}
+
+.register-card {
+  width: 500px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.full-width,
+.register-button {
+  width: 100%;
+}
+
+.register-button {
+  margin-top: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-form-field .mat-label {
+  font-size: 16px;
+}
+
+.login-link {
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .register-card {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr; /* One column on small screens */
+  }
+
+  mat-form-field {
+    margin-bottom: 15px;
+  }
+}
+
+/*RESPONSIVE DESIGN*/
+@media (max-width: 480px) {
+  .register-card {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr; /* One column on small screens */
+  }
+
+  .mat-form-field {
+    margin-bottom: 10px;
+  }
+}
