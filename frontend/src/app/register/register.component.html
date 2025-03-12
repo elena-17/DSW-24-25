@@ -94,9 +94,6 @@
             <mat-error *ngIf="registerForm.get('pwd2')?.invalid">
               {{ getErrorMessage("pwd2") }}
             </mat-error>
-            <mat-error *ngIf="registerForm.hasError('passwordMismatch')">
-              Passwords do not match
-            </mat-error>
           </mat-form-field>
         </div>
 
@@ -106,9 +103,7 @@
           color="primary"
           type="submit"
           class="full-width"
-          [disabled]="
-            registerForm.invalid || registerForm.hasError('passwordMismatch')
-          "
+          [disabled]="registerForm.invalid"
         >
           Register
         </button>

@@ -117,13 +117,6 @@ export class RegisterComponent {
       if (control?.hasError("minlength")) {
         return `${controlName === "pwd1" ? "Password" : "Confirm Password"} must be at least 8 characters long.`;
       }
-
-      if (
-        controlName === "pwd2" &&
-        this.registerForm.hasError("passwordMismatch")
-      ) {
-        return "Passwords do not match";
-      }
     }
 
     if (control?.hasError("required")) {
@@ -149,11 +142,6 @@ export class RegisterComponent {
     if (control?.hasError("passwordStrength")) {
       return "Password must contain at least one number and one uppercase letter.";
     }
-
-    if (this.registerForm.hasError("passwordMismatch")) {
-      return "Passwords do not match.";
-    }
-
     return "";
   }
 
