@@ -67,6 +67,7 @@ export class LoginComponent {
       .subscribe({
         next: (response) => {
           console.log("Login successful:", response);
+          console.log("Token:", response.token);
           sessionStorage.setItem("userToken", response.token);
         },
         error: (error) => {

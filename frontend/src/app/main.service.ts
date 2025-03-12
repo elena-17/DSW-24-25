@@ -37,7 +37,7 @@ export class MainService {
       password: password,
     };
     return this.http.post<any>(this.urlLogin, info, {
-      responseType: "text" as "json",
+      //responseType: "text" as "json",
       withCredentials: true,
     });
   }
