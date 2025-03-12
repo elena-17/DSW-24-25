@@ -2,8 +2,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #d9afd9;
+  background-size: cover;
   background-image: linear-gradient(0deg, #d9afd9 0%, #97d9e1 100%);
   padding: 20px;
 }
@@ -19,8 +20,13 @@
   gap: 25px;
 }
 
-.full-width {
+.full-width,
+.register-button {
   width: 100%;
+}
+
+.register-button {
+  margin-top: 20px;
 }
 
 .form-grid {
