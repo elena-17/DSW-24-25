@@ -86,8 +86,12 @@ WSGI_APPLICATION = "backend_main.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB_MAIN", "zap_db_main"),
+        "USER": os.getenv("POSTGRES_USER_MAIN", "zap_admin"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD_MAIN", "zap_admin"),
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
     }
 }
 
@@ -146,5 +150,5 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Origenes permitidos
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
+    os.getenv("FRONTEND_BASE_URL", "http://localhost:4200"),
 ]
