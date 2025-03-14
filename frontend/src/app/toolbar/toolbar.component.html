@@ -1,1 +1,60 @@
-<p>toolbar works!</p>
+<div class="top-bar">
+  <!-- Logo -->
+  <div class="logo">
+    <img mat-card-image src="assets/zap-logo.png" alt="logo" />
+  </div>
+
+  <!-- Menu for desktop -->
+  <div class="menu">
+    <button mat-button (click)="goToHome()">
+      <mat-icon>home</mat-icon> Home
+    </button>
+    <button mat-button (click)="goToTransactions()">
+      <mat-icon>attach_money</mat-icon> Transactions
+    </button>
+    <button mat-button (click)="goToFriends()">
+      <mat-icon>group</mat-icon> Friends
+    </button>
+    <button mat-button (click)="goToHelp()">
+      <mat-icon>help_outline</mat-icon> Help
+    </button>
+  </div>
+
+  <!-- Dropdown menu for moviles -->
+  <button mat-icon-button class="menu-toggle" (click)="toggleMenu()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <div class="mobile-menu" [ngClass]="{ open: isMenuOpen }">
+    <button mat-button (click)="goToHome()">
+      <mat-icon>home</mat-icon> Home
+    </button>
+    <button mat-button (click)="goToTransactions()">
+      <mat-icon>attach_money</mat-icon> Transactions
+    </button>
+    <button mat-button (click)="goToFriends()">
+      <mat-icon>group</mat-icon> Friends
+    </button>
+    <button mat-button (click)="goToHelp()">
+      <mat-icon>help_outline</mat-icon> Help
+    </button>
+  </div>
+
+  <!-- User Profile -->
+  <button mat-button class="user-profile" (click)="toggleUserMenu()">
+    <span class="username">Antonio</span>
+    <mat-icon class="user-icon">account_circle</mat-icon>
+  </button>
+
+  <!-- User Dropdown Menu -->
+  <div class="user-dropdown-menu" [ngClass]="{ open: isUserMenuOpen }">
+    <button mat-button (click)="goToSettings()">
+      Settings
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button mat-button (click)="logOut()">
+      Log Out
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </div>
+</div>
