@@ -2,9 +2,9 @@ import { Component } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 
 @Component({
-  selector: "app-homepage",
+  selector: "app-helppage",
   imports: [ToolbarComponent],
-  templateUrl: "./homepage.component.html",
-  styleUrl: "./homepage.component.scss",
+  templateUrl: "./helppage.component.html",
+  styleUrl: "./helppage.component.scss",
 })
-export class HomepageComponent {}
+export class HelppageComponent {}
