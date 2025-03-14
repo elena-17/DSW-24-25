@@ -1,7 +1,4 @@
-// Define variables for colors
-$primary-color: #2196f3;
-$hover-color: rgba(255, 255, 255, 0.2);
-$box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+@import "../../styles.scss";
 
 .top-bar {
   display: flex;
@@ -29,7 +26,7 @@ $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
   .menu {
     display: flex;
     gap: 20px;
-    margin-left: auto; // Ensures the menu is aligned to the right
+    margin-left: auto;
     margin-right: 20px;
 
     button {
@@ -98,7 +95,7 @@ $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
     display: none;
     flex-direction: column;
     position: absolute;
-    margin-left: 0;
+    //margin-left: 0;
     top: 60px;
     right: 20px;
     background: $primary-color;
@@ -112,6 +109,7 @@ $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
       color: white;
       font-size: 16px;
       display: flex;
+      justify-content: flex-start;
       gap: 8px;
       padding: 10px;
       border-radius: 4px;
@@ -120,7 +118,6 @@ $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
       background: none;
       border: none;
       cursor: pointer;
-      text-align: left;
 
       &:hover {
         background-color: $hover-color;
@@ -130,17 +127,17 @@ $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 
   // User dropdown menu (like the mobile menu)
   .user-dropdown-menu {
-    display: none; /* Hidden by default */
+    display: none;
     flex-direction: column;
     position: absolute;
-    top: 60px; /* Adjust this value based on where you want the menu */
-    right: 20px; /* Align to the right of the profile button */
+    top: 60px;
+    right: 20px;
     background-color: $primary-color;
     border-radius: 8px;
     box-shadow: $box-shadow;
     padding: 10px;
     z-index: 1000;
-    align-items: flex-start; 
+    align-items: flex-start;
 
     button {
       color: white;
@@ -150,6 +147,7 @@ $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
       background: none;
       border: none;
       text-align: left;
+      justify-content: flex-start;
       cursor: pointer;
 
       &:hover {
@@ -166,18 +164,17 @@ $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
   // Responsive design
   @media (max-width: 768px) {
     .menu {
-      display: none; // Hide the desktop menu
+      display: none;
     }
 
     .menu-toggle {
-      display: block; // Show the hamburger button
+      display: block;
     }
 
     .mobile-menu.open {
       display: flex;
     }
 
-    // Align profile and hamburger icon to the right
     .top-bar {
       justify-content: flex-end;
       gap: 10px;
