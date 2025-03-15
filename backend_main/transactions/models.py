@@ -1,10 +1,10 @@
 from django.db import models
-
 from register.models import User
+
 
 class Transaction(models.Model):
     class Meta:
-        db_table="transactions"
+        db_table = "transactions"
         get_latest_by = "date"
         ordering = ["date"]
 
@@ -17,10 +17,11 @@ class Transaction(models.Model):
 
     def __str__(self) -> str:
         return f"{self.sender.id_number} -> {self.receiver.id_number} - {self.amount}"
-    
+
+
 class MoneyRequest(models.Model):
     class Meta:
-        db_table="requests"
+        db_table = "requests"
         get_latest_by = "date_requested"
         ordering = ["date_requested"]
 
@@ -32,12 +33,8 @@ class MoneyRequest(models.Model):
     description = models.TextField()
     updated_at = models.DateTimeField(auto_now=True)
 
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected')
-    ]
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    STATUS_CHOICES = [("pending", "Pending"), ("approved", "Approved"), ("rejected", "Rejected")]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
 
     def approve(self):
         """when the request is approved, a transaction is created and the status is updated"""
@@ -46,10 +43,10 @@ class MoneyRequest(models.Model):
             receiver=self.requester,
             amount=self.amount,
             title="Pago de solicitud",
-            description="Pago aprobado de solicitud de dinero"
+            description="Pago aprobado de solicitud de dinero",
         )
-        self.status = 'approved'
+        self.status = "approved"
         self.save()
-    
+
     def __str__(self) -> str:
         return f"{self.requester.id_number} -> {self.requested_from.id_number} - {self.amount}"

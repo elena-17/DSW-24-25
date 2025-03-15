@@ -2,6 +2,7 @@
 
 import django.db.models.deletion
 import encrypted_model_fields.fields
+
 from django.db import migrations, models
 
 
@@ -10,18 +11,24 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('register', '0006_user_token'),
+        ("register", "0006_user_token"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CreditCard',
+            name="CreditCard",
             fields=[
-                ('number', encrypted_model_fields.fields.EncryptedCharField(primary_key=True, serialize=False, unique=True)),
-                ('owner_name', models.CharField(max_length=100, verbose_name='owner name')),
-                ('expiration_date', models.CharField(help_text='format: MM/YY', max_length=5, verbose_name='expiration date')),
-                ('cvv', encrypted_model_fields.fields.EncryptedCharField()),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='register.user')),
+                (
+                    "number",
+                    encrypted_model_fields.fields.EncryptedCharField(primary_key=True, serialize=False, unique=True),
+                ),
+                ("owner_name", models.CharField(max_length=100, verbose_name="owner name")),
+                (
+                    "expiration_date",
+                    models.CharField(help_text="format: MM/YY", max_length=5, verbose_name="expiration date"),
+                ),
+                ("cvv", encrypted_model_fields.fields.EncryptedCharField()),
+                ("user", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to="register.user")),
             ],
         ),
     ]
