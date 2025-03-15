@@ -74,6 +74,7 @@ export class LoginComponent {
       .subscribe({
         next: (response) => {
           sessionStorage.setItem("userToken", response.token);
+          sessionStorage.setItem("userName", response.userName);
           this.snackBar.open("Login successful!", "Close", {
             duration: 2000,
             horizontalPosition: "center",
