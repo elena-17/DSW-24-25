@@ -42,8 +42,8 @@ class MoneyRequest(models.Model):
             sender=self.requested_from,
             receiver=self.requester,
             amount=self.amount,
-            title="Pago de solicitud",
-            description="Pago aprobado de solicitud de dinero",
+            title=self.title,
+            description=self.description,
         )
         self.status = "approved"
         self.save()
