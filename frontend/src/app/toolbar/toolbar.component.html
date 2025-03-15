@@ -21,11 +21,21 @@
   </div>
 
   <!-- Dropdown menu for moviles -->
-  <button mat-icon-button class="menu-toggle" (click)="toggleMenu()">
+  <button
+    mat-icon-button
+    class="menu-toggle"
+    (mouseenter)="toggleMenu()"
+    (mouseleave)="toggleMenu()"
+  >
     <mat-icon>menu</mat-icon>
   </button>
 
-  <div class="mobile-menu" [ngClass]="{ open: isMenuOpen }">
+  <div
+    class="mobile-menu"
+    [ngClass]="{ open: isMenuOpen }"
+    (mouseenter)="toggleMenu()"
+    (mouseleave)="toggleMenu()"
+  >
     <button mat-button (click)="goToHome()">
       <mat-icon>home</mat-icon> Home
     </button>
@@ -41,13 +51,23 @@
   </div>
 
   <!-- User Profile -->
-  <button mat-button class="user-profile" (click)="toggleUserMenu()">
+  <button
+    mat-button
+    class="user-profile"
+    (mouseenter)="toggleUserMenu()"
+    (mouseleave)="toggleUserMenu()"
+  >
     <span class="username">{{ userName }}</span>
     <mat-icon class="user-icon">account_circle</mat-icon>
   </button>
 
   <!-- User Dropdown Menu -->
-  <div class="user-dropdown-menu" [ngClass]="{ open: isUserMenuOpen }">
+  <div
+    class="user-dropdown-menu"
+    [ngClass]="{ open: isUserMenuOpen }"
+    (mouseenter)="toggleUserMenu()"
+    (mouseleave)="toggleUserMenu()"
+  >
     <button mat-button (click)="goToSettings()">
       Settings
       <mat-icon>settings</mat-icon>
