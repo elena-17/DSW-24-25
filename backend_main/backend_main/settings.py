@@ -45,8 +45,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
+    "encrypted_model_fields",
     "register",
     "login",
+    "account",
+    "transactions",
+    "creditcard",
+    "friendships",
 ]
 
 MIDDLEWARE = [
@@ -152,3 +157,5 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     os.getenv("FRONTEND_BASE_URL", "http://localhost:4200"),
 ]
+
+FIELD_ENCRYPTION_KEY = os.getenv("FIELD_ENCRYPTION_KEY", "")
