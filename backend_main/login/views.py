@@ -21,7 +21,7 @@ def login_user(request):
         return Response(
             {
                 "message": "Login successful",
-                "userName": user.username,
+                "userName": user.name,
                 "token": user.token,
             },
             status=status.HTTP_200_OK,
