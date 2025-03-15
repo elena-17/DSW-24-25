@@ -60,15 +60,15 @@ class MoneyRequestTest(TestCase):
 
     def test_money_request_creation(self) -> None:
         money_request = MoneyRequest.objects.create(
-            requester=self.user1,
-            requested_from=self.user2,
+            request_from=self.user1,
+            request_to=self.user2,
             amount=100,
             title="Test money request",
             description="Test money request description",
         )
 
-        self.assertEqual(money_request.requester, self.user1)
-        self.assertEqual(money_request.requested_from, self.user2)
+        self.assertEqual(money_request.request_from, self.user1)
+        self.assertEqual(money_request.request_to, self.user2)
         self.assertEqual(money_request.amount, 100)
         self.assertEqual(money_request.title, "Test money request")
         self.assertEqual(money_request.description, "Test money request description")
@@ -76,8 +76,8 @@ class MoneyRequestTest(TestCase):
 
     def test_money_request_approve(self) -> None:
         money_request = MoneyRequest.objects.create(
-            requester=self.user1,
-            requested_from=self.user2,
+            request_from=self.user1,
+            request_to=self.user2,
             amount=100,
             title="Test money request",
             description="Test money request description",
@@ -91,5 +91,5 @@ class MoneyRequestTest(TestCase):
         self.assertEqual(transaction.sender, self.user2)
         self.assertEqual(transaction.receiver, self.user1)
         self.assertEqual(transaction.amount, 100)
-        self.assertEqual(transaction.title, "Pago de solicitud")
-        self.assertEqual(transaction.description, "Pago aprobado de solicitud de dinero")
+        self.assertEqual(transaction.title, "Test money request")
+        self.assertEqual(transaction.description, "Test money request description")

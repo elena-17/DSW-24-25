@@ -10,4 +10,4 @@ class TransactionAdmin(admin.ModelAdmin):
 
 @admin.register(MoneyRequest)
 class MoneyRequestAdmin(admin.ModelAdmin):
-    list_display = ("requester", "requested_from", "amount", "date_requested", "title", "status")
+    list_display = ("request_from", "request_to", "amount", "date_requested", "title", "status")

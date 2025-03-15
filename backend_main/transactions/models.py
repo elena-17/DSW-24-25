@@ -25,8 +25,8 @@ class MoneyRequest(models.Model):
         get_latest_by = "date_requested"
         ordering = ["date_requested"]
 
-    requester = models.ForeignKey(User, related_name="money_requests_sent", on_delete=models.CASCADE)
-    requested_from = models.ForeignKey(User, related_name="money_requests_received", on_delete=models.CASCADE)
+    request_from = models.ForeignKey(User, related_name="money_requests_sent", on_delete=models.CASCADE)
+    request_to = models.ForeignKey(User, related_name="money_requests_received", on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date_requested = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
@@ -39,8 +39,8 @@ class MoneyRequest(models.Model):
     def approve(self):
         """when the request is approved, a transaction is created and the status is updated"""
         Transaction.objects.create(
-            sender=self.requested_from,
-            receiver=self.requester,
+            sender=self.request_to,
+            receiver=self.request_from,
             amount=self.amount,
             title=self.title,
             description=self.description,
@@ -49,4 +49,4 @@ class MoneyRequest(models.Model):
         self.save()
 
     def __str__(self) -> str:
-        return f"{self.requester.id_number} -> {self.requested_from.id_number} - {self.amount}"
+        return f"{self.request_from.id_number} -> {self.request_to.id_number} - {self.amount}"
