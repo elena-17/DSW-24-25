@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -10,6 +11,9 @@ export class MainService {
   // TODO: change the urls to match the backend
   private urlRegister = `${this.baseApiUrl}/register/`;
   private urlLogin = `${this.baseApiUrl}/login/`;
+  private urlUserProfile = `${this.baseApiUrl}/user/profile/`;
+  private urlUpdateUserProfile = `${this.baseApiUrl}/user/profile/update/`;
+  private urlDeleteUserAccount = `${this.baseApiUrl}/user/delete/`;
 
   constructor(private http: HttpClient) {}
 
@@ -38,6 +42,22 @@ export class MainService {
     };
     return this.http.post<any>(this.urlLogin, info, {
       //responseType: "text" as "json",
+      withCredentials: true,
+    });
+  }
+
+  getUserProfile(): Observable<any> {
+    return this.http.get<any>(this.urlUserProfile, { withCredentials: true });
+  }
+
+  updateUserProfile(userData: any): Observable<any> {
+    return this.http.put<any>(this.urlUserProfile, userData, {
+      withCredentials: true,
+    });
+  }
+
+  deleteUserAccount(): Observable<any> {
+    return this.http.delete<any>(this.urlDeleteUserAccount, {
       withCredentials: true,
     });
   }

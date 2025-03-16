@@ -1,4 +1,42 @@
 <app-toolbar></app-toolbar>
 <div class="content">
-  <h1>SETTINGS</h1>
+  <h1>Account Settings</h1>
+
+  <div class="user-info">
+    <label><strong>Name:</strong></label>
+    <input
+      type="text"
+      [(ngModel)]="userData.name"
+      placeholder="Enter your name"
+    />
+
+    <label><strong>Email:</strong></label>
+    <input
+      type="email"
+      [(ngModel)]="userData.email"
+      placeholder="Enter your email"
+    />
+
+    <label><strong>Phone:</strong></label>
+    <input
+      type="text"
+      [(ngModel)]="userData.phone_number"
+      placeholder="Enter your phone"
+    />
+
+    <label><strong>ID Number:</strong></label>
+    <input type="text" [value]="userData.id_number" disabled />
+  </div>
+
+  <div class="actions">
+    <button mat-button class="save-changes" (click)="saveChanges()">
+      Save Changes
+    </button>
+    <button mat-button class="change-password" (click)="changePassword()">
+      Change Password
+    </button>
+    <button mat-button class="delete-account" (click)="deleteAccount()">
+      Delete Account
+    </button>
+  </div>
 </div>
