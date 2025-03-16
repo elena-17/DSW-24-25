@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .serializers import UserSettingsSerializer
+from .serializers import UserProfileSerializer
 
 
 @api_view(["GET"])
@@ -12,7 +12,7 @@ def get_user_profile(request):
     """
     Obtain the profile data of the authenticated user.
     """
-    serializer = UserSettingsSerializer(request.user)
+    serializer = UserProfileSerializer()(request.user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -23,7 +23,7 @@ def update_user_profile(request):
     Update the profile data of the authenticated user.
     """
     user = request.user
-    serializer = UserSettingsSerializer(user, data=request.data, partial=True)
+    serializer = UserProfileSerializer()(user, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
