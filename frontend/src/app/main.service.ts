@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { HttpHeaders } from "@angular/common/http";
 
 @Injectable({
   providedIn: "root",
@@ -47,11 +48,12 @@ export class MainService {
   }
 
   getUserProfile(): Observable<any> {
-    return this.http.get<any>(this.urlUserProfile, { withCredentials: true });
+    const headers = new HttpHeaders().set("Authorization", `Token ${localStorage.getItem("userToken")}`);
+    return this.http.get<any>(this.urlUserProfile, { headers, withCredentials: true });
   }
 
   updateUserProfile(userData: any): Observable<any> {
-    return this.http.put<any>(this.urlUserProfile, userData, {
+    return this.http.put<any>(this.urlUpdateUserProfile, userData, {
       withCredentials: true,
     });
   }
