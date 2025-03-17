@@ -18,13 +18,13 @@ class LoginUserTests(APITestCase):
             "password": make_password("securepassword123"),
         }
         self.user = User.objects.create(**self.user_data)
+        self.url = reverse("user:login_user")
 
     def test_login_user_successful(self):
-        url = reverse("login_user")
         data = {"email_or_id_number": self.user.email, "password": "securepassword123"}
 
         # Initial login
-        response = self.client.post(url, data=data, format="json")
+        response = self.client.post(self.url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("message", response.data)
         self.assertEqual(response.data["message"], "Login successful")
@@ -35,7 +35,7 @@ class LoginUserTests(APITestCase):
         token_after_first_login = self.user.token
 
         # Attempt login again with the same credentials
-        response = self.client.post(url, data=data, format="json")
+        response = self.client.post(self.url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("message", response.data)
         self.assertEqual(response.data["message"], "Login successful")
@@ -45,11 +45,10 @@ class LoginUserTests(APITestCase):
         self.assertNotEqual(self.user.token, token_after_first_login)  # Token should be different
 
     def test_login_user_with_id_number(self):
-        url = reverse("login_user")
         data = {"email_or_id_number": self.user.id_number, "password": "securepassword123"}
 
         # Initial login
-        response = self.client.post(url, data=data, format="json")
+        response = self.client.post(self.url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("message", response.data)
         self.assertEqual(response.data["message"], "Login successful")
@@ -60,7 +59,7 @@ class LoginUserTests(APITestCase):
         token_after_first_login = self.user.token
 
         # Attempt login again with the same credentials
-        response = self.client.post(url, data=data, format="json")
+        response = self.client.post(self.url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("message", response.data)
         self.assertEqual(response.data["message"], "Login successful")
@@ -70,17 +69,15 @@ class LoginUserTests(APITestCase):
         self.assertNotEqual(self.user.token, token_after_first_login)  # Token should be different
 
     def test_login_user_invalid_password(self):
-        url = reverse("login_user")
         data = {"email_or_id_number": self.user.email, "password": "wrongpassword"}
 
-        response = self.client.post(url, data=data, format="json")
+        response = self.client.post(self.url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("non_field_errors", response.data)
 
     def test_login_user_non_existent(self):
-        url = reverse("login_user")
         data = {"email_or_id_number": "nonexistent@example.com", "password": "securepassword123"}
 
-        response = self.client.post(url, data=data, format="json")
+        response = self.client.post(self.url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("non_field_errors", response.data)

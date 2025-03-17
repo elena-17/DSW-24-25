@@ -47,8 +47,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "encrypted_model_fields",
     "users",
-    "login",
-    "register",
     "account",
     "transactions",
     "creditcard",
@@ -160,3 +158,9 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 FIELD_ENCRYPTION_KEY = os.getenv("FIELD_ENCRYPTION_KEY", "")
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "backend_main.authentication.CustomTokenAuthentication",
+    ],
+}

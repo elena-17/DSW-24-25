@@ -8,7 +8,7 @@ from users.models import User
 
 class RegisterUserTests(APITestCase):
     def setUp(self) -> None:
-        self.url = reverse("register_user")
+        self.url = reverse("user:register_user")
         self.valid_data = {
             "email": "newuser@example.com",
             "phone_number": "123456789",
