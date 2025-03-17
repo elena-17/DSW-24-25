@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.test import TestCase
-from register.models import User
+from users.models import User
 
 from .models import Account
 

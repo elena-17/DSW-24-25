@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
-from register.models import User
+from users.models import User
 
 from .models import FriendRequest, Friendship
 

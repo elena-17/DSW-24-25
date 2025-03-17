@@ -1,8 +1,9 @@
 from django.contrib.auth.hashers import make_password
 from django.urls import reverse
-from register.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+from users.models import User
 
 
 class LoginUserTests(APITestCase):

@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import User
 
 
-# Register the User model in the Django admin site
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     # Define fields to be displayed in the list of users

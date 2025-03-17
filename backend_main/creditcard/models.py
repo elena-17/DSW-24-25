@@ -3,7 +3,7 @@ import re
 from django.core.exceptions import ValidationError
 from django.db import models
 from encrypted_model_fields.fields import EncryptedCharField
-from register.models import User
+from users.models import User
 
 
 def validate_expiration_date(value):

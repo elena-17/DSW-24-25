@@ -17,19 +17,19 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
-from login.views import login_user
-from register.views import register_user
-from userSettings.views import (
-    delete_user_account,
-    get_user_profile,
-    update_user_profile,
-)
+from users.views import login_user, register_user
+
+# from userSettings.views import (
+#     delete_user_account,
+#     get_user_profile,
+#     update_user_profile,
+# )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("register/", register_user, name="register_user"),
     path("login/", login_user, name="login_user"),
-    path("user/profile/", get_user_profile, name="get_user_profile"),
-    path("user/profile/update/", update_user_profile, name="update_user_profile"),
-    path("user/delete/", delete_user_account, name="delete_user_account"),
+    #     path("user/profile/", get_user_profile, name="get_user_profile"),
+    #     path("user/profile/update/", update_user_profile, name="update_user_profile"),
+    #     path("user/delete/", delete_user_account, name="delete_user_account"),
 ]

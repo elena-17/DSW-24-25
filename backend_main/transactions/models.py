@@ -1,5 +1,5 @@
 from django.db import models
-from register.models import User
+from users.models import User
 
 
 class Transaction(models.Model):

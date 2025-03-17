@@ -12,7 +12,7 @@ class User(models.Model):
     token = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        db_table = "users"
+        db_table = "users2"
 
     def save(self, *args, **kwargs):
         # Password hashing if it's not already hashed
