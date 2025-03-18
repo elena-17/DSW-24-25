@@ -12,14 +12,14 @@ class FriendshipTest(TestCase):
         """Executed once for all tests of the class."""
         cls.user1 = User.objects.create(
             email="user@test.com",
-            phone_number="123456789",
+            phone="123456789",
             name="Test User",
             id_number="123456789",
             password="testpassword",
         )
         cls.user2 = User.objects.create(
             email="user2@test.com",
-            phone_number="987654321",
+            phone="987654321",
             name="Test User2",
             id_number="987654321",
             password="testpassword",
@@ -46,14 +46,14 @@ class FriendRequestTest(TestCase):
         """Executed once for all tests of the class."""
         cls.user1 = User.objects.create(
             email="user@test.com",
-            phone_number="123456789",
+            phone="123456789",
             name="Test User",
             id_number="123456789",
             password="testpassword",
         )
         cls.user2 = User.objects.create(
             email="user2@test.com",
-            phone_number="987654321",
+            phone="987654321",
             name="Test User2",
             id_number="987654321",
             password="testpassword",

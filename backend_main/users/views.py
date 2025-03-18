@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.serializers.register import RegisterSerializer
 from users.serializers.token import CustomTokenObtainPairSerializer
+from users.serializers.user import UserProfileSerializer
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -27,14 +28,14 @@ def register_user(request) -> Response:
 @api_view(["GET"])
 def get_user_profile(request):
     user = request.user
-    serializer = RegisterSerializer(user)
+    serializer = UserProfileSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["PUT"])
 def update_user_profile(request):
     user = request.user
-    serializer = RegisterSerializer(user, data=request.data, partial=True)
+    serializer = UserProfileSerializer(user, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()

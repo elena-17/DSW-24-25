@@ -1,4 +1,3 @@
-from django.contrib.auth.hashers import make_password
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -15,9 +14,9 @@ class LoginUserTests(APITestCase):
             "name": "Test User",
             "id_number": "12345678X",
             "role": "user",
-            "password": make_password("securepassword123"),
+            "password": "securepassword123",
         }
-        self.user = User.objects.create(**self.user_data)
+        self.user = User.objects.create_user(**self.user_data)
         self.url = reverse("user:login_user")
 
     def test_login_user_email_successful(self):

@@ -10,7 +10,7 @@ class CreditCardTest(TestCase):
         """Executed once for all tests of the class."""
         cls.user = User.objects.create(
             email="user@test.com",
-            phone_number="123456789",
+            phone="123456789",
             name="Test User",
             id_number="123456789",
             password="testpassword",
