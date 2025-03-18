@@ -1,24 +1,46 @@
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
 
+USER_ROLES = (
+    ("user", "NormalUser"),
+    ("seller", "Vendor"),
+    ("admin", "Admin"),
+)
 
-class User(models.Model):
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, id_number, email, phone, password=None, **extra_fields):
+        if not email:
+            raise ValueError("El email es obligatorio")
+        email = self.normalize_email(email)
+        user = self.model(id_number=id_number, email=email, phone=phone, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, id_number, email, phone, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        return self.create_user(id_number, email, phone, password, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    id_number = models.CharField(max_length=20, primary_key=True, unique=True)
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=15, unique=True)
+    phone = models.CharField(max_length=15, unique=True)
     name = models.CharField(max_length=100)
-    id_number = models.CharField(max_length=20, unique=True)
-    rol = models.IntegerField(default=0)  # 0: User, 1: Admin
-    password = models.CharField(max_length=128, null=True, blank=True, default="")
-    token = models.CharField(max_length=255, blank=True, null=True)
+    role = models.CharField(max_length=10, choices=USER_ROLES, default="user")
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-    class Meta:
-        db_table = "users"
+    objects = CustomUserManager()
 
-    def save(self, *args, **kwargs):
-        # Password hashing if it's not already hashed
-        if not self.password.startswith("pbkdf2_sha256$"):
-            self.password = make_password(self.password)
-        super().save(*args, **kwargs)
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["id_number", "phone"]
 
     def __str__(self):
         return self.email

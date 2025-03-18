@@ -6,7 +6,7 @@ from users.models import User
 
 class LoginSerializer(serializers.Serializer):
     email_or_id_number = serializers.CharField()
-    password = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
     def validate(self, data):
         email_or_id_number = data.get("email_or_id_number")
@@ -19,7 +19,7 @@ class LoginSerializer(serializers.Serializer):
         )
 
         if user is None:
-            raise serializers.ValidationError("User with provided email or ID number does not exist.")
+            raise serializers.ValidationError("User does not exist.")
 
         # Verify the password
         if not check_password(password, user.password):
