@@ -7,7 +7,7 @@ import { HttpHeaders } from "@angular/common/http";
   providedIn: "root",
 })
 export class MainService {
-  private baseApiUrl = "http://localhost:8000";
+  private baseApiUrl = "http://localhost:8000/user";
 
   // TODO: change the urls to match the backend
   private urlRegister = `${this.baseApiUrl}/register/`;
@@ -15,6 +15,7 @@ export class MainService {
   private urlUserProfile = `${this.baseApiUrl}/user/profile/`;
   private urlUpdateUserProfile = `${this.baseApiUrl}/user/profile/update/`;
   private urlDeleteUserAccount = `${this.baseApiUrl}/user/delete/`;
+  private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
 
   constructor(private http: HttpClient) {}
 
@@ -24,21 +25,22 @@ export class MainService {
     name: string,
     id_number: string,
     pwd1: string,
+    role: string,
   ) {
     let info = {
       email: email,
-      phone_number: phone_number,
+      phone: phone_number,
       name: name,
       id_number: id_number,
+      role: role,
       password: pwd1,
-      //pwd2: pwd2,
     };
     return this.http.post<any>(this.urlRegister, info);
   }
 
   login(email_id: string, password: string) {
     let info = {
-      email_or_id_number: email_id,
+      email: email_id,
       password: password,
     };
     return this.http.post<any>(this.urlLogin, info, {
@@ -48,8 +50,14 @@ export class MainService {
   }
 
   getUserProfile(): Observable<any> {
-    const headers = new HttpHeaders().set("Authorization", `Token ${localStorage.getItem("userToken")}`);
-    return this.http.get<any>(this.urlUserProfile, { headers, withCredentials: true });
+    const headers = new HttpHeaders().set(
+      "Authorization",
+      `Token ${localStorage.getItem("userToken")}`,
+    );
+    return this.http.get<any>(this.urlUserProfile, {
+      headers,
+      withCredentials: true,
+    });
   }
 
   updateUserProfile(userData: any): Observable<any> {
