@@ -3,10 +3,10 @@ name = "bank"
 version = "0.0.1"
 authors = [
   { name="Elena Ballesteros Morallón", email="elena.ballesteros2@alu.uclm.es" },
-  { name="Antonio Campallo Gómez", email="@alu.uclm.es" },
+  { name="Antonio Campallo Gómez", email="antonio.campallo@alu.uclm.es" },
 
 ]
-description = "Implements the bank API"
+description = "Implements a bank API that validates a credit card"
 readme = "README.md"
 requires-python = ">=3.12"
 classifiers = [
@@ -15,6 +15,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+"django==5.1.6",
+"djangorestframework==3.15.2",
+"python-dotenv==1.0.1",
+"psycopg2-binary==2.9.10",
+"django-cors-headers==4.7.0",
+"gunicorn==23.0.0",
 ]
 
 [project.optional-dependencies]

@@ -1,0 +1,59 @@
+services:
+  db_main:
+    image: postgres:14.17
+    container_name: zap-postgres-main
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB_MAIN}"
+      POSTGRES_USER: "${POSTGRES_USER_MAIN}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD_MAIN}"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_main_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  db_bank:
+    image: postgres:14.17
+    container_name: zap-postgres-bank
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB_BANK}"
+      POSTGRES_USER: "${POSTGRES_USER_BANK}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD_BANK}"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_bank_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  bank:
+    container_name: zap-bank
+    build:
+      context: .
+      dockerfile: backend_bank/Dockerfile
+    depends_on:
+      db_bank:
+        condition: service_healthy
+    environment:
+      SECRET_KEY: "${SECRET_KEY_BANK}"
+      DEBUG: False
+      POSTGRES_DB_BANK: "${POSTGRES_DB_BANK}"
+      POSTGRES_USER_BANK: "${POSTGRES_USER_BANK}"
+      POSTGRES_PASSWORD_BANK: "${POSTGRES_PASSWORD_BANK}"
+      POSTGRES_HOST_BANK: "zap-postgres-bank"
+    ports:
+      - "8080:8000"
+
+
+volumes:
+  postgres_main_data:
+  postgres_bank_data:
