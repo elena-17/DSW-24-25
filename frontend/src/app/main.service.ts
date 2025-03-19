@@ -52,7 +52,7 @@ export class MainService {
   getUserProfile(): Observable<any> {
     const headers = new HttpHeaders().set(
       "Authorization",
-      `Token ${localStorage.getItem("userToken")}`,
+      `Token ${sessionStorage.getItem("accessToken")}`,
     );
     return this.http.get<any>(this.urlUserProfile, {
       headers,
