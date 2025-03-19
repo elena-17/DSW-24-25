@@ -64,10 +64,11 @@
     <!-- Actions -->
     <div class="actions">
       <button 
-        mat-button 
+        mat-raised-button 
         class="save-changes" 
         [class.disabled-button]="!isFormModified || settingsForm.invalid"
-        [disabled]="!isFormModified || settingsForm.invalid"
+        [disabled]="!isFormModified || settingsForm.invalid" 
+        (click)="saveChanges()"
       >
         <mat-icon>save</mat-icon>
         Save Changes
