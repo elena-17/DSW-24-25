@@ -78,9 +78,12 @@ export class SettingsComponent {
     if (this.settingsForm.invalid || !this.isFormModified) {
       return;
     }
+    //LOL
+    const updatedData = { ...this.settingsForm.value };
 
-    const updatedData = this.settingsForm.value;
-    this.mainService.updateUserProfile(updatedData).subscribe({
+    // Asegurarse de incluir manualmente los campos readonly si no están en settingsForm.value
+    updatedData.name = this.userData.name;
+    updatedData.id_number = this.userData.id_number;    this.mainService.updateUserProfile(updatedData).subscribe({
       next: () => {
         this.snackBar.open("Changes saved successfully!", "Close", {
           duration: 2000,
