@@ -26,52 +26,9 @@ h1 {
   padding: 0 10px;
 }
 
-.mat-form-field {
-  width: 100%;
-  position: relative;
-}
-
-.mat-form-field label {
-  font-weight: bold;
-  color: white;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 5px;
-}
-
-.mat-form-field input {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: none;
-  border-radius: 6px;
-  outline: none;
-  background: white;
-  color: #333;
-  box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-
-  &:focus {
-    border: 2px solid lighten($primary-color, 15%);
-    background: #f9f9f9;
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-  }
-
-  &:disabled {
-    background: #ddd;
-    color: #777;
-    cursor: not-allowed;
-  }
-
-  &::placeholder {
-    opacity: 0;  // Hide placeholder text when label is present
-  }
-}
-
 /* Error styles */
 mat-error {
-  color: #f44336;  // Red color for error messages
+  color: #77231d;  // Red color for error messages
   font-size: 12px;
   margin-top: 5px;
 }

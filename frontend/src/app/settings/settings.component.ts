@@ -35,7 +35,6 @@ export class SettingsComponent {
         "",
         [Validators.required, Validators.pattern(/^\d{9}$/)],
       ],
-      name: ["", [Validators.required]],
     });
   }
 

@@ -4,20 +4,6 @@
 
   <form [formGroup]="settingsForm" (ngSubmit)="saveChanges()">
     <div class="user-info">
-      <!-- Name -->
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Name</mat-label>
-        <input
-          matInput
-          type="text"
-          formControlName="name"
-          placeholder="Enter your name"
-        />
-        <mat-error *ngIf="settingsForm.get('name')?.hasError('required')">
-          Name is required.
-        </mat-error>
-      </mat-form-field>
-
       <!-- Email -->
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Email</mat-label>
@@ -52,6 +38,17 @@
         </mat-error>
       </mat-form-field>
 
+      <!-- Name -->
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Name</mat-label>
+        <input matInput
+         type="text"
+         formControlName="name"
+         [value]="userData.name"
+         readonly="true"
+        />
+      </mat-form-field>
+
       <!-- ID Number -->
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>ID Number</mat-label>
@@ -59,7 +56,7 @@
           matInput
           type="text"
           [value]="userData.id_number"
-          disabled
+          readonly="true"
         />
       </mat-form-field>
     </div>
