@@ -12,9 +12,9 @@ export class MainService {
   // TODO: change the urls to match the backend
   private urlRegister = `${this.baseApiUrl}/register/`;
   private urlLogin = `${this.baseApiUrl}/login/`;
-  private urlUserProfile = `${this.baseApiUrl}/profile/`;
-  private urlUpdateUserProfile = `${this.baseApiUrl}/profile/update/`;
-  private urlDeleteUserAccount = `${this.baseApiUrl}/delete/`;
+  private urlUserProfile = `${this.baseApiUrl}/user/profile/`;
+  private urlUpdateUserProfile = `${this.baseApiUrl}/user/profile/update/`;
+  private urlDeleteUserAccount = `${this.baseApiUrl}/user/delete/`;
   private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
 
   constructor(private http: HttpClient) {}
