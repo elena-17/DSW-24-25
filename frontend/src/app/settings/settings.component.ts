@@ -5,11 +5,13 @@ import { MainService } from "../main.service";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
+import { MatIconModule } from '@angular/material/icon';
+
 
 @Component({
   selector: "app-settings",
   standalone: true,
-  imports: [ToolbarComponent, CommonModule, FormsModule],
+  imports: [ToolbarComponent, CommonModule, FormsModule, MatIconModule],
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
 })
@@ -63,6 +65,8 @@ export class SettingsComponent {
   changePassword(): void {
     this.snackBar.open("Redirecting to password change...", "Close", {
       duration: 2000,
+      horizontalPosition: "center",
+      verticalPosition: "top",
     });
   }
 
@@ -83,6 +87,8 @@ export class SettingsComponent {
         error: () => {
           this.snackBar.open("Failed to delete account.", "Close", {
             duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
           });
         },
       });
