@@ -50,13 +50,15 @@ export class MainService {
   }
 
   getUserProfile(): Observable<any> {
+    const token = sessionStorage.getItem("accessToken");  
     const headers = new HttpHeaders().set(
       "Authorization",
-      `Token ${sessionStorage.getItem("accessToken")}`,
+      `Bearer ${token}`  
     );
+    
     return this.http.get<any>(this.urlUserProfile, {
       headers,
-      withCredentials: true,
+      withCredentials: true,  
     });
   }
 
