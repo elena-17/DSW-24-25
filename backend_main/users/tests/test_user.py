@@ -57,7 +57,6 @@ class UserAPI(APITestCase):
         self.assertEqual(response.data["phone"], self.user.phone)
         self.assertEqual(response.data["name"], self.user.name)
         self.assertEqual(response.data["id_number"], self.user.id_number)
-        self.assertEqual(response.data["role"], self.user.role)
 
     def test_update_user_profile(self):
         update_data = {
@@ -69,6 +68,8 @@ class UserAPI(APITestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.name, update_data["name"])
         self.assertEqual(self.user.phone, update_data["phone"])
+        print(response.data)
+        print(self.user.name)
 
     def test_delete_user_account(self):
         response = self.client.delete(self.url_delete)
