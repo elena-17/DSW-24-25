@@ -35,12 +35,19 @@ def get_user_profile(request):
 @api_view(["PUT"])
 def update_user_profile(request):
     user = request.user
+    print("Usuario autenticado:", user)  # Verificar usuario autenticado
+    print("Datos recibidos:", request.data)  # Verificar datos entrantes
+    
     serializer = UserProfileSerializer(user, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
+        user.refresh_from_db()
+        print("Usuario después de actualizar:", user.name, user.phone)  # Verificar si se actualizó
+        
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    print("Errores de validación:", serializer.errors)  # Verificar errores en el serializador
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
