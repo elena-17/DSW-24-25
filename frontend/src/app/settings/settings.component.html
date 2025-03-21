@@ -27,13 +27,13 @@
         <input
           matInput
           type="text"
-          formControlName="phone_number"
+          formControlName="phone"
           placeholder="Enter your phone"
         />
-        <mat-error *ngIf="settingsForm.get('phone_number')?.hasError('required')">
+        <mat-error *ngIf="settingsForm.get('phone')?.hasError('required')">
           Phone number is required.
         </mat-error>
-        <mat-error *ngIf="settingsForm.get('phone_number')?.hasError('pattern')">
+        <mat-error *ngIf="settingsForm.get('phone')?.hasError('pattern')">
           Phone number must be 9 digits.
         </mat-error>
       </mat-form-field>
@@ -41,11 +41,12 @@
       <!-- Name -->
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Name</mat-label>
-        <input matInput
-         type="text"
-         formControlName="name"
-         [value]="userData.name"
-         readonly="true"
+        <input
+          matInput
+          type="text"
+          formControlName="name"
+          [value]="userData.name"
+          readonly="true"
         />
       </mat-form-field>
 
@@ -63,21 +64,29 @@
 
     <!-- Actions -->
     <div class="actions">
-      <button 
-        mat-raised-button 
-        class="save-changes" 
+      <button
+        mat-raised-button
+        class="save-changes"
         [class.disabled-button]="!isFormModified || settingsForm.invalid"
-        [disabled]="!isFormModified || settingsForm.invalid" 
+        [disabled]="!isFormModified || settingsForm.invalid"
         (click)="saveChanges()"
       >
         <mat-icon>save</mat-icon>
         Save Changes
       </button>
-      <button mat-raised-button class="change-password" (click)="changePassword()">
+      <button
+        mat-raised-button
+        class="change-password"
+        (click)="changePassword()"
+      >
         <mat-icon>lock</mat-icon>
         Change Password
       </button>
-      <button mat-raised-button class="delete-account" (click)="deleteAccount()">
+      <button
+        mat-raised-button
+        class="delete-account"
+        (click)="deleteAccount()"
+      >
         <mat-icon>delete</mat-icon>
         Delete Account
       </button>

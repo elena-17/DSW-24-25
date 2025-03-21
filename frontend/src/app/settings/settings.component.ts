@@ -3,16 +3,30 @@ import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MainService } from "../main.service";
 import { CommonModule } from "@angular/common";
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from "@angular/forms";
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormsModule,
+} from "@angular/forms";
 import { Router } from "@angular/router";
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from "@angular/material/icon";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
 
 @Component({
   selector: "app-settings",
   standalone: true,
-  imports: [ToolbarComponent, CommonModule, FormsModule, MatIconModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
+  imports: [
+    ToolbarComponent,
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+  ],
   templateUrl: "./settings.component.html",
   styleUrl: "./settings.component.scss",
 })
@@ -20,7 +34,6 @@ export class SettingsComponent {
   settingsForm: FormGroup;
   userData: any = {};
   isFormModified: boolean = false;
-
 
   constructor(
     private formBuilder: FormBuilder,
@@ -31,10 +44,7 @@ export class SettingsComponent {
     // Create reactive form for settings
     this.settingsForm = this.formBuilder.group({
       email: ["", [Validators.required, Validators.email]],
-      phone_number: [
-        "",
-        [Validators.required, Validators.pattern(/^\d{9}$/)],
-      ],
+      phone: ["", [Validators.required, Validators.pattern(/^\d{9}$/)]],
     });
   }
 
@@ -51,7 +61,7 @@ export class SettingsComponent {
         this.userData = response;
         this.settingsForm.patchValue({
           email: this.userData.email,
-          phone_number: this.userData.phone,
+          phone: this.userData.phone,
           name: this.userData.name,
         });
         this.isFormModified = false;
@@ -69,8 +79,8 @@ export class SettingsComponent {
   checkFormChanges(): void {
     this.isFormModified = Object.keys(this.settingsForm.controls).some(
       (key) =>
-        this.settingsForm.get(key)?.value !== this.userData[key] && 
-        this.settingsForm.get(key)?.valid
+        this.settingsForm.get(key)?.value !== this.userData[key] &&
+        this.settingsForm.get(key)?.valid,
     );
   }
 
@@ -83,7 +93,8 @@ export class SettingsComponent {
 
     // Asegurarse de incluir manualmente los campos readonly si no están en settingsForm.value
     updatedData.name = this.userData.name;
-    updatedData.id_number = this.userData.id_number;    this.mainService.updateUserProfile(updatedData).subscribe({
+    updatedData.id_number = this.userData.id_number;
+    this.mainService.updateUserProfile(updatedData).subscribe({
       next: () => {
         this.snackBar.open("Changes saved successfully!", "Close", {
           duration: 2000,
@@ -152,7 +163,7 @@ export class SettingsComponent {
     }
 
     if (control?.hasError("pattern")) {
-      if (controlName === "phone_number") {
+      if (controlName === "phone") {
         return "Phone number must be 9 digits.";
       }
     }

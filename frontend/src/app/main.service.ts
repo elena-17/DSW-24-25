@@ -50,38 +50,34 @@ export class MainService {
   }
 
   getUserProfile(): Observable<any> {
-    const token = sessionStorage.getItem("accessToken");  
-    const headers = new HttpHeaders().set(
-      "Authorization",
-      `Bearer ${token}`  
-    );
-    
+    const token = sessionStorage.getItem("accessToken");
+    const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
+
     return this.http.get<any>(this.urlUserProfile, {
       headers,
-      withCredentials: true,  
+      withCredentials: true,
     });
   }
 
   updateUserProfile(userData: any): Observable<any> {
     const headers = new HttpHeaders().set(
       "Authorization",
-      `Bearer ${sessionStorage.getItem("accessToken")}`  // Aquí agregamos el token
+      `Bearer ${sessionStorage.getItem("accessToken")}`, // Aquí agregamos el token
     );
     return this.http.put<any>(this.urlUpdateUserProfile, userData, {
       headers, // Añadimos los headers con el token
       withCredentials: true, // Si necesitas enviar cookies
     });
   }
-  
+
   deleteUserAccount(): Observable<any> {
     const headers = new HttpHeaders().set(
       "Authorization",
-      `Bearer ${sessionStorage.getItem("accessToken")}`  // Aquí agregamos el token
+      `Bearer ${sessionStorage.getItem("accessToken")}`, // Aquí agregamos el token
     );
     return this.http.delete<any>(this.urlDeleteUserAccount, {
       headers, // Añadimos los headers con el token
       withCredentials: true, // Si necesitas enviar cookies
     });
   }
-  
 }

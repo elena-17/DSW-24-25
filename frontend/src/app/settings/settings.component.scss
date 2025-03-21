@@ -21,14 +21,14 @@ h1 {
 .user-info {
   display: flex;
   flex-direction: column;
-  gap: 20px;  // Increased gap for better spacing
+  gap: 20px; // Increased gap for better spacing
   text-align: left;
   padding: 0 10px;
 }
 
 /* Error styles */
 mat-error {
-  color: #77231d;  // Red color for error messages
+  color: #77231d; // Red color for error messages
   font-size: 12px;
   margin-top: 5px;
 }
@@ -65,8 +65,8 @@ mat-error {
 
 .disabled-button {
   opacity: 0.5;
-  cursor: not-allowed; 
-  background: #a5d6a7 !important; 
+  cursor: not-allowed;
+  background: #a5d6a7 !important;
   box-shadow: none !important;
   transform: none !important;
 }
