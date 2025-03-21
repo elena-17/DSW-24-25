@@ -9,6 +9,8 @@ import {
   FormGroup,
   Validators,
   FormsModule,
+  AbstractControl,
+  ValidationErrors,
 } from "@angular/forms";
 import { Router } from "@angular/router";
 import { MatIconModule } from "@angular/material/icon";
@@ -37,6 +39,8 @@ export class SettingsComponent {
   userData: any = {};
   isFormModified: boolean = false;
   showPasswordForm: boolean = false;
+  hidePassword = true;
+  hideConfirmPassword = true;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -54,10 +58,10 @@ export class SettingsComponent {
     this.passwordForm = this.formBuilder.group(
       {
         currentPassword: ["", [Validators.required]],
-        password: ["", [Validators.required, Validators.minLength(8)]],
-        confirmPassword: ["", [Validators.required, Validators.minLength(8)]],
+        password: ["", [Validators.required, Validators.minLength(8), PasswordValidators.passwordStrengthValidator,]],
+        confirmPassword: ["", [Validators.required]],
       },
-      { validators: [PasswordValidators.passwordStrengthValidator] },
+      { validators: this.passwordMatchValidator },
     );
   }
 
@@ -67,6 +71,22 @@ export class SettingsComponent {
       this.checkFormChanges();
     });
   }
+
+    // Hide/show password and confirm password
+    togglePasswordVisibility() {
+      this.hidePassword = !this.hidePassword;
+    }
+  
+    toggleConfirmPasswordVisibility() {
+      this.hideConfirmPassword = !this.hideConfirmPassword;
+    }
+
+  // Mhetod to validate that the passwords match
+    passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+      const password = group.get("password")?.value;
+      const confirmPassword = group.get("confirmPassword")?.value;
+      return password === confirmPassword ? null : { passwordMismatch: true };
+    }
 
   loadUserInfo(): void {
     this.mainService.getUserProfile().subscribe({
@@ -132,14 +152,28 @@ export class SettingsComponent {
     }
   }
 
-  changePassword(): void {
+  changePassword() {
     if (this.passwordForm.invalid) {
+      let errorMessage = "";
+      for (const controlName in this.passwordForm.controls) {
+        const control = this.passwordForm.get(controlName);
+        if (control && control.invalid && (control.touched || control.dirty)) {
+          errorMessage += this.getErrorMessage(controlName, "password") + "\n";
+        }
+      }
+
+      if (errorMessage) {
+        this.snackBar.open(errorMessage, "OK", {
+          duration: 5000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      }
       return;
     }
 
     const currentPassword = this.passwordForm.get("currentPassword")?.value;
     const password = this.passwordForm.get("password")?.value;
-    const confirmPassword = this.passwordForm.get("confirmPassword")?.value;
 
     this.mainService
       .changeUserPassword({ currentPassword, password })
@@ -214,15 +248,12 @@ export class SettingsComponent {
       }
     }
 
-    if (control?.hasError("passwordStrength")) {
-      return "Password must include uppercase, lowercase, and a number.";
+    if (control?.hasError("minlength")) {
+      return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} must be at least 8 characters long.`;
     }
 
-    if (
-      form.hasError("passwordMismatch") &&
-      controlName === "confirmPassword"
-    ) {
-      return "Passwords do not match.";
+    if (control?.hasError("passwordStrength")) {
+      return "Password must include uppercase, lowercase, and a number.";
     }
 
     return "";

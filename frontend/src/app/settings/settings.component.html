@@ -93,7 +93,7 @@
     </div>
   </form>
 
-  <form [formGroup]="passwordForm" [ngClass]="{ hidden: !showPasswordForm }">
+  <form [formGroup]="passwordForm" [ngClass]="{ hidden: !showPasswordForm } ">
     <div class="user-info">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Current Password</mat-label>
@@ -112,10 +112,21 @@
         <mat-label>New Password</mat-label>
         <input
           matInput
-          type="password"
+          [type]="hidePassword ? 'password' : 'text'"
           formControlName="password"
           placeholder="Enter new password"
+          required
         />
+        <button
+              mat-icon-button
+              matSuffix
+              (click)="togglePasswordVisibility()"
+              type="button"
+            >
+              <mat-icon>{{
+                hidePassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
+            </button>
         <mat-error *ngIf="passwordForm.get('password')?.invalid">
           {{ getErrorMessage("password", "password") }}
         </mat-error>
@@ -125,22 +136,33 @@
         <mat-label>Confirm Password</mat-label>
         <input
           matInput
-          type="password"
+          [type]="hideConfirmPassword ? 'password' : 'text'"
           formControlName="confirmPassword"
           placeholder="Confirm new password"
+          required
         />
-        <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid">
-          {{ getErrorMessage("confirmPassword", "password") }}
-        </mat-error>
+        <button
+              mat-icon-button
+              matSuffix
+              (click)="toggleConfirmPasswordVisibility()"
+              type="button"
+            >
+              <mat-icon>{{
+                hideConfirmPassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
+            </button>
+            <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid">
+              {{ getErrorMessage("confirmPassword", "password") }}
+            </mat-error>
       </mat-form-field>
     </div>
     <div class="actions">
       <button
         mat-raised-button
         class="save-changes"
-        [disabled]="
-          passwordForm.invalid || passwordForm.hasError('passwordMismatch')
-        "
+        [class.disabled-button]="passwordForm.invalid"
+        [disabled]="passwordForm.invalid"
+        (click)="saveChanges()"
       >
         Accept
       </button>

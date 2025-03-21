@@ -15,6 +15,7 @@ export class MainService {
   private urlUserProfile = `${this.baseApiUrl}/user/profile/`;
   private urlUpdateUserProfile = `${this.baseApiUrl}/user/profile/update/`;
   private urlDeleteUserAccount = `${this.baseApiUrl}/user/delete/`;
+  private urlChangePassword = `${this.baseApiUrl}/user/change/password/`
   private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
   constructor(private http: HttpClient) {}
 
@@ -78,7 +79,7 @@ export class MainService {
       `Bearer ${sessionStorage.getItem("accessToken")}`,
     );
 
-    return this.http.post<any>(this.urlUpdateUserProfile, data, {
+    return this.http.post<any>(this.urlChangePassword, data, {
       headers,
       withCredentials: true,
     });
