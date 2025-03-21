@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.db import models
-from register.models import User
+from users.models import User
 
 
 class Account(models.Model):
