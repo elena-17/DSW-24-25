@@ -198,8 +198,8 @@ export class SettingsComponent {
             this.showPasswordForm = false;
             this.passwordForm.reset();
           },
-          error: () => {
-            this.snackBar.open("Failed to change password.", "Close", {
+          error: (errorMessage) => {
+            this.snackBar.open(errorMessage.error?.error, "Close", {
               duration: 2000,
               horizontalPosition: "center",
               verticalPosition: "top",
