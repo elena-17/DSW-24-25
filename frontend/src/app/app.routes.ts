@@ -6,6 +6,7 @@ import { FriendsComponent } from "./friends/friends.component";
 import { SettingsComponent } from "./settings/settings.component";
 import { HelppageComponent } from "./helppage/helppage.component";
 import { TransactionsComponent } from "./transactions/transactions.component";
+import { Error404Component } from "./error404/error404.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
@@ -15,4 +16,5 @@ export const routes: Routes = [
   { path: "settings", component: SettingsComponent },
   { path: "help", component: HelppageComponent },
   { path: "transactions", component: TransactionsComponent },
+  { path: "**", component: Error404Component },
 ];
