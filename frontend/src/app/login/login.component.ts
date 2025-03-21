@@ -73,7 +73,13 @@ export class LoginComponent {
       .login(this.loginForm.value.email_id, this.loginForm.value.password)
       .subscribe({
         next: (response) => {
-          sessionStorage.setItem("userToken", response.token);
+          sessionStorage.setItem("accessToken", response.access);
+          sessionStorage.setItem("refreshToken", response.refresh);
+
+          const payload = this.decodeToken(response.access);
+          sessionStorage.setItem("userName", payload.name);
+          sessionStorage.setItem("userRole", payload.role);
+
           this.snackBar.open("Login successful!", "Close", {
             duration: 2000,
             horizontalPosition: "center",
@@ -125,5 +131,13 @@ export class LoginComponent {
       }
       return null;
     };
+  }
+  private decodeToken(token: string): any {
+    try {
+      const payload = token.split(".")[1];
+      return JSON.parse(atob(payload));
+    } catch (e) {
+      return null;
+    }
   }
 }

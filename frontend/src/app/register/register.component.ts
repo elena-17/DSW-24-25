@@ -181,6 +181,7 @@ export class RegisterComponent {
         this.registerForm.value.name,
         this.registerForm.value.id_number,
         this.registerForm.value.pwd1,
+        "user",
       )
       .subscribe({
         next: (response) => {

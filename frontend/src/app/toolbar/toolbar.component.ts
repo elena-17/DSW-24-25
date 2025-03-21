@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
@@ -7,7 +7,7 @@ import { Router } from "@angular/router"; // Si usas Angular Router
 
 @Component({
   selector: "app-toolbar",
-  standalone: true, // Para indicar que es un componente independiente.
+  standalone: true,
   imports: [CommonModule, MatIconModule, MatToolbarModule, MatButtonModule],
   templateUrl: "./toolbar.component.html",
   styleUrls: ["./toolbar.component.scss"],
@@ -15,8 +15,13 @@ import { Router } from "@angular/router"; // Si usas Angular Router
 export class ToolbarComponent {
   isMenuOpen: boolean = false; //Status menu
   isUserMenuOpen: boolean = false; // Status user menu
+  userName: string = "User"; // value for default username
 
   constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    this.userName = sessionStorage.getItem("userName") || "User";
+  }
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
@@ -53,8 +58,7 @@ export class ToolbarComponent {
 
   // Handle Log Out
   logOut(): void {
-    sessionStorage.removeItem("userToken");
-    console.log("Logging out...");
+    sessionStorage.clear();
     this.router.navigate([""]);
   }
 }
