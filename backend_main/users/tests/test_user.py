@@ -68,10 +68,18 @@ class UserAPI(APITestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.name, update_data["name"])
         self.assertEqual(self.user.phone, update_data["phone"])
-        print(response.data)
-        print(self.user.name)
 
     def test_delete_user_account(self):
         response = self.client.delete(self.url_delete)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(User.objects.filter(id_number=self.user.id_number).exists())
+
+    def test_change_password(self):
+        data = {
+            "password": "newpassword123",
+        }
+        response = self.client.put(self.url_update, data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password(data["password"]))
+        self.assertFalse(self.user.check_password("securepassword123"))

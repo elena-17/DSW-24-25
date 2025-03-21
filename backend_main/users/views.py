@@ -35,25 +35,23 @@ def get_user_profile(request):
 @api_view(["PUT"])
 def update_user_profile(request):
     user = request.user
-    print("Usuario autenticado:", user)  # Verificar usuario autenticado
-    print("Datos recibidos:", request.data)  # Verificar datos entrantes
-    
+    password = request.data.get("password", None)
     serializer = UserProfileSerializer(user, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
+        if password:
+            user.set_password(password)
+            user.save()
+
         user.refresh_from_db()
-        print("Usuario después de actualizar:", user.name, user.phone)  # Verificar si se actualizó
-        
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    print("Errores de validación:", serializer.errors)  # Verificar errores en el serializador
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["DELETE"])
 def delete_user_account(request):
-    """Elimina la cuenta del usuario autenticado"""
     user = request.user
     user.delete()
     return Response({"message": "Account deleted"}, status=status.HTTP_204_NO_CONTENT)
