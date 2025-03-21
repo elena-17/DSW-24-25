@@ -19,6 +19,11 @@ export class MainService {
   private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
   constructor(private http: HttpClient) {}
 
+  isAuthenticated(): boolean {
+    const token = sessionStorage.getItem("accessToken");
+    return token != null;
+  }
+
   register(
     email: string,
     phone_number: string,

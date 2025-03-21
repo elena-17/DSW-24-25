@@ -73,6 +73,10 @@ export class SettingsComponent {
   }
 
   ngOnInit(): void {
+    if (!this.mainService.isAuthenticated()) {
+      this.router.navigate(["error-page"]);
+      return;
+    }
     this.loadUserInfo();
     this.settingsForm.valueChanges.subscribe(() => {
       this.checkFormChanges();

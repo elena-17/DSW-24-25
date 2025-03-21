@@ -4,10 +4,11 @@
     <div class="error-banner">Page Not Found</div>
     <h2>UH OH! You're lost.</h2>
     <p>
-      The page you are looking for does not exist. How you got here is a
-      mystery. But you can click the button below to go back to the homepage.
+      The page you are looking for does not exist or you do not have access. How
+      you got here is a mystery. But you can click the button below to go back
+      to the homepage.
     </p>
-    <button mat-fab extended routerLink="/" class="home-button">
+    <button mat-fab extended class="home-button" (click)="goHome()">
       <mat-icon>home</mat-icon>
       Go Home
     </button>
