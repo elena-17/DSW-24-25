@@ -15,7 +15,7 @@ export class MainService {
   private urlUserProfile = `${this.baseApiUrl}/user/profile/`;
   private urlUpdateUserProfile = `${this.baseApiUrl}/user/profile/update/`;
   private urlDeleteUserAccount = `${this.baseApiUrl}/user/delete/`;
-  private urlChangePassword = `${this.baseApiUrl}/user/change/password/`
+  private urlChangePassword = `${this.baseApiUrl}/user/change/password/`;
   private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
   constructor(private http: HttpClient) {}
 

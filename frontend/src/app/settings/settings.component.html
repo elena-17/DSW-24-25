@@ -93,7 +93,7 @@
     </div>
   </form>
 
-  <form [formGroup]="passwordForm" [ngClass]="{ hidden: !showPasswordForm } ">
+  <form [formGroup]="passwordForm" [ngClass]="{ hidden: !showPasswordForm }">
     <div class="user-info">
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Current Password</mat-label>
@@ -118,15 +118,15 @@
           required
         />
         <button
-              mat-icon-button
-              matSuffix
-              (click)="togglePasswordVisibility()"
-              type="button"
-            >
-              <mat-icon>{{
-                hidePassword ? "visibility_off" : "visibility"
-              }}</mat-icon>
-            </button>
+          mat-icon-button
+          matSuffix
+          (click)="togglePasswordVisibility()"
+          type="button"
+        >
+          <mat-icon>{{
+            hidePassword ? "visibility_off" : "visibility"
+          }}</mat-icon>
+        </button>
         <mat-error *ngIf="passwordForm.get('password')?.invalid">
           {{ getErrorMessage("password", "password") }}
         </mat-error>
@@ -142,18 +142,18 @@
           required
         />
         <button
-              mat-icon-button
-              matSuffix
-              (click)="toggleConfirmPasswordVisibility()"
-              type="button"
-            >
-              <mat-icon>{{
-                hideConfirmPassword ? "visibility_off" : "visibility"
-              }}</mat-icon>
-            </button>
-            <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid">
-              {{ getErrorMessage("confirmPassword", "password") }}
-            </mat-error>
+          mat-icon-button
+          matSuffix
+          (click)="toggleConfirmPasswordVisibility()"
+          type="button"
+        >
+          <mat-icon>{{
+            hideConfirmPassword ? "visibility_off" : "visibility"
+          }}</mat-icon>
+        </button>
+        <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid">
+          {{ getErrorMessage("confirmPassword", "password") }}
+        </mat-error>
       </mat-form-field>
     </div>
     <div class="actions">

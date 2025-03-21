@@ -58,7 +58,14 @@ export class SettingsComponent {
     this.passwordForm = this.formBuilder.group(
       {
         currentPassword: ["", [Validators.required]],
-        password: ["", [Validators.required, Validators.minLength(8), PasswordValidators.passwordStrengthValidator,]],
+        password: [
+          "",
+          [
+            Validators.required,
+            Validators.minLength(8),
+            PasswordValidators.passwordStrengthValidator,
+          ],
+        ],
         confirmPassword: ["", [Validators.required]],
       },
       { validators: this.passwordMatchValidator },
@@ -72,21 +79,21 @@ export class SettingsComponent {
     });
   }
 
-    // Hide/show password and confirm password
-    togglePasswordVisibility() {
-      this.hidePassword = !this.hidePassword;
-    }
-  
-    toggleConfirmPasswordVisibility() {
-      this.hideConfirmPassword = !this.hideConfirmPassword;
-    }
+  // Hide/show password and confirm password
+  togglePasswordVisibility() {
+    this.hidePassword = !this.hidePassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.hideConfirmPassword = !this.hideConfirmPassword;
+  }
 
   // Mhetod to validate that the passwords match
-    passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
-      const password = group.get("password")?.value;
-      const confirmPassword = group.get("confirmPassword")?.value;
-      return password === confirmPassword ? null : { passwordMismatch: true };
-    }
+  passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+    const password = group.get("password")?.value;
+    const confirmPassword = group.get("confirmPassword")?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
 
   loadUserInfo(): void {
     this.mainService.getUserProfile().subscribe({
@@ -174,27 +181,32 @@ export class SettingsComponent {
 
     const currentPassword = this.passwordForm.get("currentPassword")?.value;
     const password = this.passwordForm.get("password")?.value;
-
-    this.mainService
-      .changeUserPassword({ currentPassword, password })
-      .subscribe({
-        next: () => {
-          this.snackBar.open("Password changed successfully!", "Close", {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          });
-          this.showPasswordForm = false;
-          this.passwordForm.reset();
-        },
-        error: () => {
-          this.snackBar.open("Failed to change password.", "Close", {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          });
-        },
-      });
+    if (
+      confirm(
+        "Are you sure you want to change your password? This action cannot be undone.",
+      )
+    ) {
+      this.mainService
+        .changeUserPassword({ currentPassword, password })
+        .subscribe({
+          next: () => {
+            this.snackBar.open("Password changed successfully!", "Close", {
+              duration: 2000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
+            this.showPasswordForm = false;
+            this.passwordForm.reset();
+          },
+          error: () => {
+            this.snackBar.open("Failed to change password.", "Close", {
+              duration: 2000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
+          },
+        });
+    }
   }
 
   deleteAccount(): void {
