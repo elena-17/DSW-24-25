@@ -16,7 +16,6 @@ export class MainService {
   private urlUpdateUserProfile = `${this.baseApiUrl}/user/profile/update/`;
   private urlDeleteUserAccount = `${this.baseApiUrl}/user/delete/`;
   private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
-
   constructor(private http: HttpClient) {}
 
   register(
@@ -67,6 +66,18 @@ export class MainService {
     return this.http.put<any>(this.urlUpdateUserProfile, userData, {
       headers, // Añadimos los headers con el token
       withCredentials: true, // Si necesitas enviar cookies
+    });
+  }
+
+  changeUserPassword(data: { currentPassword: string; password: string }): Observable<any> {
+    const headers = new HttpHeaders().set(
+      "Authorization",
+      `Bearer ${sessionStorage.getItem("accessToken")}`
+    );
+
+    return this.http.post<any>(this.urlUpdateUserProfile, data, {
+      headers,
+      withCredentials: true,
     });
   }
 

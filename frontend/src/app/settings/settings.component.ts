@@ -14,6 +14,7 @@ import { Router } from "@angular/router";
 import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { PasswordValidators } from "../password.validators"; 
 
 @Component({
   selector: "app-settings",
@@ -32,8 +33,10 @@ import { MatInputModule } from "@angular/material/input";
 })
 export class SettingsComponent {
   settingsForm: FormGroup;
+  passwordForm: FormGroup;
   userData: any = {};
   isFormModified: boolean = false;
+  showPasswordForm: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -46,6 +49,13 @@ export class SettingsComponent {
       email: ["", [Validators.required, Validators.email]],
       phone: ["", [Validators.required, Validators.pattern(/^\d{9}$/)]],
     });
+
+    // Create reactive form for password change
+    this.passwordForm = this.formBuilder.group({
+      currentPassword: ["", [Validators.required]],
+      password: ["", [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ["", [Validators.required, Validators.minLength(8)]],
+    }, {validators: [PasswordValidators.passwordStrengthValidator]});
   }
 
   ngOnInit(): void {
@@ -88,10 +98,8 @@ export class SettingsComponent {
     if (this.settingsForm.invalid || !this.isFormModified) {
       return;
     }
-    //LOL
     const updatedData = { ...this.settingsForm.value };
 
-    // Asegurarse de incluir manualmente los campos readonly si no están en settingsForm.value
     updatedData.name = this.userData.name;
     updatedData.id_number = this.userData.id_number;
     this.mainService.updateUserProfile(updatedData).subscribe({
@@ -114,11 +122,39 @@ export class SettingsComponent {
     });
   }
 
+  toggleChangePassword(): void {
+    this.showPasswordForm = !this.showPasswordForm;
+    if (this.showPasswordForm) {
+      this.passwordForm.reset(); 
+    }
+  }
+
   changePassword(): void {
-    this.snackBar.open("Redirecting to password change...", "Close", {
-      duration: 2000,
-      horizontalPosition: "center",
-      verticalPosition: "top",
+    if (this.passwordForm.invalid) {
+      return;
+    }
+
+    const currentPassword = this.passwordForm.get("currentPassword")?.value;
+    const password = this.passwordForm.get("password")?.value;
+    const confirmPassword = this.passwordForm.get("confirmPassword")?.value;
+
+    this.mainService.changeUserPassword({ currentPassword, password }).subscribe({
+      next: () => {
+        this.snackBar.open("Password changed successfully!", "Close", {
+          duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+        this.showPasswordForm = false;
+        this.passwordForm.reset();
+      },
+      error: () => {
+        this.snackBar.open("Failed to change password.", "Close", {
+          duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      },
     });
   }
 
@@ -147,27 +183,36 @@ export class SettingsComponent {
     }
   }
 
-  getErrorMessage(controlName: string): string {
-    const control = this.settingsForm.get(controlName);
-
+  getErrorMessage(controlName: string, formType: "settings" | "password"): string {
+    const form = formType === "settings" ? this.settingsForm : this.passwordForm;
+    const control = form.get(controlName);
+  
     if (!control?.touched && !control?.dirty) {
       return "";
     }
-
+  
     if (control?.hasError("required")) {
       return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required.`;
     }
-
+  
     if (control?.hasError("email")) {
       return "Invalid email format.";
     }
-
+  
     if (control?.hasError("pattern")) {
       if (controlName === "phone") {
         return "Phone number must be 9 digits.";
       }
     }
-
+  
+    if (control?.hasError("passwordStrength")) {
+      return "Password must include uppercase, lowercase, and a number.";
+    }
+  
+    if (form.hasError("passwordMismatch") && controlName === "confirmPassword") {
+      return "Passwords do not match.";
+    }
+  
     return "";
   }
 }
