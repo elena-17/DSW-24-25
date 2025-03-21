@@ -50,6 +50,26 @@ def update_user_profile(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(["POST"])
+def change_user_password(request):
+    user = request.user
+    current_password = request.data.get("currentPassword")
+    new_password = request.data.get("password")
+
+    if not current_password or not new_password:
+        return Response({"error": "Both current and new passwords are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Verificate current password is correct
+    if not user.check_password(current_password):
+        return Response({"error": "Current password is incorrect."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Change password and save
+    user.set_password(new_password)
+    user.save()
+
+    return Response({"message": "Password changed successfully!"}, status=status.HTTP_200_OK)
+
+
 @api_view(["DELETE"])
 def delete_user_account(request):
     user = request.user
