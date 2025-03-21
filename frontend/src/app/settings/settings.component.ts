@@ -14,7 +14,7 @@ import { Router } from "@angular/router";
 import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { PasswordValidators } from "../password.validators"; 
+import { PasswordValidators } from "../password.validators";
 
 @Component({
   selector: "app-settings",
@@ -51,11 +51,14 @@ export class SettingsComponent {
     });
 
     // Create reactive form for password change
-    this.passwordForm = this.formBuilder.group({
-      currentPassword: ["", [Validators.required]],
-      password: ["", [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ["", [Validators.required, Validators.minLength(8)]],
-    }, {validators: [PasswordValidators.passwordStrengthValidator]});
+    this.passwordForm = this.formBuilder.group(
+      {
+        currentPassword: ["", [Validators.required]],
+        password: ["", [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ["", [Validators.required, Validators.minLength(8)]],
+      },
+      { validators: [PasswordValidators.passwordStrengthValidator] },
+    );
   }
 
   ngOnInit(): void {
@@ -125,7 +128,7 @@ export class SettingsComponent {
   toggleChangePassword(): void {
     this.showPasswordForm = !this.showPasswordForm;
     if (this.showPasswordForm) {
-      this.passwordForm.reset(); 
+      this.passwordForm.reset();
     }
   }
 
@@ -138,24 +141,26 @@ export class SettingsComponent {
     const password = this.passwordForm.get("password")?.value;
     const confirmPassword = this.passwordForm.get("confirmPassword")?.value;
 
-    this.mainService.changeUserPassword({ currentPassword, password }).subscribe({
-      next: () => {
-        this.snackBar.open("Password changed successfully!", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
-        this.showPasswordForm = false;
-        this.passwordForm.reset();
-      },
-      error: () => {
-        this.snackBar.open("Failed to change password.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
-      },
-    });
+    this.mainService
+      .changeUserPassword({ currentPassword, password })
+      .subscribe({
+        next: () => {
+          this.snackBar.open("Password changed successfully!", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+          this.showPasswordForm = false;
+          this.passwordForm.reset();
+        },
+        error: () => {
+          this.snackBar.open("Failed to change password.", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+        },
+      });
   }
 
   deleteAccount(): void {
@@ -183,36 +188,43 @@ export class SettingsComponent {
     }
   }
 
-  getErrorMessage(controlName: string, formType: "settings" | "password"): string {
-    const form = formType === "settings" ? this.settingsForm : this.passwordForm;
+  getErrorMessage(
+    controlName: string,
+    formType: "settings" | "password",
+  ): string {
+    const form =
+      formType === "settings" ? this.settingsForm : this.passwordForm;
     const control = form.get(controlName);
-  
+
     if (!control?.touched && !control?.dirty) {
       return "";
     }
-  
+
     if (control?.hasError("required")) {
       return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required.`;
     }
-  
+
     if (control?.hasError("email")) {
       return "Invalid email format.";
     }
-  
+
     if (control?.hasError("pattern")) {
       if (controlName === "phone") {
         return "Phone number must be 9 digits.";
       }
     }
-  
+
     if (control?.hasError("passwordStrength")) {
       return "Password must include uppercase, lowercase, and a number.";
     }
-  
-    if (form.hasError("passwordMismatch") && controlName === "confirmPassword") {
+
+    if (
+      form.hasError("passwordMismatch") &&
+      controlName === "confirmPassword"
+    ) {
       return "Passwords do not match.";
     }
-  
+
     return "";
   }
 }

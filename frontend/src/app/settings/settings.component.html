@@ -2,8 +2,8 @@
 <div class="content">
   <h1>Account Settings</h1>
 
-  <form [formGroup]="settingsForm" [ngClass]="{'hidden': showPasswordForm}">
-    <div class="user-info" >
+  <form [formGroup]="settingsForm" [ngClass]="{ hidden: showPasswordForm }">
+    <div class="user-info">
       <!-- Email -->
       <mat-form-field appearance="fill" class="full-width">
         <mat-label>Email</mat-label>
@@ -93,34 +93,64 @@
     </div>
   </form>
 
-  <form [formGroup]="passwordForm" [ngClass]="{'hidden': !showPasswordForm}">
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Current Password</mat-label>
-      <input matInput type="password" formControlName="currentPassword" placeholder="Enter current password" />
-      <mat-error *ngIf="passwordForm.get('currentPassword')?.invalid">
-        {{ getErrorMessage('currentPassword',"password") }}
-      </mat-error>
-    </mat-form-field>
+  <form [formGroup]="passwordForm" [ngClass]="{ hidden: !showPasswordForm }">
+    <div class="user-info">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Current Password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="currentPassword"
+          placeholder="Enter current password"
+        />
+        <mat-error *ngIf="passwordForm.get('currentPassword')?.invalid">
+          {{ getErrorMessage("currentPassword", "password") }}
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>New Password</mat-label>
-      <input matInput type="password" formControlName="password" placeholder="Enter new password" />
-      <mat-error *ngIf="passwordForm.get('password')?.invalid">
-        {{ getErrorMessage('newPassword', "password") }}
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>New Password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          placeholder="Enter new password"
+        />
+        <mat-error *ngIf="passwordForm.get('password')?.invalid">
+          {{ getErrorMessage("password", "password") }}
+        </mat-error>
+      </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Confirm Password</mat-label>
-      <input matInput type="password" formControlName="confirmPassword" placeholder="Confirm new password" />
-      <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid">
-        {{ getErrorMessage('confirmPassword', "password") }}
-      </mat-error>
-    </mat-form-field>
-
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Confirm Password</mat-label>
+        <input
+          matInput
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirm new password"
+        />
+        <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid">
+          {{ getErrorMessage("confirmPassword", "password") }}
+        </mat-error>
+      </mat-form-field>
+    </div>
     <div class="actions">
-      <button mat-raised-button class="save-changes" [disabled]="passwordForm.invalid || passwordForm.hasError('passwordMismatch')">Accept</button>
-      <button mat-raised-button class="delete-account" (click)="toggleChangePassword()">Cancel</button>
+      <button
+        mat-raised-button
+        class="save-changes"
+        [disabled]="
+          passwordForm.invalid || passwordForm.hasError('passwordMismatch')
+        "
+      >
+        Accept
+      </button>
+      <button
+        mat-raised-button
+        class="delete-account"
+        (click)="toggleChangePassword()"
+      >
+        Cancel
+      </button>
     </div>
   </form>
 </div>

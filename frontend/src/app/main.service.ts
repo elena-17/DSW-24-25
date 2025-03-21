@@ -69,10 +69,13 @@ export class MainService {
     });
   }
 
-  changeUserPassword(data: { currentPassword: string; password: string }): Observable<any> {
+  changeUserPassword(data: {
+    currentPassword: string;
+    password: string;
+  }): Observable<any> {
     const headers = new HttpHeaders().set(
       "Authorization",
-      `Bearer ${sessionStorage.getItem("accessToken")}`
+      `Bearer ${sessionStorage.getItem("accessToken")}`,
     );
 
     return this.http.post<any>(this.urlUpdateUserProfile, data, {
