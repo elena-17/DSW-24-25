@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MainService } from "../main.service";
+import { MainService } from "../services/user.service";
 import { CommonModule } from "@angular/common";
 import {
   ReactiveFormsModule,

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { Router } from "@angular/router";
-import { MainService } from "../main.service";
+import { MainService } from "../services/user.service";
 
 @Component({
   selector: "app-friends",

@@ -15,7 +15,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
-import { MainService } from "../main.service";
+import { AuthService } from "../services/auth.service";
 import { PasswordValidators } from "../password.validators";
 
 @Component({
@@ -40,7 +40,7 @@ export class RegisterComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private mainService: MainService,
+    private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
   ) {
@@ -174,7 +174,7 @@ export class RegisterComponent {
       return;
     }
     // Going to the backend to register the user
-    this.mainService
+    this.authService
       .register(
         this.registerForm.value.email,
         this.registerForm.value.phone_number,

@@ -16,7 +16,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
-import { MainService } from "../main.service";
+import { AuthService } from "../services/auth.service";
 import { PasswordValidators } from "../password.validators";
 import { Router } from "@angular/router";
 
@@ -44,7 +44,7 @@ export class LoginComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private mainService: MainService,
+    private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
   ) {
@@ -69,12 +69,12 @@ export class LoginComponent {
       });
       return;
     }
-    this.mainService
+    this.authService
       .login(this.loginForm.value.email_id, this.loginForm.value.password)
       .subscribe({
         next: (response) => {
-          sessionStorage.setItem("accessToken", response.access);
-          sessionStorage.setItem("refreshToken", response.refresh);
+          this.authService.saveToken(response.access);
+          this.authService.saveRefreshToken(response.refresh);
 
           const payload = this.decodeToken(response.access);
           sessionStorage.setItem("userName", payload.name);
