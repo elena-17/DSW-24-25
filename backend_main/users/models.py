@@ -15,7 +15,7 @@ USER_ROLES = (
 class CustomUserManager(BaseUserManager):
     def create_user(self, id_number, email, phone, password=None, **extra_fields):
         if not email:
-            raise ValueError("El email es obligatorio")
+            raise ValueError("ERROR. Email is required")
         email = self.normalize_email(email)
         user = self.model(id_number=id_number, email=email, phone=phone, **extra_fields)
         user.set_password(password)

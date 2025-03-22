@@ -38,7 +38,7 @@ class FriendRequest(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),
         ("accepted", "Accepted"),
-        ("denied", "Denied"),
+        ("Rejected", "Rejected"),
     ]
 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
