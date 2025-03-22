@@ -24,6 +24,17 @@ h1 {
   gap: 20px; // Increased gap for better spacing
   text-align: left;
   padding: 0 10px;
+  
+}
+
+button[matSuffix] {
+  background: transparent !important;
+  border: none !important;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Error styles */
@@ -32,6 +43,7 @@ mat-error {
   font-size: 12px;
   margin-top: 5px;
 }
+
 
 /* Actions */
 .actions {
