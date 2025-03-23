@@ -54,8 +54,6 @@ export class LoginComponent {
         "",
         [
           Validators.required,
-          Validators.minLength(8),
-          PasswordValidators.passwordStrengthValidator,
         ],
       ],
     });
@@ -79,14 +77,17 @@ export class LoginComponent {
           const payload = this.authService.decodeToken(response.access);
           sessionStorage.setItem("userName", payload.name);
           sessionStorage.setItem("userRole", payload.role);
-          
+          if (payload.role === "admin") {
+            window.location.href = 'http://127.0.0.1:8000/admin/';
+          }
+          else{
           this.snackBar.open("Login successful!", "Close", {
             duration: 2000,
             horizontalPosition: "center",
             verticalPosition: "top",
           });
           this.router.navigate(["homepage"]);
-        },
+        }},
         error: () => {
           this.snackBar.open("Login failed. Check your credentials.", "Close", {
             duration: 3000,
