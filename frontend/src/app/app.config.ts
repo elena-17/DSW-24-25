@@ -7,7 +7,7 @@ import {
   withEventReplay,
 } from "@angular/platform-browser";
 
-import { provideHttpClient, HTTP_INTERCEPTORS } from "@angular/common/http";
+import { provideHttpClient, HTTP_INTERCEPTORS, withInterceptorsFromDi } from "@angular/common/http";
 import { withFetch } from "@angular/common/http";
 
 import { AuthInterceptor } from "./interceptors/auth.interceptors";
@@ -17,13 +17,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch()),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
-    AuthService,
+    provideHttpClient(
+      withInterceptorsFromDi(),
+    ),
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
   ],
 };
+

@@ -1,7 +1,8 @@
 import { Component } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MainService } from "../services/user.service";
+import { AuthService } from "../services/auth.service";
+import { UserService } from "../services/user.service";
 import { CommonModule } from "@angular/common";
 import {
   ReactiveFormsModule,
@@ -46,7 +47,8 @@ export class SettingsComponent {
     private formBuilder: FormBuilder,
     private router: Router,
     private snackBar: MatSnackBar,
-    private mainService: MainService,
+    private authService: AuthService,
+    private userService: UserService,
   ) {
     // Create reactive form for settings
     this.settingsForm = this.formBuilder.group({
@@ -73,7 +75,7 @@ export class SettingsComponent {
   }
 
   ngOnInit(): void {
-    if (!this.mainService.isAuthenticated()) {
+    if (!this.authService.isAuthenticated()) {
       this.router.navigate(["error-page"]);
       return;
     }
@@ -100,7 +102,7 @@ export class SettingsComponent {
   }
 
   loadUserInfo(): void {
-    this.mainService.getUserProfile().subscribe({
+    this.userService.getUserProfile().subscribe({
       next: (response) => {
         this.userData = response;
         this.settingsForm.patchValue({
@@ -136,7 +138,7 @@ export class SettingsComponent {
 
     updatedData.name = this.userData.name;
     updatedData.id_number = this.userData.id_number;
-    this.mainService.updateUserProfile(updatedData).subscribe({
+    this.userService.updateUserProfile(updatedData).subscribe({
       next: () => {
         this.snackBar.open("Changes saved successfully!", "Close", {
           duration: 2000,
@@ -190,7 +192,7 @@ export class SettingsComponent {
         "Are you sure you want to change your password? This action cannot be undone.",
       )
     ) {
-      this.mainService
+      this.userService
         .changeUserPassword({ currentPassword, password })
         .subscribe({
           next: () => {
@@ -219,7 +221,7 @@ export class SettingsComponent {
         "Are you sure you want to delete your account? This action cannot be undone.",
       )
     ) {
-      this.mainService.deleteUserAccount().subscribe({
+      this.userService.deleteUserAccount().subscribe({
         next: () => {
           this.snackBar.open("Account deleted successfully.", "Close", {
             duration: 2000,

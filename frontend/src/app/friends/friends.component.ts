@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { Router } from "@angular/router";
-import { MainService } from "../services/user.service";
+import { AuthService } from "../services/auth.service";
 
 @Component({
   selector: "app-friends",
@@ -12,11 +12,11 @@ import { MainService } from "../services/user.service";
 export class FriendsComponent implements OnInit {
   constructor(
     private router: Router,
-    private mainService: MainService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
-    if (!this.mainService.isAuthenticated()) {
+    if (!this.authService.isAuthenticated()) {
       this.router.navigate(["error-page"]);
       return;
     }

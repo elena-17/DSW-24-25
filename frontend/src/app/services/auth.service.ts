@@ -12,7 +12,7 @@ export class AuthService {
   private urlLogin = `${this.baseApiUrl}/login/`;
 
   constructor(private http: HttpClient) {}
-
+  
   public saveToken(token: string): void {
     sessionStorage.setItem("access_token", token);
   }
@@ -33,12 +33,13 @@ export class AuthService {
     sessionStorage.removeItem("access_token");
     sessionStorage.removeItem("refresh_token");
   }
+
   public isAuthenticated(): boolean {
-    const token = this.getToken();
-    return token !== null;
+    const token = sessionStorage.getItem("access_token");
+    return token != null;
   }
 
-  private decodeToken(token: string): any {
+  public decodeToken(token: string): any {
     const parts = token.split(".");
     if (parts.length === 3) {
       const decoded = atob(parts[1]);
@@ -48,7 +49,7 @@ export class AuthService {
   }
 
   public refreshToken(): Observable<any> {
-    return this.http.post<any>(this.urlTokenRefresh, this.getRefreshToken());
+    return this.http.post<any>(this.urlTokenRefresh, {refresh: this.getRefreshToken()});
   }
 
   register(

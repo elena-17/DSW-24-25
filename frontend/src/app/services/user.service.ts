@@ -6,7 +6,7 @@ import { HttpHeaders } from "@angular/common/http";
 @Injectable({
   providedIn: "root",
 })
-export class MainService {
+export class UserService {
   private baseApiUrl = "http://localhost:8000/user";
 
   private urlUserProfile = `${this.baseApiUrl}/profile/`;
@@ -16,21 +16,12 @@ export class MainService {
 
   constructor(private http: HttpClient) {}
 
-  httpToken = {
-    headers: new HttpHeaders({
-      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-    }),
-  };
-
   isAuthenticated(): boolean {
     const token = sessionStorage.getItem("accessToken");
     return token != null;
   }
 
   getUserProfile(): Observable<any> {
-    const token = sessionStorage.getItem("accessToken");
-    const headers = new HttpHeaders().set("Authorization", `Bearer ${token}`);
-
     return this.http.get<any>(this.urlUserProfile, {
       withCredentials: true,
     });

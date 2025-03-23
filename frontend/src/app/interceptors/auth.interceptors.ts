@@ -12,7 +12,8 @@ import { AuthService } from "../services/auth.service";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {
+  }
 
   intercept(
     req: HttpRequest<any>,
@@ -30,7 +31,7 @@ export class AuthInterceptor implements HttpInterceptor {
           Authorization: `Bearer ${token}`,
         },
       });
-      return next.handle(req).pipe(
+      return next.handle(clonedRequest).pipe(
         catchError((error: any) => {
           if (this.isTokenExpiredError(error)) {
             return this.handleTokenExpiredError(req, next);
@@ -49,7 +50,7 @@ export class AuthInterceptor implements HttpInterceptor {
       error instanceof HttpErrorResponse &&
       error.status === 401 &&
       error.error &&
-      error.error.includes("JWT expired")
+      error.error.code === "token_not_valid"
     );
   }
 
@@ -74,4 +75,5 @@ export class AuthInterceptor implements HttpInterceptor {
       }),
     );
   }
+
 }
