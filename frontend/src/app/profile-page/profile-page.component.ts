@@ -58,6 +58,7 @@ export class ProfilePageComponent {
     this.settingsForm = this.formBuilder.group({
       email: ["", [Validators.required, Validators.email]],
       phone: ["", [Validators.required, Validators.pattern(/^\d{9}$/)]],
+      name: ["", [Validators.required]],
     });
 
     // reactive form for password change
@@ -149,7 +150,6 @@ export class ProfilePageComponent {
     }
     const updatedData = { ...this.settingsForm.value };
 
-    updatedData.name = this.userData.name;
     updatedData.id_number = this.userData.id_number;
     this.userService.updateUserProfile(updatedData).subscribe({
       next: () => {
@@ -160,6 +160,8 @@ export class ProfilePageComponent {
         });
         this.userData = { ...updatedData };
         this.isFormModified = false;
+        sessionStorage.setItem("userName", updatedData.name); 
+        window.dispatchEvent(new Event("userNameUpdated"));
       },
       error: () => {
         this.snackBar.open("Failed to save changes.", "Close", {

@@ -78,13 +78,19 @@
               <input
                 matInput
                 type="text"
-                [value]="userData.name"
-                readonly="true"
+                formControlName="name"
+                placeholder="Enter your name"
+                readonly="false"
               />
               <mat-icon matPrefix>person</mat-icon>
+              <mat-error
+              *ngIf="settingsForm.get('name')?.hasError('required')"
+            >
+              Name is required.
+            </mat-error>
             </mat-form-field>
 
-            <!-- ID Number Field (spanning both columns) -->
+            <!-- ID Number Field -->
             <mat-form-field appearance="outline">
               <mat-label>ID Number</mat-label>
               <input
