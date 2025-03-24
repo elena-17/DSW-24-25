@@ -16,4 +16,12 @@ export class PasswordValidators {
       ? { passwordStrength: true }
       : null;
   }
+  // Validate if passwords match
+  static passwordMatchValidator(
+    group: AbstractControl,
+  ): ValidationErrors | null {
+    const password = group.get("pwd1")?.value;
+    const confirmPassword = group.get("pwd2")?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
 }

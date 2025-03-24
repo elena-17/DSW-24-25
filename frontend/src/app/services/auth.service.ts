@@ -12,7 +12,7 @@ export class AuthService {
   private urlLogin = `${this.baseApiUrl}/login/`;
 
   constructor(private http: HttpClient) {}
-  
+
   public saveToken(token: string): void {
     sessionStorage.setItem("access_token", token);
   }
@@ -49,7 +49,9 @@ export class AuthService {
   }
 
   public refreshToken(): Observable<any> {
-    return this.http.post<any>(this.urlTokenRefresh, {refresh: this.getRefreshToken()});
+    return this.http.post<any>(this.urlTokenRefresh, {
+      refresh: this.getRefreshToken(),
+    });
   }
 
   register(

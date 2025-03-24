@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>Delete Account</h2>
+
+<mat-dialog-content>
+  <p>To confirm, type <strong>DELETE</strong> below:</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Type DELETE</mat-label>
+    <input matInput [(ngModel)]="confirmationText" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+  <button
+    mat-flat-button
+    color="warn"
+    (click)="deleteAccount()"
+    [disabled]="confirmationText !== 'DELETE'"
+  >
+    Delete
+  </button>
+</mat-dialog-actions>

@@ -1,14 +1,13 @@
-import { Component, OnInit } from "@angular/core";
-import { MatIconModule } from "@angular/material/icon";
+import { Component } from "@angular/core";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatButtonModule } from "@angular/material/button";
 import { CommonModule } from "@angular/common";
-import { Router } from "@angular/router"; // Si usas Angular Router
+import { Router } from "@angular/router";
+import { MaterialModule } from "../material.module";
 
 @Component({
   selector: "app-toolbar",
   standalone: true,
-  imports: [CommonModule, MatIconModule, MatToolbarModule, MatButtonModule],
+  imports: [CommonModule, MatToolbarModule, MaterialModule],
   templateUrl: "./toolbar.component.html",
   styleUrls: ["./toolbar.component.scss"],
 })
@@ -31,29 +30,28 @@ export class ToolbarComponent {
     this.isUserMenuOpen = !this.isUserMenuOpen;
   }
 
-  // Navigate to Help
   goToHelp(): void {
     this.router.navigate(["/help"]);
   }
 
-  // Navigate to Friends
   goToFriends(): void {
     this.router.navigate(["/friends"]);
   }
 
-  // Navigate to Transactions
   goToTransactions(): void {
     this.router.navigate(["/transactions"]);
   }
 
-  // Navigate to Home
   goToHome(): void {
     this.router.navigate(["/homepage"]);
   }
 
-  // Navigate to Settings
-  goToSettings(): void {
+  goToSettings1(): void {
     this.router.navigate(["/settings"]);
+  }
+
+  goToSettings2(): void {
+    this.router.navigate(["/profile"]);
   }
 
   // Handle Log Out

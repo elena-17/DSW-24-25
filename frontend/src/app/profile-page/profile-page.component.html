@@ -1,0 +1,212 @@
+<app-toolbar></app-toolbar>
+
+<mat-sidenav-container class="container" autosize>
+  <!-- Menú lateral -->
+  <mat-sidenav #sidenav mode="side" [opened]="isDesktop" class="sidenav">
+    <mat-toolbar>Settings</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item routerLink="profile">Profile</a>
+      <a mat-list-item>Credit Cards</a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Contenido Principal -->
+  <mat-sidenav-content>
+    <!-- Navbar para móviles -->
+    <mat-toolbar color="primary" class="menu-sidebar">
+      <button
+        mat-icon-button
+        (click)="sidenav.toggle()"
+        *ngIf="!isDesktop"
+        class="menu-button"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <div class="sections">
+      <section id="profile-section">
+        <h2>Profile</h2>
+        <h4>Manage settings for your Zap's profile</h4>
+        <hr />
+        <form [formGroup]="settingsForm" class="form-container">
+          <!-- Wrap fields in a grid container -->
+          <div class="form-grid">
+            <!-- Email Field (first column) -->
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="Enter your email"
+              />
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error
+                *ngIf="settingsForm.get('email')?.hasError('required')"
+              >
+                Email is required.
+              </mat-error>
+              <mat-error *ngIf="settingsForm.get('email')?.hasError('email')">
+                Invalid email format.
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Phone Field (second column) -->
+            <mat-form-field appearance="outline">
+              <mat-label>Phone</mat-label>
+              <input
+                matInput
+                type="text"
+                formControlName="phone"
+                placeholder="Enter your phone"
+              />
+              <mat-icon matPrefix>phone</mat-icon>
+              <mat-error
+                *ngIf="settingsForm.get('phone')?.hasError('required')"
+              >
+                Phone number is required.
+              </mat-error>
+              <mat-error *ngIf="settingsForm.get('phone')?.hasError('pattern')">
+                Phone number must be 9 digits.
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Name Field (spanning both columns) -->
+            <mat-form-field appearance="outline">
+              <mat-label>Name</mat-label>
+              <input
+                matInput
+                type="text"
+                [value]="userData.name"
+                readonly="true"
+              />
+              <mat-icon matPrefix>person</mat-icon>
+            </mat-form-field>
+
+            <!-- ID Number Field (spanning both columns) -->
+            <mat-form-field appearance="outline">
+              <mat-label>ID Number</mat-label>
+              <input
+                matInput
+                type="text"
+                [value]="userData.id_number"
+                readonly="true"
+              />
+              <mat-icon matPrefix>badge</mat-icon>
+            </mat-form-field>
+          </div>
+        </form>
+        <button
+          mat-flat-button
+          [class.disabled-button]="!isFormModified || settingsForm.invalid"
+          [disabled]="!isFormModified || settingsForm.invalid"
+          (click)="saveChanges()"
+        >
+          <mat-icon>save</mat-icon>
+          Save Changes
+        </button>
+      </section>
+
+      <section id="password-section">
+        <h2>Password</h2>
+        <h4>
+          Change your password. Pasword must contein uppercase, lowercase and
+          numbers.
+        </h4>
+        <hr />
+        <form
+          [formGroup]="passwordForm"
+          [ngClass]="{ hidden: !showPasswordForm }"
+          class="form-container"
+        >
+          <div class="form-grid-password">
+            <mat-form-field appearance="fill">
+              <mat-label>Current Password</mat-label>
+              <input
+                matInput
+                type="password"
+                formControlName="currentPassword"
+                placeholder="Enter current password"
+              />
+              <mat-error *ngIf="passwordForm.get('currentPassword')?.invalid">
+                {{ getErrorMessage("currentPassword", "password") }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>New Password</mat-label>
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="Enter new password"
+                required
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="togglePasswordVisibility()"
+                type="button"
+              >
+                <mat-icon>{{
+                  hidePassword ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+              <mat-error *ngIf="passwordForm.get('password')?.invalid">
+                {{ getErrorMessage("password", "password") }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Confirm Password</mat-label>
+              <input
+                matInput
+                [type]="hideConfirmPassword ? 'password' : 'text'"
+                formControlName="confirmPassword"
+                placeholder="Confirm new password"
+                required
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="toggleConfirmPasswordVisibility()"
+                type="button"
+              >
+                <mat-icon>{{
+                  hideConfirmPassword ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
+              <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid">
+                {{ getErrorMessage("confirmPassword", "password") }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </form>
+        <button
+          mat-flat-button
+          class="form-button"
+          [class.disabled-button]="!isFormModified || passwordForm.invalid"
+          [disabled]="!isFormModified || passwordForm.invalid"
+          (click)="changePassword()"
+        >
+          <mat-icon>key_vertical</mat-icon>
+          Change Password
+        </button>
+      </section>
+
+      <section id="delete-section">
+        <h2>Delete Account</h2>
+        <h4>
+          Once you delete your account, there's no going back. Please be
+          certain.
+        </h4>
+        <hr />
+        <button mat-flat-button (click)="deleteAccount()">
+          <mat-icon>delete</mat-icon>
+          Delete account
+        </button>
+      </section>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

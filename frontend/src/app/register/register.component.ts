@@ -8,27 +8,21 @@ import {
   ValidationErrors,
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { MatCardModule } from "@angular/material/card";
-import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { AuthService } from "../services/auth.service";
 import { PasswordValidators } from "../password.validators";
+import { MaterialModule } from "../material.module";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-register",
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     ReactiveFormsModule,
+    MaterialModule,
   ],
   templateUrl: "./register.component.html",
   styleUrl: "./register.component.scss",
@@ -40,7 +34,7 @@ export class RegisterComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService,
+    private authServic: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
   ) {
@@ -174,7 +168,7 @@ export class RegisterComponent {
       return;
     }
     // Going to the backend to register the user
-    this.authService
+    this.authServic
       .register(
         this.registerForm.value.email,
         this.registerForm.value.phone_number,

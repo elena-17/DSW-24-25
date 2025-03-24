@@ -36,9 +36,7 @@
             ],
             "scripts": [],
             "outputMode": "static",
-            "ssr": {
-              
-            }
+            "ssr": {}
           },
           "configurations": {
             "production": {

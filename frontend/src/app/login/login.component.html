@@ -13,11 +13,11 @@
             matInput
             type="text"
             formControlName="email_id"
-            placeholder="Enter email or ID number"
+            placeholder="Enter email"
             required
           />
           <mat-error *ngIf="loginForm.get('email_id')?.hasError('required')">
-            Email or ID number is required.
+            Email is required.
           </mat-error>
         </mat-form-field>
 

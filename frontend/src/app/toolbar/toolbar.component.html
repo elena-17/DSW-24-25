@@ -68,8 +68,12 @@
     (mouseenter)="toggleUserMenu()"
     (mouseleave)="toggleUserMenu()"
   >
-    <button mat-button (click)="goToSettings()">
-      Settings
+    <button mat-button (click)="goToSettings1()">
+      Settings v1
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button mat-button (click)="goToSettings2()">
+      Settings v2
       <mat-icon>settings</mat-icon>
     </button>
     <button mat-button (click)="logOut()">
