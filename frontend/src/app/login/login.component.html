@@ -1,6 +1,11 @@
 <div class="login_form">
   <mat-card class="login-card">
-    <img mat-card-image src="assets/zap-logo.png" alt="logo" class="logo-image"/>
+    <img
+      mat-card-image
+      src="assets/zap-logo.png"
+      alt="logo"
+      class="logo-image"
+    />
     <mat-card-header>
       <mat-card-title>Login</mat-card-title>
     </mat-card-header>
@@ -68,7 +73,6 @@
     </mat-card-content>
   </mat-card>
 
-
   <div class="modal" *ngIf="isModalOpen">
     <div class="modal-content">
       <h2>Recuperar Contraseña</h2>
@@ -83,7 +87,7 @@
             placeholder="Enter email"
             required
           />
-          
+
           <mat-error *ngIf="loginForm.get('email_id')?.hasError('required')">
             Email is required.
           </mat-error>
@@ -91,7 +95,13 @@
       </form>
       <div class="modal-actions">
         <button mat-raised-button (click)="closeModal()">Cancelar</button>
-        <button mat-raised-button (click)="onSubmit()" [disabled]="fmodal.invalid">Aceptar</button>
+        <button
+          mat-raised-button
+          (click)="onSubmit()"
+          [disabled]="fmodal.invalid"
+        >
+          Aceptar
+        </button>
       </div>
     </div>
   </div>

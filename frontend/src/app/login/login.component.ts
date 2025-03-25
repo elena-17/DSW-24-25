@@ -42,7 +42,7 @@ export class LoginComponent {
       password: ["", [Validators.required]],
     });
     this.fmodal = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ["", [Validators.required, Validators.email]],
     });
   }
 
@@ -56,7 +56,7 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    alert('Se notificará al administrador.');
+    alert("Se notificará al administrador.");
     this.fmodal.reset();
     this.closeModal();
   }
@@ -80,7 +80,7 @@ export class LoginComponent {
           sessionStorage.setItem("userName", payload.name);
           sessionStorage.setItem("userRole", payload.role);
           if (payload.role === "admin") {
-            window.location.href = "http://127.0.0.1:8000/admin/";
+            this.router.navigate(["admin"]);
           } else {
             // this.snackBar.open("Login successful!", "Close", {
             //   duration: 2000,

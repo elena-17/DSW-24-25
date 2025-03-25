@@ -43,3 +43,30 @@ button {
   border-radius: 8px;
   background: white;
 }
+
+.page-container {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.underlined-title {
+  h2 {
+    font-size: 2rem;
+    font-weight: normal;
+    margin-bottom: 0.2rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #666;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  hr {
+    margin: 0.5rem 0 1rem 0;
+    border: none;
+    border-top: 1px solid #ddd;
+  }
+}

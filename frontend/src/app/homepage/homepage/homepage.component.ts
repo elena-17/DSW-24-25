@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
-import { ToolbarComponent } from "../toolbar/toolbar.component";
+import { ToolbarComponent } from "../../toolbar/toolbar.component";
 import { Router, RouterOutlet } from "@angular/router";
-import { AuthService } from "../services/auth.service";
+import { AuthService } from "../../services/auth.service";
 
 @Component({
   selector: "app-homepage",
