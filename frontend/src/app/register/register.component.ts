@@ -59,17 +59,14 @@ export class RegisterComponent {
             PasswordValidators.passwordStrengthValidator,
           ],
         ],
-        pwd2: [
-          "",
-          [
-            Validators.required,
-            Validators.minLength(8),
-            PasswordValidators.passwordStrengthValidator,
-          ],
-        ],
+        pwd2: ["", []],
       },
-      // Custom validator for password matching
-      { validators: this.passwordMatchValidator },
+      {
+        validators: PasswordValidators.passwordMismatchValidator(
+          "pwd1",
+          "pwd2",
+        ),
+      },
     );
   }
 
@@ -87,20 +84,6 @@ export class RegisterComponent {
     const password = group.get("pwd1")?.value;
     const confirmPassword = group.get("pwd2")?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
-  }
-
-  // Method to validate the password strength
-  passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value;
-    if (!value) return null;
-
-    const hasUpperCase = /[A-Z]+/.test(value);
-    const hasLowerCase = /[a-z]+/.test(value);
-    const hasNumeric = /[0-9]+/.test(value);
-
-    return !(hasUpperCase && hasLowerCase && hasNumeric)
-      ? { passwordStrength: true }
-      : null;
   }
 
   // Method to get the error message for each form control (Pwd1 and Pwd2 have custom error messages to put Password and Confirm Password)
@@ -191,8 +174,17 @@ export class RegisterComponent {
         },
         error: (error) => {
           console.error("Registration failed:", error);
-          this.snackBar.open("Registration failed. Please try again.", "OK", {
-            duration: 2000,
+          console.error("Error message:", error.error);
+          let errorMessage = "Registration failed. Please try again.\n";
+          if (error.error) {
+            for (const key in error.error) {
+              if (error.error.hasOwnProperty(key)) {
+                errorMessage += `${key}: ${error.error[key].join(", ")}\n`;
+              }
+            }
+          }
+          this.snackBar.open(errorMessage, "OK", {
+            duration: 5000,
             horizontalPosition: "center",
             verticalPosition: "top",
           });

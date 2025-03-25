@@ -83,11 +83,9 @@
                 readonly="false"
               />
               <mat-icon matPrefix>person</mat-icon>
-              <mat-error
-              *ngIf="settingsForm.get('name')?.hasError('required')"
-            >
-              Name is required.
-            </mat-error>
+              <mat-error *ngIf="settingsForm.get('name')?.hasError('required')">
+                Name is required.
+              </mat-error>
             </mat-form-field>
 
             <!-- ID Number Field -->
@@ -98,6 +96,7 @@
                 type="text"
                 [value]="userData.id_number"
                 readonly="true"
+                disabled="true"
               />
               <mat-icon matPrefix>badge</mat-icon>
             </mat-form-field>
@@ -117,15 +116,11 @@
       <section id="password-section">
         <h2>Password</h2>
         <h4>
-          Change your password. Pasword must contein uppercase, lowercase and
-          numbers.
+          Here you can change your password. Pasword must contein uppercase,
+          lowercase and numbers.
         </h4>
         <hr />
-        <form
-          [formGroup]="passwordForm"
-          [ngClass]="{ hidden: !showPasswordForm }"
-          class="form-container"
-        >
+        <form [formGroup]="passwordForm" class="form-container">
           <div class="form-grid-password">
             <mat-form-field appearance="fill">
               <mat-label>Current Password</mat-label>
@@ -183,8 +178,14 @@
                   hideConfirmPassword ? "visibility_off" : "visibility"
                 }}</mat-icon>
               </button>
-              <mat-error *ngIf="passwordForm.get('confirmPassword')?.invalid">
-                {{ getErrorMessage("confirmPassword", "password") }}
+
+              <mat-error
+                *ngIf="
+                  passwordForm.hasError('passwordMismatch') &&
+                  passwordForm.get('confirmPassword')?.touched
+                "
+              >
+                Passwords do not match.
               </mat-error>
             </mat-form-field>
           </div>
@@ -192,8 +193,8 @@
         <button
           mat-flat-button
           class="form-button"
-          [class.disabled-button]="!isFormModified || passwordForm.invalid"
-          [disabled]="!isFormModified || passwordForm.invalid"
+          [class.disabled-button]="passwordForm.invalid"
+          [disabled]="passwordForm.invalid"
           (click)="changePassword()"
         >
           <mat-icon>key_vertical</mat-icon>

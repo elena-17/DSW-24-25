@@ -73,9 +73,14 @@ export class ProfilePageComponent {
             PasswordValidators.passwordStrengthValidator,
           ],
         ],
-        confirmPassword: ["", [Validators.required]],
+        confirmPassword: ["", []],
       },
-      { validators: PasswordValidators.passwordMatchValidator },
+      {
+        validators: PasswordValidators.passwordMismatchValidator(
+          "password",
+          "confirmPassword",
+        ),
+      },
     );
   }
 
@@ -160,7 +165,7 @@ export class ProfilePageComponent {
         });
         this.userData = { ...updatedData };
         this.isFormModified = false;
-        sessionStorage.setItem("userName", updatedData.name); 
+        sessionStorage.setItem("userName", updatedData.name);
         window.dispatchEvent(new Event("userNameUpdated"));
       },
       error: () => {
@@ -175,52 +180,31 @@ export class ProfilePageComponent {
 
   changePassword() {
     if (this.passwordForm.invalid) {
-      let errorMessage = "";
-      for (const controlName in this.passwordForm.controls) {
-        const control = this.passwordForm.get(controlName);
-        if (control && control.invalid && (control.touched || control.dirty)) {
-          errorMessage += this.getErrorMessage(controlName, "password") + "\n";
-        }
-      }
-
-      if (errorMessage) {
-        this.snackBar.open(errorMessage, "OK", {
-          duration: 5000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
-      }
       return;
     }
 
     const currentPassword = this.passwordForm.get("currentPassword")?.value;
     const password = this.passwordForm.get("password")?.value;
-    if (
-      confirm(
-        "Are you sure you want to change your password? This action cannot be undone.",
-      )
-    ) {
-      this.userService
-        .changeUserPassword({ currentPassword, password })
-        .subscribe({
-          next: () => {
-            this.snackBar.open("Password changed successfully!", "Close", {
-              duration: 2000,
-              horizontalPosition: "center",
-              verticalPosition: "top",
-            });
-            this.showPasswordForm = false;
-            this.passwordForm.reset();
-          },
-          error: (errorMessage) => {
-            this.snackBar.open(errorMessage.error?.error, "Close", {
-              duration: 2000,
-              horizontalPosition: "center",
-              verticalPosition: "top",
-            });
-          },
-        });
-    }
+    this.userService
+      .changeUserPassword({ currentPassword, password })
+      .subscribe({
+        next: () => {
+          this.snackBar.open("Password changed successfully!", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+          this.showPasswordForm = false;
+          this.passwordForm.reset();
+        },
+        error: (errorMessage) => {
+          this.snackBar.open(errorMessage.error?.error, "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+        },
+      });
   }
 
   getErrorMessage(

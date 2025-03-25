@@ -17,11 +17,21 @@ export class PasswordValidators {
       : null;
   }
   // Validate if passwords match
-  static passwordMatchValidator(
-    group: AbstractControl,
-  ): ValidationErrors | null {
-    const password = group.get("pwd1")?.value;
-    const confirmPassword = group.get("pwd2")?.value;
-    return password === confirmPassword ? null : { passwordMismatch: true };
+  static passwordMismatchValidator(
+    passwordField: string,
+    confirmPasswordField: string,
+  ) {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const password = group.get(passwordField)?.value;
+      const confirmPassword = group.get(confirmPasswordField)?.value;
+
+      if (password && confirmPassword && password !== confirmPassword) {
+        group.get(confirmPasswordField)?.setErrors({ passwordMismatch: true });
+        return { passwordMismatch: true };
+      } else {
+        group.get(confirmPasswordField)?.setErrors(null);
+        return null;
+      }
+    };
   }
 }

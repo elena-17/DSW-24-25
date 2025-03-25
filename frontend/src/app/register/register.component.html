@@ -91,8 +91,13 @@
                 hideConfirmPassword ? "visibility_off" : "visibility"
               }}</mat-icon>
             </button>
-            <mat-error *ngIf="registerForm.get('pwd2')?.invalid">
-              {{ getErrorMessage("pwd2") }}
+            <mat-error
+              *ngIf="
+                registerForm.hasError('passwordMismatch') &&
+                registerForm.get('pwd2')?.touched
+              "
+            >
+              Passwords do not match.
             </mat-error>
           </mat-form-field>
         </div>
