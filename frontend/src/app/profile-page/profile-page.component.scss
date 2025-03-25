@@ -1,0 +1,115 @@
+.container {
+  height: 90vh;
+  padding: 0%;
+  
+}
+
+mat-sidenav {
+  width: 250px;
+  background-color: var(--mat-sys-surface-container-low);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+mat-toolbar {
+  background-color: transparent;
+  color: black;
+}
+
+.delete-button {
+  background-color: var(--mat-sys-error) !important;
+  color: white;
+}
+
+.menu-button {
+  border: none !important;
+  outline: none !important;
+}
+
+.sections {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
+.sections h2 {
+  font-size: 2rem;
+  /* Título más grande */
+  font-weight: normal;
+  /* Sin negrita */
+  margin-bottom: 0.2rem;
+  /* Menor separación inferior */
+}
+
+.sections h4 {
+  font-size: 1rem;
+  font-weight: normal;
+  /* Tamaño de subtítulo */
+  color: #666;
+  /* Gris */
+  margin-top: 0.25rem;
+  /* Menor separación superior */
+  margin-bottom: 0.5rem;
+  /* Menor separación inferior */
+}
+
+.sections hr {
+  margin: 0.5rem 0 1rem 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+#delete-section {
+  margin-bottom: 100px;
+}
+
+/* Form container to center content horizontally */
+.form-container {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+}
+
+/* Grid container for two columns */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Two equal columns */
+  gap: 20px;
+  width: 100%;
+}
+
+/* Full-width fields will span both columns */
+.full-width {
+  grid-column: span 2;
+}
+
+.form-grid-password {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  mat-form-field {
+    width: 50%;
+  }
+}
+
+.active-link {
+  background-color: var(--mat-sys-surface-container-high);
+  border: 1px solid var(--mat-sys-shadow);
+}
+
+@media (min-width: 769px) {
+  .menu-sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-grid-password {
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}

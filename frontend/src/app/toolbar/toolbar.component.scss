@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: $primary-color;
+  background: var(--mat-sys-primary) !important;
   color: white;
   padding: 10px 20px;
   position: relative;
@@ -69,13 +69,13 @@
     }
 
     .username {
-      font-weight: bold;
       color: white;
     }
 
     .user-icon {
       font-size: 21px;
       line-height: normal;
+      color: white;
     }
   }
 
@@ -98,7 +98,7 @@
     //margin-left: 0;
     top: 60px;
     right: 20px;
-    background: $primary-color;
+    background: var(--mat-sys-primary) !important;
     border-radius: 8px;
     box-shadow: $box-shadow;
     padding: 10px;
@@ -132,7 +132,7 @@
     position: absolute;
     top: 60px;
     right: 20px;
-    background-color: $primary-color;
+    background: var(--mat-sys-primary) !important;
     border-radius: 8px;
     box-shadow: $box-shadow;
     padding: 10px;

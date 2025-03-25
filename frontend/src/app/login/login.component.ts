@@ -10,29 +10,15 @@ import {
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 
-import { MatCardModule } from "@angular/material/card";
-import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "../services/auth.service";
-import { PasswordValidators } from "../password.validators";
 import { Router } from "@angular/router";
+import { MaterialModule } from "../material.module";
 
 @Component({
   selector: "app-login",
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatSnackBarModule,
-    CommonModule,
-  ],
+  imports: [ReactiveFormsModule, CommonModule, MaterialModule],
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
 })
@@ -41,22 +27,38 @@ export class LoginComponent {
   email_id: string = "";
   password: string = "";
   hidePassword = true;
+  fmodal: FormGroup;
+  isModalOpen = false;
 
   constructor(
     private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
   ) {
     this.loginForm = this.formBuilder.group({
       email_id: ["", [Validators.required, this.emailIdValidator()]],
-      password: [
-        "",
-        [
-          Validators.required,
-        ],
-      ],
+      password: ["", [Validators.required]],
     });
+    this.fmodal = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  openModal(event: Event): void {
+    event.preventDefault();
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+  }
+
+  onSubmit(): void {
+    alert('Se notificará al administrador.');
+    this.fmodal.reset();
+    this.closeModal();
   }
 
   onLogin() {
@@ -78,16 +80,16 @@ export class LoginComponent {
           sessionStorage.setItem("userName", payload.name);
           sessionStorage.setItem("userRole", payload.role);
           if (payload.role === "admin") {
-            window.location.href = 'http://127.0.0.1:8000/admin/';
+            window.location.href = "http://127.0.0.1:8000/admin/";
+          } else {
+            // this.snackBar.open("Login successful!", "Close", {
+            //   duration: 2000,
+            //   horizontalPosition: "center",
+            //   verticalPosition: "top",
+            // });
+            this.router.navigate(["homepage"]);
           }
-          else{
-          this.snackBar.open("Login successful!", "Close", {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          });
-          this.router.navigate(["homepage"]);
-        }},
+        },
         error: () => {
           this.snackBar.open("Login failed. Check your credentials.", "Close", {
             duration: 3000,
@@ -133,5 +135,4 @@ export class LoginComponent {
       return null;
     };
   }
-
 }

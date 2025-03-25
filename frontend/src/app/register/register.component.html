@@ -1,6 +1,6 @@
 <div class="register_form">
   <mat-card class="register-card">
-    <img mat-card-image src="assets/zap-logo.png" alt="logo" />
+    <img mat-card-image src="assets/zap-logo.png" alt="logo" class="logo-image" />
     <mat-card-header>
       <mat-card-title>Register</mat-card-title>
     </mat-card-header>
@@ -91,8 +91,13 @@
                 hideConfirmPassword ? "visibility_off" : "visibility"
               }}</mat-icon>
             </button>
-            <mat-error *ngIf="registerForm.get('pwd2')?.invalid">
-              {{ getErrorMessage("pwd2") }}
+            <mat-error
+              *ngIf="
+                registerForm.hasError('passwordMismatch') &&
+                registerForm.get('pwd2')?.touched
+              "
+            >
+              Passwords do not match.
             </mat-error>
           </mat-form-field>
         </div>

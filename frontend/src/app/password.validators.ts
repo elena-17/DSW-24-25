@@ -16,4 +16,22 @@ export class PasswordValidators {
       ? { passwordStrength: true }
       : null;
   }
+  // Validate if passwords match
+  static passwordMismatchValidator(
+    passwordField: string,
+    confirmPasswordField: string,
+  ) {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const password = group.get(passwordField)?.value;
+      const confirmPassword = group.get(confirmPasswordField)?.value;
+
+      if (password && confirmPassword && password !== confirmPassword) {
+        group.get(confirmPasswordField)?.setErrors({ passwordMismatch: true });
+        return { passwordMismatch: true };
+      } else {
+        group.get(confirmPasswordField)?.setErrors(null);
+        return null;
+      }
+    };
+  }
 }

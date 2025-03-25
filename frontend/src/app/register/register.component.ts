@@ -8,27 +8,21 @@ import {
   ValidationErrors,
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
-import { MatCardModule } from "@angular/material/card";
-import { MatInputModule } from "@angular/material/input";
-import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 import { AuthService } from "../services/auth.service";
 import { PasswordValidators } from "../password.validators";
+import { MaterialModule } from "../material.module";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-register",
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
     MatFormFieldModule,
-    MatIconModule,
     ReactiveFormsModule,
+    MaterialModule,
   ],
   templateUrl: "./register.component.html",
   styleUrl: "./register.component.scss",
@@ -40,7 +34,7 @@ export class RegisterComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService,
+    private authServic: AuthService,
     private router: Router,
     private snackBar: MatSnackBar,
   ) {
@@ -65,17 +59,14 @@ export class RegisterComponent {
             PasswordValidators.passwordStrengthValidator,
           ],
         ],
-        pwd2: [
-          "",
-          [
-            Validators.required,
-            Validators.minLength(8),
-            PasswordValidators.passwordStrengthValidator,
-          ],
-        ],
+        pwd2: ["", []],
       },
-      // Custom validator for password matching
-      { validators: this.passwordMatchValidator },
+      {
+        validators: PasswordValidators.passwordMismatchValidator(
+          "pwd1",
+          "pwd2",
+        ),
+      },
     );
   }
 
@@ -93,20 +84,6 @@ export class RegisterComponent {
     const password = group.get("pwd1")?.value;
     const confirmPassword = group.get("pwd2")?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
-  }
-
-  // Method to validate the password strength
-  passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value;
-    if (!value) return null;
-
-    const hasUpperCase = /[A-Z]+/.test(value);
-    const hasLowerCase = /[a-z]+/.test(value);
-    const hasNumeric = /[0-9]+/.test(value);
-
-    return !(hasUpperCase && hasLowerCase && hasNumeric)
-      ? { passwordStrength: true }
-      : null;
   }
 
   // Method to get the error message for each form control (Pwd1 and Pwd2 have custom error messages to put Password and Confirm Password)
@@ -174,7 +151,7 @@ export class RegisterComponent {
       return;
     }
     // Going to the backend to register the user
-    this.authService
+    this.authServic
       .register(
         this.registerForm.value.email,
         this.registerForm.value.phone_number,
@@ -197,8 +174,17 @@ export class RegisterComponent {
         },
         error: (error) => {
           console.error("Registration failed:", error);
-          this.snackBar.open("Registration failed. Please try again.", "OK", {
-            duration: 2000,
+          console.error("Error message:", error.error);
+          let errorMessage = "Registration failed. Please try again.\n";
+          if (error.error) {
+            for (const key in error.error) {
+              if (error.error.hasOwnProperty(key)) {
+                errorMessage += `${key}: ${error.error[key].join(", ")}\n`;
+              }
+            }
+          }
+          this.snackBar.open(errorMessage, "OK", {
+            duration: 5000,
             horizontalPosition: "center",
             verticalPosition: "top",
           });
