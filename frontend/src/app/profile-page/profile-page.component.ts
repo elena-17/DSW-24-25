@@ -154,6 +154,7 @@ export class ProfilePageComponent {
     const updatedData = { ...this.settingsForm.value };
 
     updatedData.id_number = this.userData.id_number;
+    updatedData.role = sessionStorage.getItem("userRole");
     this.userService.updateUserProfile(updatedData).subscribe({
       next: () => {
         this.snackBar.open("Changes saved successfully!", "Close", {
@@ -161,6 +162,7 @@ export class ProfilePageComponent {
           horizontalPosition: "center",
           verticalPosition: "top",
         });
+        delete updatedData.role;
         this.userData = { ...updatedData };
         this.isFormModified = false;
         sessionStorage.setItem("userName", updatedData.name);
