@@ -1,6 +1,6 @@
 <div class="login_form">
   <mat-card class="login-card">
-    <img mat-card-image src="assets/zap-logo.png" alt="logo" />
+    <img mat-card-image src="assets/zap-logo.png" alt="logo" class="logo-image"/>
     <mat-card-header>
       <mat-card-title>Login</mat-card-title>
     </mat-card-header>
@@ -47,7 +47,7 @@
         </mat-form-field>
 
         <div class="forgot-password">
-          <a href="#">Forgot Password?</a>
+          <a href="#" (click)="openModal($event)">Forgot Password?</a>
         </div>
 
         <!-- Login Button -->
@@ -67,4 +67,32 @@
       </form>
     </mat-card-content>
   </mat-card>
+
+
+  <div class="modal" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <h2>Recuperar Contraseña</h2>
+      <h5>Ingrese su correo electrónico para restablecer su contraseña.</h5>
+      <form [formGroup]="fmodal">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="email"
+            placeholder="Enter email"
+            required
+          />
+          
+          <mat-error *ngIf="loginForm.get('email_id')?.hasError('required')">
+            Email is required.
+          </mat-error>
+        </mat-form-field>
+      </form>
+      <div class="modal-actions">
+        <button mat-raised-button (click)="closeModal()">Cancelar</button>
+        <button mat-raised-button (click)="onSubmit()" [disabled]="fmodal.invalid">Aceptar</button>
+      </div>
+    </div>
+  </div>
 </div>

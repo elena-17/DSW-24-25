@@ -27,9 +27,12 @@ export class LoginComponent {
   email_id: string = "";
   password: string = "";
   hidePassword = true;
+  fmodal: FormGroup;
+  isModalOpen = false;
 
   constructor(
     private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
@@ -38,6 +41,24 @@ export class LoginComponent {
       email_id: ["", [Validators.required, this.emailIdValidator()]],
       password: ["", [Validators.required]],
     });
+    this.fmodal = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  openModal(event: Event): void {
+    event.preventDefault();
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+  }
+
+  onSubmit(): void {
+    alert('Se notificará al administrador.');
+    this.fmodal.reset();
+    this.closeModal();
   }
 
   onLogin() {
