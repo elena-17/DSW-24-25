@@ -92,6 +92,11 @@ mat-toolbar {
   }
 }
 
+.active-link {
+  background-color: var(--mat-sys-surface-container-high);
+  border: 1px solid var(--mat-sys-shadow);
+}
+
 @media (min-width: 769px) {
   .menu-sidebar {
     display: none;
