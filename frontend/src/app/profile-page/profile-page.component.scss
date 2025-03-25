@@ -1,17 +1,23 @@
 .container {
   height: 90vh;
   padding: 0%;
+  
 }
 
 mat-sidenav {
   width: 250px;
-  background-color: rgb(244, 243, 243);
+  background-color: var(--mat-sys-surface-container-low);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 mat-toolbar {
   background-color: transparent;
   color: black;
+}
+
+.delete-button {
+  background-color: var(--mat-sys-error) !important;
+  color: white;
 }
 
 .menu-button {

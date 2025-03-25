@@ -9,3 +9,10 @@ mat-dialog-actions {
   justify-content: flex-end;
   padding: 16px;
 }
+
+.confirm-button {
+  &:not(:disabled) {
+    background-color: var(--mat-sys-error);
+    color: white;
+  }
+}
