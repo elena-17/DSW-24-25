@@ -1,11 +1,11 @@
 import { Component } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
-import { Router } from "@angular/router";
+import { Router, RouterOutlet } from "@angular/router";
 import { AuthService } from "../services/auth.service";
 
 @Component({
   selector: "app-homepage",
-  imports: [ToolbarComponent],
+  imports: [ToolbarComponent, RouterOutlet],
   templateUrl: "./homepage.component.html",
   styleUrl: "./homepage.component.scss",
 })

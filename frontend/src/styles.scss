@@ -1,23 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
 
-
 $hover-color: rgba(255, 255, 255, 0.2);
 $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 $background-image: linear-gradient(0deg, #d9afd9 0%, #97d9e1 100%);
 
-
-@use '@angular/material' as mat;
-
+@use "@angular/material" as mat;
 
 html {
   color-scheme: light;
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$cyan-palette,
-      theme-type: light,
-    ),
-  ));
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$cyan-palette,
+        theme-type: light,
+      ),
+    )
+  );
 }
 
 html,
