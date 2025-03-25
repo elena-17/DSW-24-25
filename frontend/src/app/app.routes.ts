@@ -9,11 +9,16 @@ import { TransactionsComponent } from "./transactions/transactions.component";
 import { Error404Component } from "./error404/error404.component";
 
 import { ProfilePageComponent } from "./profile-page/profile-page.component";
+import { AdminHomepageComponent } from "./homepage/admin-homepage/admin-homepage.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
   { path: "register", component: RegisterComponent },
-  { path: "homepage", component: HomepageComponent },
+  {
+    path: "homepage",
+    component: HomepageComponent,
+    children: [{ path: "admin", component: AdminHomepageComponent }],
+  },
   { path: "friends", component: FriendsComponent },
   { path: "profile", component: ProfilePageComponent },
   { path: "settings", component: SettingsComponent },

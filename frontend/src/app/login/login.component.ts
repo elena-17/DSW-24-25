@@ -42,7 +42,7 @@ export class LoginComponent {
       password: ["", [Validators.required]],
     });
     this.fmodal = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ["", [Validators.required, Validators.email]],
     });
   }
 
@@ -56,7 +56,7 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    alert('Se notificará al administrador.');
+    alert("Se notificará al administrador.");
     this.fmodal.reset();
     this.closeModal();
   }
