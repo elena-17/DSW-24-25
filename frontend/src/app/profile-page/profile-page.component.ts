@@ -103,7 +103,6 @@ export class ProfilePageComponent {
     const dialogRef = this.dialog.open(DeleteAccountDialogComponent, {
       width: "270px",
     });
-
   }
 
   togglePasswordVisibility() {

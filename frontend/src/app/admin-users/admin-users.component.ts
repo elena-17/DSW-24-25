@@ -3,7 +3,7 @@ import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MaterialModule } from "../material.module";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
-import { MatSort } from '@angular/material/sort';
+import { MatSort } from "@angular/material/sort";
 import { SelectionModel } from "@angular/cdk/collections";
 
 import { CommonModule } from "@angular/common";
@@ -15,7 +15,7 @@ import { ManageUserComponent } from "./manage-user/manage-user.component";
 
 // es necesario?
 export interface User {
-  id: number;
+  id_number: number;
   name: string;
   email: string;
   role: string;
@@ -25,35 +25,35 @@ export interface User {
 //test data
 const users: User[] = [
   {
-    id: 1,
+    id_number: 1,
     name: "John Doe",
     email: "john.doe@example.com",
     role: "Admin",
     phone: "123-456-7890",
   },
   {
-    id: 2,
+    id_number: 2,
     name: "Jane Smith",
     email: "jane.smith@example.com",
     role: "User",
     phone: "987-654-3210",
   },
   {
-    id: 3,
+    id_number: 3,
     name: "Alice Johnson",
     email: "alice.johnson@example.com",
     role: "Vendor",
     phone: "555-123-4567",
   },
   {
-    id: 4,
+    id_number: 4,
     name: "Alice Johnson",
     email: "alice.johnson@example.com",
     role: "other",
     phone: "555-123-4567",
   },
   {
-    id: 5,
+    id_number: 5,
     name: "Alice Johnson",
     email: "alice.johnson@example.com",
     role: "Vendor",
@@ -89,9 +89,9 @@ export class AdminUsersComponent implements AfterViewInit {
       cell: (element: User) => `${element.role}`,
     },
     {
-      columnDef: "id",
+      columnDef: "id_number",
       header: "ID",
-      cell: (element: User) => `${element.id}`,
+      cell: (element: User) => `${element.id_number}`,
     },
     {
       columnDef: "phone",
@@ -105,18 +105,24 @@ export class AdminUsersComponent implements AfterViewInit {
     },
   ];
 
-
   dataSource = new MatTableDataSource<User>(users);
-  displayedColumns = ['select', ...this.columns.map(c => c.columnDef), 'actions'];
+  displayedColumns = [
+    "select",
+    ...this.columns.map((c) => c.columnDef),
+    "actions",
+  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   initialSelection = [];
   allowMultiSelect = true;
-  selection = new SelectionModel<User>(this.allowMultiSelect, this.initialSelection);
+  selection = new SelectionModel<User>(
+    this.allowMultiSelect,
+    this.initialSelection,
+  );
   selectedRoles: string[] = [];
-  searchText:string = '';
+  searchText: string = "";
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -130,11 +136,10 @@ export class AdminUsersComponent implements AfterViewInit {
     return numSelected === numRows;
   }
 
-
   toggleAllRows() {
     this.isAllSelected()
       ? this.selection.clear()
-      : this.dataSource.data.forEach(row => this.selection.select(row));
+      : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
   createFilter(): (data: User, filter: string) => boolean {
@@ -142,12 +147,20 @@ export class AdminUsersComponent implements AfterViewInit {
       const searchObj = JSON.parse(filter);
       const searchText = searchObj.searchText;
       const selectedRoles: string[] = searchObj.selectedRoles;
-      
-      const dataStr = (data.name + ' ' + data.email + ' ' + data.role).toLowerCase();
-      
+
+      const dataStr = (
+        data.name +
+        " " +
+        data.email +
+        " " +
+        data.role
+      ).toLowerCase();
+
       const textMatch = dataStr.indexOf(searchText) !== -1;
-      
-      const roleMatch = selectedRoles.length === 0 || selectedRoles.includes(data.role.toLowerCase());
+
+      const roleMatch =
+        selectedRoles.length === 0 ||
+        selectedRoles.includes(data.role.toLowerCase());
 
       return textMatch && roleMatch;
     };
@@ -156,7 +169,7 @@ export class AdminUsersComponent implements AfterViewInit {
   applyCombinedFilter() {
     const filterObj = {
       searchText: this.searchText.trim().toLowerCase(),
-      selectedRoles: this.selectedRoles.map(r => r.toLowerCase()),
+      selectedRoles: this.selectedRoles.map((r) => r.toLowerCase()),
     };
     this.dataSource.filter = JSON.stringify(filterObj);
   }
@@ -172,50 +185,67 @@ export class AdminUsersComponent implements AfterViewInit {
   }
 
   clearFilter(input: HTMLInputElement): void {
-    input.value = '';
-    this.searchText = '';
+    input.value = "";
+    this.searchText = "";
     this.applyCombinedFilter();
   }
-  
+
   addUser() {
     // Implement add user logic here
     const dialogRef = this.dialog.open(ManageUserComponent, {
       data: { title: "Add User" },
-          width: "75%",
-          height: "60%",
-        });
+      width: "75%",
+      height: "60%",
+    });
     dialogRef.afterClosed().subscribe((result) => {
-      if (result){
-        console.log('User added:', result);
+      if (result) {
+        console.log("User added:", result);
         this.dataSource.data = [result, ...this.dataSource.data];
       }
     });
-    
   }
 
-  editUserButton(){
+  editUserButton() {
     // Implement edit user logic here
     const row = this.selection.selected[0];
     this.editUser(row);
   }
 
-  deleteUserButton(){
+  deleteUserButton() {
     // Implement delete user logic here
     if (this.selection.selected.length === 1) {
       this.deleteUser(this.selection.selected[0]);
-    }
-    else {
-    console.log('Delete multiple users');
+    } else {
+      this.selection.selected.forEach((user) => this.deleteUser(user));
     }
   }
 
   editUser(row: User) {
-    // Implement edit user logic here
-    console.log('Edit user:', row);
+    const dialogRef = this.dialog.open(ManageUserComponent, {
+      data: { title: "Update User", user: row },
+      width: "75%",
+      height: "60%",
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        const index = this.dataSource.data.findIndex(
+          (user) => user.id_number === row.id_number,
+        );
+        if (index !== -1) {
+          this.dataSource.data[index] = result;
+          this.dataSource._updateChangeSubscription();
+        }
+      }
+    });
   }
 
   deleteUser(row: User) {
-    // Implement delete user logic here
-    console.log('Delete user:', row);
+    const index = this.dataSource.data.findIndex(
+      (user) => user.id_number === row.id_number,
+    );
+    if (index !== -1) {
+      this.dataSource.data.splice(index, 1);
+      this.dataSource._updateChangeSubscription();
+    }
   }
 }

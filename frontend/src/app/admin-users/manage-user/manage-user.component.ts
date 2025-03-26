@@ -16,7 +16,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { User } from "../admin-users.component";
 
 @Component({
-  selector: 'app-manage-user',
+  selector: "app-manage-user",
   imports: [
     CommonModule,
     MatFormFieldModule,
@@ -24,8 +24,8 @@ import { User } from "../admin-users.component";
     MaterialModule,
     MatSelectModule,
   ],
-  templateUrl: './manage-user.component.html',
-  styleUrl: './manage-user.component.scss'
+  templateUrl: "./manage-user.component.html",
+  styleUrl: "./manage-user.component.scss",
 })
 export class ManageUserComponent {
   manageUserForm: FormGroup;
@@ -35,34 +35,33 @@ export class ManageUserComponent {
   constructor(
     private dialogRef: MatDialogRef<ManageUserComponent>,
     private formBuilder: FormBuilder,
-    private authServic: AuthService,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string,user?: User }
+    @Inject(MAT_DIALOG_DATA) public data: { title: string; user?: User },
   ) {
     this.dialogTitle = data.title;
     // Create the registration form
-    this.manageUserForm = this.formBuilder.group(
-      {
-        email: [data.user?.email, [Validators.required, Validators.email]],
-        phone_number: [
-          data.user?.phone,
-          [Validators.required, Validators.pattern(/^\d{9}$/)],
-        ],
-        name: [data.user?.name, [Validators.required]],
-        id_number: [
-          "",
-          [Validators.required, Validators.pattern(/^\d{8}[a-zA-Z]$/)],
-        ],
-        pwd1: [
-          "",
-          [
-            Validators.required,
-            Validators.minLength(8),
-            PasswordValidators.passwordStrengthValidator,
-          ],
-        ],
-        role: [data.user?.role, [Validators.required]]
-      },
-    );
+    this.manageUserForm = this.formBuilder.group({
+      email: [data.user?.email, [Validators.required, Validators.email]],
+      phone: [
+        data.user?.phone,
+        [Validators.required, Validators.pattern(/^\d{9}$/)],
+      ],
+      name: [data.user?.name, [Validators.required]],
+      id_number: [
+        "",
+        [Validators.required, Validators.pattern(/^\d{8}[a-zA-Z]$/)],
+      ],
+      pwd1: [""],
+      role: [data.user?.role, [Validators.required]],
+    });
+  }
+
+  logFormErrors() {
+    Object.keys(this.manageUserForm.controls).forEach((key) => {
+      const controlErrors = this.manageUserForm.get(key)?.errors;
+      if (controlErrors) {
+        console.log("Key:", key, "Errors:", controlErrors);
+      }
+    });
   }
 
   togglePasswordVisibility() {
@@ -71,18 +70,15 @@ export class ManageUserComponent {
 
   onSave() {
     if (this.manageUserForm.valid) {
-      console.log('User data saved:', this.manageUserForm.value);
-      //mandar datos al otro formulario?? no sé si se puede
+      console.log("User data saved:", this.manageUserForm.value);
     }
-    this.dialogRef.close();
+    this.dialogRef.close(this.manageUserForm.value);
   }
 
   onCancel() {
     this.manageUserForm.reset();
     this.dialogRef.close();
   }
-
-
 
   // Method to get the error message for each form control (Pwd1 and Pwd2 have custom error messages to put Password and Confirm Password)
   getErrorMessage(controlName: string): string {
@@ -114,7 +110,7 @@ export class ManageUserComponent {
       if (controlName === "phone_number") {
         return "Phone number must be 9 digits.";
       } else if (controlName === "id_number") {
-        return "ID number must be 8 digits followed by 1 letter.";
+        return "Must be 8 digits and a letter.";
       }
     }
 
@@ -127,5 +123,4 @@ export class ManageUserComponent {
     }
     return "";
   }
-
 }

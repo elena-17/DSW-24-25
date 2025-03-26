@@ -1,41 +1,40 @@
 /* Estilo base para las badges */
 .badge {
-    display: inline-block;
-    padding: 8px 16px;
-    font-size: 14px; 
-    border-radius: 20px;
-    text-transform: capitalize;
-    color: white;
-    transition: background-color 0.3s ease;
-  }
-  
-  /* Colores personalizados para cada tipo de badge */
-  .admin-badge {
-    background-color: #d894f5;
-    color: #8931af;
-    border: 1px solid #8931af;
-  }
-  
-  .user-badge {
-    background-color: #f6ba82;
-    color: #db6e00;
-    border: 1px solid #db6e00;
-  }
-  
-  .vendor-badge {
-    background-color: #f1e895;
-    color: #C7A008;
-    border: 1px solid #C7A008;
-  }
-  
-  .default-badge {
-    background-color: #FFCCCC;
-    color: #D33F3F;
-    border: 1px solid #D33F3F;
-  }
-  
-  /* Colores al pasar el mouse */
-  .badge:hover {
-    opacity: 0.8;
-  }
-  
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 20px;
+  text-transform: capitalize;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+/* Colores personalizados para cada tipo de badge */
+.admin-badge {
+  background-color: #d894f5;
+  color: #8931af;
+  border: 1px solid #8931af;
+}
+
+.user-badge {
+  background-color: #f6ba82;
+  color: #db6e00;
+  border: 1px solid #db6e00;
+}
+
+.vendor-badge {
+  background-color: #f1e895;
+  color: #c7a008;
+  border: 1px solid #c7a008;
+}
+
+.default-badge {
+  background-color: #ffcccc;
+  color: #d33f3f;
+  border: 1px solid #d33f3f;
+}
+
+/* Colores al pasar el mouse */
+.badge:hover {
+  opacity: 0.8;
+}
