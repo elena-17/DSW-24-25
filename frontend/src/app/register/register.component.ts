@@ -125,7 +125,7 @@ export class RegisterComponent {
     }
 
     if (control?.hasError("passwordStrength")) {
-      return "Password must contain at least one number and one uppercase letter.";
+      return "Use at least one number and one uppercase letter.";
     }
     return "";
   }

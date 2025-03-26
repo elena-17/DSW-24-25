@@ -111,7 +111,7 @@ export class LoginComponent {
       return "Password must be at least 8 characters long.";
     }
     if (control?.hasError("passwordStrength")) {
-      return "Password must contain at least one number and one uppercase letter.";
+      return "Use at least one number and one uppercase letter.";
     }
     if (controlName === "password") {
       return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required.`;

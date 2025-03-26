@@ -1,0 +1,80 @@
+<div class="manage_user_form">
+    <h2>{{ dialogTitle }}</h2>
+    <form [formGroup]="manageUserForm" (ngSubmit)="onSave()">
+        <div class="form-grid">
+            <!-- Email -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email" required />
+                <mat-error *ngIf="manageUserForm.get('email')?.invalid">
+                    {{ getErrorMessage("email") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Phone Number -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Phone Number</mat-label>
+                <input matInput type="text" formControlName="phone_number" required />
+                <mat-error *ngIf="manageUserForm.get('phone_number')?.invalid">
+                    {{ getErrorMessage("phone_number") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Name -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Name</mat-label>
+                <input matInput type="text" formControlName="name" required />
+                <mat-error *ngIf="manageUserForm.get('name')?.invalid">
+                    {{ getErrorMessage("name") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- ID Number -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>ID Number</mat-label>
+                <input matInput type="text" formControlName="id_number" required />
+                <mat-error *ngIf="manageUserForm.get('id_number')?.invalid">
+                    {{ getErrorMessage("id_number") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Password -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="pwd1" required />
+                <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
+                    <mat-icon>{{
+                        hidePassword ? "visibility_off" : "visibility"
+                        }}</mat-icon>
+                </button>
+                <mat-error *ngIf="manageUserForm.get('pwd1')?.invalid">
+                    {{ getErrorMessage("pwd1") }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Role (Dropdown instead of Password) -->
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Role</mat-label>
+                <mat-select formControlName="role" required>
+                    <mat-option value="admin">Admin</mat-option>
+                    <mat-option value="user">User</mat-option>
+                    <mat-option value="vendor">Vendor</mat-option>
+                </mat-select>
+                <mat-error *ngIf="manageUserForm.get('role')?.invalid">
+                    Please select a role.
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Save and Cancel Buttons -->
+        <div class="form-buttons">
+            <button mat-stroked-button color="warn" type="button" class="cancel-button" (click)="onCancel()">
+                Cancel
+            </button>
+            <button mat-flat-button color="primary" type="submit" class="save-button"
+                [disabled]="manageUserForm.invalid">
+                Save
+            </button>
+        </div>
+    </form>
+</div>

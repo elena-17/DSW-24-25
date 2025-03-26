@@ -5,39 +5,97 @@
     <hr />
   </div>
   <div class="action-buttons">
-    <button mat-flat-button>
+    <button mat-flat-button (click)="addUser()">
       <mat-icon>add</mat-icon>
       Add User
     </button>
-    <button mat-stroked-button>
+    <button mat-stroked-button (click)="editUserButton()"
+      [disabled]="selection.isEmpty() || selection.selected.length > 1">
       <mat-icon>edit</mat-icon>
       Edit User
     </button>
-    <button mat-stroked-button>
+    <button mat-stroked-button (click)="deleteUserButton()"
+      [disabled]="selection.isEmpty()">
       <mat-icon>delete</mat-icon>
       Delete User
     </button>
+    
   </div>
 
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-    @for (column of columns; track column) {
-      <ng-container [matColumnDef]="column.columnDef">
+  <div class="filters">
+  <mat-form-field class="full-width">
+    <mat-label>Search in all fields</mat-label>
+    <mat-icon matPrefix>search</mat-icon>
+    <input matInput (keyup)="updateSearchFilter($event)" placeholder="Ex: Jane" #input>
+    <button mat-icon-button matSuffix (click)="clearFilter(input)">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+  <div id="by-role">
+    <mat-button-toggle-group
+    name="filer_role"
+    multiple
+    (change)="applyRoleFilter($event)"
+  >
+    <mat-button-toggle value="admin">Admin</mat-button-toggle>
+    <mat-button-toggle value="user">User</mat-button-toggle>
+    <mat-button-toggle value="vendor">Vendor</mat-button-toggle>
+  </mat-button-toggle-group>
+  </div>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+      <!-- Columna para checkboxes -->
+      <ng-container matColumnDef="select">
         <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Bloque para las columnas definidas dinámicamente -->
+      @for (column of columns; track column) {
+      <ng-container [matColumnDef]="column.columnDef">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ column.header }}
         </th>
         <td mat-cell *matCellDef="let row">
-          {{ column.cell(row) }}
+          <ng-container [ngSwitch]="column.columnDef">
+            <ng-container *ngSwitchCase="'role'">
+              <app-badge [role]="row.role" [type]="row.role"></app-badge>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{ row[column.columnDef] }}
+            </ng-container>
+          </ng-container>
         </td>
       </ng-container>
-    }
+      }
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-icon-button (click)="$event.stopPropagation(); editUser(row)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button (click)="$event.stopPropagation(); deleteUser(row)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    <mat-paginator
-      [pageSizeOptions]="[2, 4, 10]"
-      showFirstLastButtons
-      [length]="dataSource.data.length"
-    >
-    </mat-paginator>
-  </table>
+      <!-- Filas de encabezado y datos -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" (click)="selection.toggle(row)"></tr>
+    </table>
+  </div>
+  <mat-paginator [pageSizeOptions]="[3, 20, 30]" showFirstLastButtons [length]="dataSource.data.length">
+  </mat-paginator>
+
 </div>
