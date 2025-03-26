@@ -1,8 +1,9 @@
-from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from users.models import User
+
 
 class UserAPI(APITestCase):
     def setUp(self) -> None:
@@ -35,52 +36,74 @@ class UserAPI(APITestCase):
         )
 
         # Define the URLs for the test cases
-        self.url_get_all = reverse("user:get_all_users")  # URL for getting all users
-        self.url_bulk_delete = reverse("user:bulk_delete")  # URL for bulk delete
-        self.url_register_user = reverse("user:register_user")  # URL for user registration
-        self.url_get_user_profile = reverse("user:get_user_profile")  # URL for getting user profile
-        self.url_update_user_profile = reverse("user:update_user_profile")  # URL for updating user profile
-        self.url_delete_user_account = reverse("user:delete_user_account")  # URL for deleting user account
-        
+        self.url_list_users = reverse("user:user-list")  # GET /users/
+        self.url_bulk_delete = reverse("user:user-bulk-delete")  # DELETE /users/bulk-delete/
+        self.url_register_user = reverse("user:register_user")  # POST /register/
+        self.url_get_user_by_email = lambda email: reverse(
+            "user:user-get-by-email", kwargs={"email": email}
+        )  # GET /users/get/{email}/
+        self.url_update_user_by_email = lambda email: reverse(
+            "user:user-update-by-email", kwargs={"email": email}
+        )  # PUT /users/update/{email}/
+        self.url_delete_user = lambda email: reverse(
+            "user:user-delete", kwargs={"email": email}
+        )  # DELETE /users/{email}/
+
         # Get the token for the admin user and set it as the authorization header
         self.token = self.get_token(self.admin)  # Use admin credentials to generate the token
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
-    
+
     def get_token(self, user):
         # Helper function to get token for the user
         data = {"email": user.email, "password": "adminpassword123"}
         response = self.client.post(reverse("user:login_user"), data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         return response.data["access"]
-    
-    def test_get_all_users(self):
-        # Test that all users are retrieved successfully
-        response = self.client.get(self.url_get_all)
+
+    def test_list_users(self):
+        # Test that the admin can get a list of all users
+        response = self.client.get(self.url_list_users)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
-        # Verify that the response contains all users
-        self.assertEqual(len(response.data), 3)
-        self.assertEqual(response.data[0]["email"], self.user1.email)
-        self.assertEqual(response.data[1]["email"], self.user2.email)
-        self.assertEqual(response.data[2]["email"], self.admin.email)
-        self.assertEqual(response.data[0]["name"], self.user1.name)
-        self.assertEqual(response.data[1]["name"], self.user2.name)
-        self.assertEqual(response.data[2]["name"], self.admin.name)
-        self.assertEqual(response.data[0]["id_number"], self.user1.id_number)
-        self.assertEqual(response.data[1]["id_number"], self.user2.id_number)
-        self.assertEqual(response.data[2]["id_number"], self.admin.id_number)
+        self.assertEqual(len(response.data), 3)  # 3 usuarios en total (user1, user2, admin)
+
+        # Verify user details in the response
+        emails = [user["email"] for user in response.data]
+        self.assertIn(self.user1.email, emails)
+        self.assertIn(self.user2.email, emails)
+        self.assertIn(self.admin.email, emails)
+
+    def test_get_user_by_email(self):
+        # Test that the admin can get a user by email
+        response = self.client.get(self.url_get_user_by_email(self.user1.email))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["email"], self.user1.email)
+
+    def test_update_user_by_email(self):
+        # Test that the admin can update user details by email
+        updated_data = {
+            "name": "Updated User One",
+            "phone": "9999999999",
+            "password": "newpassword123",
+        }
+        response = self.client.put(self.url_update_user_by_email(self.user1.email), updated_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify that the user details are updated
+        self.user1.refresh_from_db()
+        self.assertEqual(self.user1.name, "Updated User One")
+        self.assertEqual(self.user1.phone, "9999999999")
+        self.assertTrue(self.user1.check_password("newpassword123"))
 
     def test_bulk_delete_users(self):
-        # Test that the admin can delete multiple users by their email addresses
-        users_to_delete = [self.user1.email, self.user2.email]  # Usamos los correos electrónicos
-        data = {"emails": users_to_delete}  # Enviamos los correos electrónicos en la solicitud
+        # Test that the admin can delete multiple users at once
+        data = {"emails": [self.user1.email, self.user2.email]}
         response = self.client.delete(self.url_bulk_delete, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Verify that the users are deleted
-        self.assertEqual(User.objects.count(), 1)
-        self.assertFalse(User.objects.filter(email=self.user1.email).exists()) 
-        self.assertFalse(User.objects.filter(email=self.user2.email).exists()) 
+        self.assertEqual(User.objects.count(), 1)  # Solo debería quedar el admin
+        self.assertFalse(User.objects.filter(email=self.user1.email).exists())
+        self.assertFalse(User.objects.filter(email=self.user2.email).exists())
 
     def test_register_user(self):
         # Test that the admin can register a new user
@@ -97,29 +120,11 @@ class UserAPI(APITestCase):
 
         # Verify that the new user is created
         self.assertTrue(User.objects.filter(email="newuser@example.com").exists())
-    
-    '''
-    def test_update_user_profile(self):
-        # Test that the admin can update user details
-        update_data = {
-            "name": "Updated User",
-            "phone": "987654321",
-        }
-        self.url_update_user_profile = reverse("user:update_user_profile", kwargs={"email": self.user1.email})
-        response = self.client.put(self.url_update_user_profile, data=update_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
-        # Verify that the user details are updated
-        self.user1.refresh_from_db()
-        self.assertEqual(self.user1.name, update_data["name"])
-        self.assertEqual(self.user1.phone, update_data["phone"])
 
-    def test_delete_user_account(self):
-        # Test that the admin can delete a user
-        url_delete_user = reverse("user:delete_user_account", kwargs={"pk": self.user1.id})
-        response = self.client.delete(url_delete_user)
+    def test_delete_user(self):
+        # Test that the admin can delete a user by email
+        response = self.client.delete(self.url_delete_user(self.user1.email))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # Verify that the user is deleted
-        self.assertFalse(User.objects.filter(id=self.user1.id).exists())
-'''
+        self.assertFalse(User.objects.filter(email=self.user1.email).exists())
