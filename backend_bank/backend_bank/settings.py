@@ -91,7 +91,7 @@ DATABASES = {
         "USER": os.getenv("POSTGRES_USER_BANK", "zap_admin"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD_BANK", "zap_admin"),
         "HOST": os.getenv("POSTGRES_HOST_BANK", "localhost"),
-        "PORT": "5432",
+        "PORT": "5433",
     },
 }
 
@@ -143,13 +143,4 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Rest Framework
-REST_FRAMEWORK = {
-    "DEFAULT_THROTTLE_CLASSES": (
-        "rest_framework.throttling.UserRateThrottle",
-        "rest_framework.throttling.AnonRateThrottle",
-    ),
-    "DEFAULT_THROTTLE_RATES": {
-        "user": "5/day",
-        "anon": "40/hour",
-    },
-}
+REST_FRAMEWORK = {}
