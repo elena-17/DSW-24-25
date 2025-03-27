@@ -156,7 +156,7 @@ export class RegisterComponent {
         this.registerForm.value.email,
         this.registerForm.value.phone_number,
         this.registerForm.value.name,
-        this.registerForm.value.id_number,
+        this.registerForm.value.id_number.toUpperCase(),
         this.registerForm.value.pwd1,
         "user",
       )

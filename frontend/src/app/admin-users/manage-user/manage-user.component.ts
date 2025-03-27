@@ -82,6 +82,9 @@ export class ManageUserComponent {
   onSave() {
     if (this.manageUserForm.valid) {
       const formData = { ...this.manageUserForm.value };
+      if (formData.id_number) {
+        formData.id_number = formData.id_number.toUpperCase();
+      }
       if (!formData.pwd1) {
         delete formData.pwd1;
       } else {
