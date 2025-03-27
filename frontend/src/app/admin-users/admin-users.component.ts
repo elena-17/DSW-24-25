@@ -1,4 +1,10 @@
-import { Component, AfterViewInit, ViewChild, inject } from "@angular/core";
+import {
+  Component,
+  AfterViewInit,
+  ViewChild,
+  inject,
+  OnInit,
+} from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MaterialModule } from "../material.module";
 import { MatPaginator } from "@angular/material/paginator";
@@ -12,6 +18,9 @@ import { MatButtonToggleModule } from "@angular/material/button-toggle";
 
 import { MatDialog } from "@angular/material/dialog";
 import { ManageUserComponent } from "./manage-user/manage-user.component";
+import { AdminUsersService } from "../services/admin-users.service";
+import { AuthService } from "../services/auth.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 // es necesario?
 export interface User {
@@ -23,43 +32,43 @@ export interface User {
 }
 
 //test data
-const users: User[] = [
-  {
-    id_number: 1,
-    name: "John Doe",
-    email: "john.doe@example.com",
-    role: "Admin",
-    phone: "123-456-7890",
-  },
-  {
-    id_number: 2,
-    name: "Jane Smith",
-    email: "jane.smith@example.com",
-    role: "User",
-    phone: "987-654-3210",
-  },
-  {
-    id_number: 3,
-    name: "Alice Johnson",
-    email: "alice.johnson@example.com",
-    role: "Vendor",
-    phone: "555-123-4567",
-  },
-  {
-    id_number: 4,
-    name: "Alice Johnson",
-    email: "alice.johnson@example.com",
-    role: "other",
-    phone: "555-123-4567",
-  },
-  {
-    id_number: 5,
-    name: "Alice Johnson",
-    email: "alice.johnson@example.com",
-    role: "Vendor",
-    phone: "555-123-4567",
-  },
-];
+// const users: User[] = [
+//   {
+//     id_number: 1,
+//     name: "John Doe",
+//     email: "john.doe@example.com",
+//     role: "Admin",
+//     phone: "123-456-7890",
+//   },
+//   {
+//     id_number: 2,
+//     name: "Jane Smith",
+//     email: "jane.smith@example.com",
+//     role: "User",
+//     phone: "987-654-3210",
+//   },
+//   {
+//     id_number: 3,
+//     name: "Alice Johnson",
+//     email: "alice.johnson@example.com",
+//     role: "seller",
+//     phone: "555-123-4567",
+//   },
+//   {
+//     id_number: 4,
+//     name: "Alice Johnson",
+//     email: "alice.johnson@example.com",
+//     role: "other",
+//     phone: "555-123-4567",
+//   },
+//   {
+//     id_number: 5,
+//     name: "Alice Johnson",
+//     email: "alice.johnson@example.com",
+//     role: "seller",
+//     phone: "555-123-4567",
+//   },
+// ];
 
 @Component({
   selector: "app-admin-users",
@@ -73,8 +82,13 @@ const users: User[] = [
   templateUrl: "./admin-users.component.html",
   styleUrl: "./admin-users.component.scss",
 })
-export class AdminUsersComponent implements AfterViewInit {
-  constructor(private dialog: MatDialog) {}
+export class AdminUsersComponent implements AfterViewInit, OnInit {
+  constructor(
+    private dialog: MatDialog,
+    private adminUsersService: AdminUsersService,
+    private authService: AuthService,
+    private snackBar: MatSnackBar,
+  ) {}
 
   // borrar esto cuando sea funcional
   columns = [
@@ -105,7 +119,7 @@ export class AdminUsersComponent implements AfterViewInit {
     },
   ];
 
-  dataSource = new MatTableDataSource<User>(users);
+  dataSource = new MatTableDataSource<User>([]);
   displayedColumns = [
     "select",
     ...this.columns.map((c) => c.columnDef),
@@ -123,6 +137,13 @@ export class AdminUsersComponent implements AfterViewInit {
   );
   selectedRoles: string[] = [];
   searchText: string = "";
+
+  ngOnInit() {
+    this.adminUsersService.getUsers().subscribe((all_users) => {
+      console.log("Users:", all_users);
+      this.dataSource.data = all_users;
+    });
+  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -191,7 +212,6 @@ export class AdminUsersComponent implements AfterViewInit {
   }
 
   addUser() {
-    // Implement add user logic here
     const dialogRef = this.dialog.open(ManageUserComponent, {
       data: { title: "Add User" },
       width: "75%",
@@ -200,7 +220,33 @@ export class AdminUsersComponent implements AfterViewInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log("User added:", result);
-        this.dataSource.data = [result, ...this.dataSource.data];
+        this.authService
+          .register(
+            result.email,
+            result.phone,
+            result.name,
+            result.id_number,
+            result.password,
+            result.role,
+          )
+          .subscribe({
+            next: (response) => {
+              this.dataSource.data = [result, ...this.dataSource.data];
+            },
+            error: (error) => {
+              console.error("Registration failed:", error);
+              console.error("Error message:", error.error);
+              this.snackBar.open(
+                "Registration failed. Please try again.",
+                "OK",
+                {
+                  duration: 5000,
+                  horizontalPosition: "center",
+                  verticalPosition: "top",
+                },
+              );
+            },
+          });
       }
     });
   }
@@ -216,7 +262,31 @@ export class AdminUsersComponent implements AfterViewInit {
     if (this.selection.selected.length === 1) {
       this.deleteUser(this.selection.selected[0]);
     } else {
-      this.selection.selected.forEach((user) => this.deleteUser(user));
+      this.adminUsersService
+        .deleteBulkUsers(this.selection.selected.map((user) => user.email))
+        .subscribe({
+          next: () => {
+            this.selection.selected.forEach((user) => {
+              const index = this.dataSource.data.findIndex(
+                (dataUser) => dataUser.email === user.email,
+              );
+              if (index !== -1) {
+                this.dataSource.data.splice(index, 1);
+              }
+            });
+            this.dataSource._updateChangeSubscription();
+            this.selection.clear();
+          },
+          error: (error) => {
+            console.error("Delete failed:", error);
+            console.error("Error message:", error.error);
+            this.snackBar.open("Delete failed. Please try again.", "OK", {
+              duration: 5000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
+          },
+        });
     }
   }
 
@@ -228,24 +298,53 @@ export class AdminUsersComponent implements AfterViewInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        const index = this.dataSource.data.findIndex(
-          (user) => user.id_number === row.id_number,
-        );
-        if (index !== -1) {
-          this.dataSource.data[index] = result;
-          this.dataSource._updateChangeSubscription();
+        if (result.pwd1 === "") {
+          delete result.pwd1;
         }
+        this.adminUsersService.updateUser(result.email, result).subscribe({
+          next: (response) => {
+            const index = this.dataSource.data.findIndex(
+              (user) => user.id_number === row.id_number,
+            );
+            if (index !== -1) {
+              this.dataSource.data[index] = result;
+              this.dataSource._updateChangeSubscription();
+            }
+          },
+          error: (error) => {
+            console.error("Update failed:", error);
+            console.error("Error message:", error.error);
+            this.snackBar.open("Update failed. Please try again.", "OK", {
+              duration: 5000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
+          },
+        });
       }
     });
   }
 
   deleteUser(row: User) {
-    const index = this.dataSource.data.findIndex(
-      (user) => user.id_number === row.id_number,
-    );
-    if (index !== -1) {
-      this.dataSource.data.splice(index, 1);
-      this.dataSource._updateChangeSubscription();
-    }
+    this.adminUsersService.deleteUser(row.email).subscribe({
+      next: () => {
+        const index = this.dataSource.data.findIndex(
+          (user) => user.id_number === row.id_number,
+        );
+        if (index !== -1) {
+          this.dataSource.data.splice(index, 1);
+          this.dataSource._updateChangeSubscription();
+        }
+      },
+      error: (error) => {
+        console.error("Delete failed:", error);
+        console.error("Error message:", error.error);
+        this.snackBar.open("Delete failed. Please try again.", "OK", {
+          duration: 5000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      },
+    });
   }
 }

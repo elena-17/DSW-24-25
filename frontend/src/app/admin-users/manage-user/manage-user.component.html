@@ -15,8 +15,8 @@
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Phone Number</mat-label>
         <input matInput type="text" formControlName="phone" required />
-        <mat-error *ngIf="manageUserForm.get('phone_number')?.invalid">
-          {{ getErrorMessage("phone_number") }}
+        <mat-error *ngIf="manageUserForm.get('phone')?.invalid">
+          {{ getErrorMessage("phone") }}
         </mat-error>
       </mat-form-field>
 
@@ -67,7 +67,7 @@
         <mat-select formControlName="role" required>
           <mat-option value="admin">Admin</mat-option>
           <mat-option value="user">User</mat-option>
-          <mat-option value="vendor">Vendor</mat-option>
+          <mat-option value="seller">Seller</mat-option>
         </mat-select>
         <mat-error *ngIf="manageUserForm.get('role')?.invalid">
           Please select a role.

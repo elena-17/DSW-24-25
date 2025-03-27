@@ -7,7 +7,7 @@ import {
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AuthService } from "../../services/auth.service";
+
 import { PasswordValidators } from "../../password.validators";
 import { MaterialModule } from "../../material.module";
 import { MatSelectModule } from "@angular/material/select";
@@ -31,6 +31,7 @@ export class ManageUserComponent {
   manageUserForm: FormGroup;
   hidePassword = true;
   dialogTitle: string;
+  isEditMode: boolean;
 
   constructor(
     private dialogRef: MatDialogRef<ManageUserComponent>,
@@ -39,6 +40,7 @@ export class ManageUserComponent {
   ) {
     this.dialogTitle = data.title;
     // Create the registration form
+    this.isEditMode = !!this.data.user;
     this.manageUserForm = this.formBuilder.group({
       email: [data.user?.email, [Validators.required, Validators.email]],
       phone: [
@@ -47,10 +49,19 @@ export class ManageUserComponent {
       ],
       name: [data.user?.name, [Validators.required]],
       id_number: [
-        "",
+        data.user?.id_number,
         [Validators.required, Validators.pattern(/^\d{8}[a-zA-Z]$/)],
       ],
-      pwd1: [""],
+      pwd1: [
+        "",
+        this.isEditMode
+          ? []
+          : [
+              Validators.required,
+              Validators.minLength(8),
+              PasswordValidators.passwordStrengthValidator,
+            ],
+      ], // Only required in create mode
       role: [data.user?.role, [Validators.required]],
     });
   }
@@ -70,9 +81,16 @@ export class ManageUserComponent {
 
   onSave() {
     if (this.manageUserForm.valid) {
-      console.log("User data saved:", this.manageUserForm.value);
+      const formData = { ...this.manageUserForm.value };
+      if (!formData.pwd1) {
+        delete formData.pwd1;
+      } else {
+        formData.password = formData.pwd1;
+        delete formData.pwd1;
+      }
+
+      this.dialogRef.close(formData);
     }
-    this.dialogRef.close(this.manageUserForm.value);
   }
 
   onCancel() {
@@ -107,7 +125,7 @@ export class ManageUserComponent {
     }
 
     if (control?.hasError("pattern")) {
-      if (controlName === "phone_number") {
+      if (controlName === "phone") {
         return "Phone number must be 9 digits.";
       } else if (controlName === "id_number") {
         return "Must be 8 digits and a letter.";

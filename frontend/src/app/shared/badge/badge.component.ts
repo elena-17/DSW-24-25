@@ -16,8 +16,8 @@ export class BadgeComponent {
         return "admin-badge";
       case "user":
         return "user-badge";
-      case "vendor":
-        return "vendor-badge";
+      case "seller":
+        return "seller-badge";
       default:
         return "default-badge";
     }
