@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('friendships', '0002_initial'),
+        ("friendships", "0002_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='friendrequest',
-            name='status',
-            field=models.CharField(choices=[('pending', 'Pending'), ('accepted', 'Accepted'), ('Rejected', 'Rejected')], default='pending', max_length=10),
+            model_name="friendrequest",
+            name="status",
+            field=models.CharField(
+                choices=[("pending", "Pending"), ("accepted", "Accepted"), ("Rejected", "Rejected")],
+                default="pending",
+                max_length=10,
+            ),
         ),
     ]
