@@ -15,8 +15,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   isMenuOpen: boolean = false; //Status menu
   isUserMenuOpen: boolean = false; // Status user menu
   userName: string = "User"; // value for default username
+  role: string = "user";
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    this.role = sessionStorage.getItem("userRole") || "user";
+  }
 
   ngOnInit(): void {
     this.userName = sessionStorage.getItem("userName") || "User";
@@ -50,6 +53,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   goToHome(): void {
+    if (this.role === "admin") {
+      this.router.navigate(["/admin"]);
+      return;
+    }
     this.router.navigate(["/homepage"]);
   }
 
@@ -65,5 +72,16 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   logOut(): void {
     sessionStorage.clear();
     this.router.navigate([""]);
+  }
+
+  // Admin
+  isAdmin(): boolean {
+    return this.role === "admin";
+  }
+  goToUsers(): void {
+    this.router.navigate(["/admin-users"]);
+  }
+  goToAccounts(): void {
+    this.router.navigate(["/admin-accounts"]);
   }
 }
