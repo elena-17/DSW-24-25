@@ -9,10 +9,10 @@
     <button mat-button (click)="goToHome()">
       <mat-icon>home</mat-icon> Home
     </button>
-    <button mat-button *ngIf="isAdmin" (click)="goToUsers()">
+    <button mat-button *ngIf="isAdmin()" (click)="goToUsers()">
       <mat-icon>person</mat-icon> Users
     </button>
-    <button mat-button *ngIf="isAdmin" (click)="goToUsers()">
+    <button mat-button *ngIf="isAdmin()" (click)="goToUsers()">
       <mat-icon>account_balance</mat-icon> Accounts
     </button>
     <button mat-button (click)="goToTransactions()">
