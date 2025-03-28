@@ -34,11 +34,11 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"message": f"Successfully deleted {count} users."}, status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    #@action(detail=False, methods=["delete"], url_path="delete/(?P<email>.+)")
-    #def delete_by_email(self, request, email=None):
-    #    user = get_object_or_404(User, email=email)
-    #    user.delete()
-    #    return Response(status=status.HTTP_204_NO_CONTENT)
+    @action(detail=False, methods=["delete"], url_path="delete/(?P<email>.+)")
+    def delete_by_email(self, request, email=None):
+        user = get_object_or_404(User, email=email)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     #@action(detail=False, methods=["get"], url_path="get/(?P<email>.+)")
     #def get_user_by_email(self, request, email=None):
