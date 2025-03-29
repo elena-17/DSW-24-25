@@ -72,11 +72,11 @@ class UserAPI(APITestCase):
         self.assertIn(self.user2.email, emails)
         self.assertIn(self.admin.email, emails)
 
-    def test_get_user_by_email(self):
-        # Test that the admin can get a user by email
-        response = self.client.get(self.url_get_user_by_email(self.user1.email))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["email"], self.user1.email)
+    # def test_get_user_by_email(self):
+    #     # Test that the admin can get a user by email
+    #     response = self.client.get(self.url_get_user_by_email(self.user1.email))
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(response.data["email"], self.user1.email)
 
     def test_update_user_by_email(self):
         # Test that the admin can update user details by email

@@ -1,0 +1,151 @@
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+from users.models import User
+
+from .models import Transaction
+
+
+class TransactionAPI(APITestCase):
+    def setUp(self) -> None:
+        # Create test users
+        self.password = "password123"
+        self.user1 = User.objects.create_user(
+            email="user1@test.com",
+            phone="123456789",
+            name="User One",
+            id_number="111111111",
+            password=self.password,
+        )
+        self.user2 = User.objects.create_user(
+            email="user2@test.com",
+            phone="987654321",
+            name="User Two",
+            id_number="222222222",
+            password=self.password,
+        )
+
+        # Add money to user accounts
+        self.user1.account.balance = 1000
+        self.user1.account.save()
+        self.user2.account.balance = 1000
+        self.user2.account.save()
+
+        self.token = self.get_token()
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
+
+    def get_token(self):
+        data = {"email": self.user1.email, "password": self.password}
+        response = self.client.post(reverse("user:login_user"), data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        return response.data["access"]
+
+    def test_get_transaction_successful(self) -> None:
+        # Send GET request to retrieve the transaction
+        self.transaction = Transaction.objects.create(
+            sender=self.user1,
+            receiver=self.user2,
+            amount=150,
+            title="Sample Transaction",
+            description="This is a test transaction",
+            status="pending",
+        )
+
+        transaction_url = reverse("get_transaction", kwargs={"id": self.transaction.id})
+        response = self.client.get(transaction_url)
+
+        # Verify the response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], self.transaction.id)
+        self.assertEqual(response.data["sender"], self.user1.email)
+        self.assertEqual(response.data["receiver"], self.user2.email)
+        self.assertEqual(response.data["amount"], "150.00")
+        self.assertEqual(response.data["title"], "Sample Transaction")
+        self.assertEqual(response.data["description"], "This is a test transaction")
+        self.assertEqual(response.data["status"], "pending")
+
+    def test_send_money(self):
+        send_money_url = reverse("send_money")
+
+        # Define the payload for the request
+        payload = {
+            "sender": self.user1.email,
+            "receivers": [self.user2.email],
+            "amount": 50,
+            "title": "Payment",
+            "description": "Payment for services",
+        }
+        response = self.client.post(send_money_url, data=payload, format="json")
+
+        # Verify the response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.data
+        # Verify the response contains only the transaction ID
+        self.assertIn("transactions", data)
+        self.assertEqual(len(data["transactions"]), 1)
+
+        # Verify the transaction was created in the database
+        transaction = Transaction.objects.get(id=data["transactions"][0])
+        self.assertEqual(transaction.sender, self.user1)
+        self.assertEqual(transaction.receiver, self.user2)
+        self.assertEqual(transaction.amount, 50)
+        self.assertEqual(transaction.title, "Payment")
+        self.assertEqual(transaction.description, "Payment for services")
+        self.assertEqual(transaction.status, "pending")
+
+        self.assertEqual(data["transactions"][0], transaction.id)
+
+    def test_request_money(self):
+        request_money_url = reverse("request_money")
+
+        # Define the payload for the request
+        payload = {
+            "senders": [self.user1.email],
+            "receiver": self.user2.email,
+            "amount": 50,
+            "title": "Payment",
+            "description": "Payment for services",
+        }
+        response = self.client.post(request_money_url, data=payload, format="json")
+
+        # Verify the response
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        data = response.data
+        # Verify the response contains only the transaction ID
+        self.assertIn("transactions", data)
+        self.assertEqual(len(data["transactions"]), 1)
+
+        # Verify the transaction was created in the database
+        transaction = Transaction.objects.get(id=data["transactions"][0])
+        self.assertEqual(transaction.sender, self.user1)
+        self.assertEqual(transaction.receiver, self.user2)
+        self.assertEqual(transaction.amount, 50)
+        self.assertEqual(transaction.title, "Payment")
+        self.assertEqual(transaction.description, "Payment for services")
+        self.assertEqual(transaction.status, "pending")
+
+        self.assertEqual(data["transactions"][0], transaction.id)
+
+    def test_update_transaction_approved(self):
+        # Create a transaction for testing
+        self.transaction = Transaction.objects.create(
+            sender=self.user1,
+            receiver=self.user2,
+            amount=100,
+            title="Sample Transaction",
+            description="This is a test transaction",
+            status="pending",
+        )
+
+        update_url = reverse("update_transaction_status", kwargs={"id": self.transaction.id})
+        payload = {"status": "approved"}
+        response = self.client.put(update_url, data=payload, format="json")
+
+        # Verify the response
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.transaction.refresh_from_db()
+        self.assertEqual(self.transaction.status, "approved")
+        self.assertEqual(str(self.transaction.sender.account.balance), "900.00")
+        self.assertEqual(str(self.transaction.receiver.account.balance), "1100.00")
