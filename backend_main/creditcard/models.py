@@ -23,9 +23,7 @@ class CreditCard(models.Model):
     expiration_date = models.CharField(
         max_length=5, help_text="format: MM/YY", verbose_name="expiration date", validators=[validate_expiration_date]
     )
-    cvv = EncryptedCharField(max_length=3)
     card_alias = models.CharField(max_length=100, verbose_name="alias", blank=True, null=True)
-    is_default = models.BooleanField(default=False)  # optional, for the frontend to preselect a card
 
     def __str__(self):
         return f"{self.number} - {self.owner_name}"
