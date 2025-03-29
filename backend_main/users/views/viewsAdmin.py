@@ -40,8 +40,8 @@ class UserViewSet(viewsets.ModelViewSet):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    #@action(detail=False, methods=["get"], url_path="get/(?P<email>.+)")
-    #def get_user_by_email(self, request, email=None):
+    # @action(detail=False, methods=["get"], url_path="get/(?P<email>.+)")
+    # def get_user_by_email(self, request, email=None):
     #    user = get_object_or_404(User, email=email)
     #    serializer = UserProfileSerializer(user)
     #    return Response(serializer.data, status=status.HTTP_200_OK)

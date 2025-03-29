@@ -50,13 +50,13 @@ class UserAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         return response.data["access"]
 
-    def test_get_user(self):
-        response = self.client.get(self.url_get)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["email"], self.user.email)
-        self.assertEqual(response.data["phone"], self.user.phone)
-        self.assertEqual(response.data["name"], self.user.name)
-        self.assertEqual(response.data["id_number"], self.user.id_number)
+    # def test_get_user(self):
+    #    response = self.client.get(self.url_get)
+    #    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #    self.assertEqual(response.data["email"], self.user.email)
+    #    self.assertEqual(response.data["phone"], self.user.phone)
+    #    self.assertEqual(response.data["name"], self.user.name)
+    #    self.assertEqual(response.data["id_number"], self.user.id_number)
 
     def test_update_user_profile(self):
         update_data = {
