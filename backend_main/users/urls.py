@@ -28,8 +28,8 @@ urlpatterns = [
     path("profile/delete/", delete_user_account, name="delete_user_account"),
     path("", include(router.urls)),
     path("users/delete/<str:email>/", UserViewSet.as_view({"delete": "delete_by_email"}), name="user-delete"),
-    #path("users/get/<str:email>/", UserViewSet.as_view({"get": "get_user_by_email"}), name="user-get-by-email"), # Delete in future if not needed, cause we are not using it in frontend
+    # path("users/get/<str:email>/", UserViewSet.as_view({"get": "get_user_by_email"}), name="user-get-by-email"), # Delete in future if not needed, cause we are not using it in frontend
     path(
         "users/update/<str:email>/", UserViewSet.as_view({"put": "update_user_by_email"}), name="user-update-by-email"
-    ), 
+    ),
 ]

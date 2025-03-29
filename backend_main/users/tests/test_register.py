@@ -1,3 +1,4 @@
+from account.models import Account
 from django.contrib.auth.hashers import check_password
 from django.urls import reverse
 from rest_framework import status
@@ -36,6 +37,11 @@ class RegisterUserTests(APITestCase):
 
         # First argument is the password, second argument is the hashed password
         self.assertTrue(check_password(self.valid_data["password"], user.password))
+
+        # Check that the Account was created for the user
+        account = Account.objects.get(user=user)
+        self.assertIsNotNone(account)
+        self.assertEqual(account.balance, 0.00)  # Verifica que el balance de la cuenta es 0.00
 
         # Verify that the token field exists and is null
         # self.assertIsNone(user.token)
