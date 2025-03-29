@@ -15,7 +15,6 @@ def validate_expiration_date(value):
 class CreditCard(models.Model):
     class Meta:
         db_table = "credit_cards"
-        constraints = [models.UniqueConstraint(fields=["user", "is_default"], name="unique_default_card")]
 
     number = EncryptedCharField(max_length=16, unique=True, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="credit_cards")
