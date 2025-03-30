@@ -22,9 +22,25 @@ def get_transaction(request, id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-"""GET all transactions by email sender"""
+@api_view(["GET"])
+def get_all_transactions(request):
+    transactions = Transaction.objects.filter(sender=request.user) | Transaction.objects.filter(receiver=request.user)
+    serializer = TransactionSerializer(transactions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
-"""GET all transactions by email receiver"""
+
+@api_view(["GET"])
+def get_all_transactions_sender(request):
+    transactions = Transaction.objects.filter(sender=request.user)
+    serializer = TransactionSerializer(transactions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def get_all_transactions_receiver(request):
+    transactions = Transaction.objects.filter(receiver=request.user)
+    serializer = TransactionSerializer(transactions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
