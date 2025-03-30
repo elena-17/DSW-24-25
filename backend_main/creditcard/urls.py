@@ -1,16 +1,19 @@
 from django.urls import path
+
 from .views import (
-    get_creditcards,
+    delete_creditcard,
+    get_all_creditcards,
+    get_creditcard,
     post_creditcard,
     put_creditcard,
-    delete_creditcard,
 )
 
 app_name = "creditcard"
 
 urlpatterns = [
-    path("creditcards/", get_creditcards, name="creditcard-list"),
-    path("creditcards/create/", post_creditcard, name="creditcard-create"),
-    path("creditcards/update/", put_creditcard, name="creditcard-update"), 
-    path("creditcards/delete/", delete_creditcard, name="creditcard-delete"), 
+    path("", get_all_creditcards, name="creditcard-list"),
+    path("create/", post_creditcard, name="creditcard-create"),
+    path("update/", put_creditcard, name="creditcard-update"),
+    path("delete/", delete_creditcard, name="creditcard-delete"),
+    path("<str:number>/", get_creditcard, name="creditcard-detail"),
 ]
