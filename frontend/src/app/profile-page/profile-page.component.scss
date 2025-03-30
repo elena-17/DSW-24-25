@@ -31,23 +31,16 @@ mat-toolbar {
 
 .sections h2 {
   font-size: 2rem;
-  /* Título más grande */
   font-weight: normal;
-  /* Sin negrita */
   margin-bottom: 0.2rem;
-  /* Menor separación inferior */
 }
 
 .sections h4 {
   font-size: 1rem;
   font-weight: normal;
-  /* Tamaño de subtítulo */
   color: #666;
-  /* Gris */
   margin-top: 0.25rem;
-  /* Menor separación superior */
   margin-bottom: 0.5rem;
-  /* Menor separación inferior */
 }
 
 .sections hr {
@@ -56,7 +49,7 @@ mat-toolbar {
   border-top: 1px solid #ddd;
 }
 
-#delete-section {
+.delete-section {
   margin-bottom: 100px;
 }
 
@@ -110,5 +103,189 @@ mat-toolbar {
     mat-form-field {
       width: 100%;
     }
+  }
+}
+
+/* Credit Cards Section */
+.credit-cards-section {
+  padding: 30px;
+  background-color: #f3f4f8;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #3c4a9c;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+h4 {
+  font-size: 1.2rem;
+  color: #5c6b82;
+  margin-bottom: 20px;
+}
+
+hr.section-divider {
+  margin: 15px 0;
+  border: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    #5c6b82,
+    var(--mat-sys-primary) !important
+  );
+  border-radius: 2px;
+}
+
+.creditcard-list {
+  margin-bottom: 20px;
+}
+
+.credit-cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.credit-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.credit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.card-name {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.card-owner {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin-top: 10px;
+}
+
+.card-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-top: 10px;
+}
+
+/* Edit Button */
+.edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 50%;
+  background-color: var(--mat-sys-primary) !important;
+  color: white;
+  padding: 8px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.edit-btn:hover {
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  border-radius: 50%;
+  background-color: var(--mat-sys-error) !important;
+  color: white;
+  padding: 8px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  transform: scale(1.1);
+}
+
+.no-cards-text {
+  color: #888;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.add-card-button {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  background-color: var(--mat-sys-primary) !important;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 10px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease;
+  margin-top: 25px;
+}
+
+.add-card-button:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .credit-cards-section {
+    padding: 20px;
+  }
+
+  .credit-card {
+    max-width: 100%;
+    height: auto;
+    padding: 12px;
+  }
+
+  .mat-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-body {
+    margin-top: 10px;
   }
 }
