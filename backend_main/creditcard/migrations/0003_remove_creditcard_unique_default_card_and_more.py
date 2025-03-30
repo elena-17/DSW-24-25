@@ -7,25 +7,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('creditcard', '0002_initial'),
+        ("creditcard", "0002_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='creditcard',
-            name='unique_default_card',
+            model_name="creditcard",
+            name="unique_default_card",
         ),
         migrations.RemoveField(
-            model_name='creditcard',
-            name='cvv',
+            model_name="creditcard",
+            name="cvv",
         ),
         migrations.RemoveField(
-            model_name='creditcard',
-            name='is_default',
+            model_name="creditcard",
+            name="is_default",
         ),
         migrations.AddConstraint(
-            model_name='creditcard',
-            constraint=models.UniqueConstraint(fields=('user',), name='unique_default_card'),
+            model_name="creditcard",
+            constraint=models.UniqueConstraint(fields=("user",), name="unique_default_card"),
         ),
     ]

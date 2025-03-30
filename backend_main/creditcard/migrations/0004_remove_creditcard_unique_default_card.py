@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('creditcard', '0003_remove_creditcard_unique_default_card_and_more'),
+        ("creditcard", "0003_remove_creditcard_unique_default_card_and_more"),
     ]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='creditcard',
-            name='unique_default_card',
+            model_name="creditcard",
+            name="unique_default_card",
         ),
     ]
