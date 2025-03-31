@@ -3,23 +3,17 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-badge",
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: "./badge.component.html",
   styleUrls: ["./badge.component.scss"],
-  imports: [CommonModule],
 })
 export class BadgeComponent {
-  @Input() role: string = ""; // El valor del rol (ej. "admin", "user", etc.)
-  @Input() type: string = ""; // El tipo de badge (ej. "admin", "user", etc.)
-  getBadgeClass(role: string): string {
-    switch (role.toLowerCase()) {
-      case "admin":
-        return "admin-badge";
-      case "user":
-        return "user-badge";
-      case "seller":
-        return "seller-badge";
-      default:
-        return "default-badge";
-    }
+  @Input() text: string = "";
+  @Input() icon: string = "";
+  @Input() class: string = "";
+
+  getBadgeClass(): string {
+    return `badge-${this.class}`;
   }
 }
