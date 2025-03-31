@@ -147,8 +147,7 @@ export class ProfilePageComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // Here you can handle the result, like adding the new card to the list
-        console.log("Card details:", result);
+        this.creditCards.push(result);
       }
     });
   }

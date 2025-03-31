@@ -16,10 +16,10 @@ export class UserService {
   private urlChangePassword = `${this.baseApiUrl}/profile/password/`;
 
   // URL for credit cards
-  private urlAddCreditCard = `${this.creditApiUrl}/add/`;
+  private urlAddCreditCard = `${this.creditApiUrl}/create/`;
   private urlUpdateCreditCard = `${this.creditApiUrl}/update/`;
   private urlDeleteCreditCard = `${this.creditApiUrl}/delete/`;
-  private urlGetCreditCards = `${this.creditApiUrl}/get/`;
+  private urlGetCreditCards = `${this.creditApiUrl}/`;
 
   constructor(private http: HttpClient) {}
 
