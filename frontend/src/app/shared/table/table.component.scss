@@ -3,6 +3,19 @@
   overflow-x: auto;
 }
 
+.mat-mdc-table {
+  background-color: transparent !important;
+}
+
+.mat-mdc-header-row {
+  font-weight: bold;
+  background-color: var(--mat-sys-surface-container-high);
+}
+
 .mat-mdc-row:hover .mat-mdc-cell {
   background-color: rgba(0, 0, 0, 0.04);
+}
+
+.mat-mdc-paginator {
+  background-color: transparent !important;
 }

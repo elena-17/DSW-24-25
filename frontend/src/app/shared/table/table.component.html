@@ -1,4 +1,25 @@
 <table mat-table [dataSource]="dataSource" matSort>
+  <!-- checkboxes -->
+  <ng-container *ngIf="enableSelection" matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+      <mat-checkbox
+        (change)="$event ? toggleAllRows() : null"
+        [checked]="isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()"
+      >
+      </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+      <mat-checkbox
+        (click)="$event.stopPropagation()"
+        (change)="$event ? selection.toggle(row) : null"
+        [checked]="selection.isSelected(row)"
+      >
+      </mat-checkbox>
+    </td>
+  </ng-container>
+
+  <!-- normal columns -->
   <ng-container
     *ngFor="let column of columns"
     [matColumnDef]="column.columnDef"
@@ -6,29 +27,42 @@
     <th mat-header-cell *matHeaderCellDef mat-sort-header>
       {{ column.header }}
     </th>
-    <td mat-cell *matCellDef="let element">{{ column.cell(element) }}</td>
-  </ng-container>
+    <td mat-cell *matCellDef="let element">
+      <ng-container *ngIf="column.component === 'badge'; else otherCell">
+        <app-badge
+          [text]="column.getComponentProps?.(element)?.text"
+          [icon]="column.getComponentProps?.(element)?.icon"
+          [class]="column.getComponentProps?.(element)?.class"
+        >
+        </app-badge>
+      </ng-container>
 
-  <ng-container matColumnDef="select" *ngIf="enableSelection">
-    <th mat-header-cell *matHeaderCellDef>
-      <mat-checkbox
-        (change)="toggleAllRows()"
-        [checked]="isAllSelected()"
-      ></mat-checkbox>
-    </th>
-    <td mat-cell *matCellDef="let row">
-      <mat-checkbox
-        (click)="$event.stopPropagation()"
-        (change)="selection.toggle(row)"
-      ></mat-checkbox>
+      <ng-template #otherCell>
+        <ng-container *ngIf="column.component === 'text-icon'; else normalCell">
+          <mat-icon>{{ column.getComponentProps?.(element)?.icon }}</mat-icon>
+          <span>{{ column.cell(element) }}</span>
+        </ng-container>
+      </ng-template>
+
+      <ng-template #normalCell>
+        {{ column.cell(element) }}
+      </ng-template>
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="actions" *ngIf="enableActions">
+  <!-- actions -->
+  <ng-container *ngIf="enableActions" matColumnDef="actions">
     <th mat-header-cell *matHeaderCellDef>Actions</th>
     <td mat-cell *matCellDef="let row">
-      <button mat-button color="primary" (click)="editRow(row)">Edit</button>
-      <button mat-button color="warn" (click)="deleteRow(row)">Delete</button>
+      <button mat-icon-button (click)="$event.stopPropagation(); editRow(row)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="$event.stopPropagation(); deleteRow(row)"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
     </td>
   </ng-container>
 

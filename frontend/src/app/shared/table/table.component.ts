@@ -13,19 +13,18 @@ import { MatSort } from "@angular/material/sort";
 import { SelectionModel } from "@angular/cdk/collections";
 import { MaterialModule } from "../../material.module";
 import { CommonModule } from "@angular/common";
+import { BadgeComponent } from "../badge/badge.component";
+import { TableColumn } from "./table-column.model";
 
 @Component({
   selector: "app-table",
   templateUrl: "./table.component.html",
   styleUrls: ["./table.component.scss"],
-  imports: [MaterialModule, CommonModule],
+  imports: [MaterialModule, CommonModule, BadgeComponent],
 })
 export class TableComponent<T> implements AfterViewInit, OnInit {
-  @Input() columns: {
-    columnDef: string;
-    header: string;
-    cell: (element: T) => string;
-  }[] = [];
+  @Input() columns: TableColumn<T>[] = [];
+
   @Input() data: T[] = [];
   @Input() enableSelection: boolean = false;
   @Input() enableActions: boolean = false;
@@ -65,10 +64,12 @@ export class TableComponent<T> implements AfterViewInit, OnInit {
   }
 
   editRow(row: T): void {
+    console.log("Edit row:", row);
     this.edit.emit(row);
   }
 
   deleteRow(row: T): void {
+    console.log("Delete row:", row);
     this.delete.emit(row);
   }
 }
