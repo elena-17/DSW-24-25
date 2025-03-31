@@ -5,8 +5,18 @@
   <mat-sidenav #sidenav mode="side" [opened]="isDesktop" class="sidenav">
     <mat-toolbar>Settings</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item routerLink="/profile" class="active-link">Profile</a>
-      <a mat-list-item>Credit Cards</a>
+      <a
+        mat-list-item
+        (click)="setActiveSection('profile')"
+        [class.active]="activeSection === 'profile'"
+        >Profile</a
+      >
+      <a
+        mat-list-item
+        (click)="setActiveSection('creditCards')"
+        [class.active]="activeSection === 'creditCards'"
+        >Credit Cards</a
+      >
     </mat-nav-list>
   </mat-sidenav>
 
@@ -25,7 +35,7 @@
     </mat-toolbar>
 
     <div class="sections">
-      <section id="profile-section">
+      <section *ngIf="activeSection === 'profile'">
         <h2>Profile</h2>
         <h4>Manage settings for your Zap's profile</h4>
         <hr />
@@ -111,9 +121,8 @@
           <mat-icon>save</mat-icon>
           Save Changes
         </button>
-      </section>
 
-      <section id="password-section">
+        <!-- Change password -->
         <h2>Password</h2>
         <h4>
           Here you can change your password. Pasword must contein uppercase,
@@ -200,18 +209,79 @@
           <mat-icon>key_vertical</mat-icon>
           Change Password
         </button>
+
+        <!-- Delete account -->
+        <div class="delete-section">
+          <h2>Delete Account</h2>
+          <h4>
+            Once you delete your account, there's no going back. Please be
+            certain.
+          </h4>
+          <hr />
+          <button
+            mat-flat-button
+            class="delete-button"
+            (click)="deleteAccount()"
+          >
+            <mat-icon>delete</mat-icon>
+            Delete Account
+          </button>
+        </div>
       </section>
 
-      <section id="delete-section">
-        <h2>Delete Account</h2>
-        <h4>
-          Once you delete your account, there's no going back. Please be
-          certain.
-        </h4>
-        <hr />
-        <button mat-flat-button class="delete-button" (click)="deleteAccount()">
-          <mat-icon>delete</mat-icon>
-          Delete account
+      <!-- Credit Cards section -->
+      <section
+        *ngIf="activeSection === 'creditCards'"
+        class="credit-cards-section"
+      >
+        <h2>Credit Cards</h2>
+        <h4>Manage your saved credit cards</h4>
+        <hr class="section-divider" />
+        <div class="creditcard-list">
+          <div *ngIf="creditCards.length > 0" class="credit-cards-grid">
+            <div *ngFor="let card of creditCards" class="credit-card">
+              <div class="card-header">
+                <span class="card-name">{{
+                  card.card_alias || "Unnamed Card"
+                }}</span>
+                <button
+                  mat-icon-button
+                  color="primary"
+                  class="edit-btn"
+                  (click)="editCard(card)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </div>
+              <div class="card-body">
+                <div class="card-owner">
+                  <strong>Owner:</strong> {{ card.owner_name }}
+                </div>
+                <div class="card-number">
+                  **** **** **** {{ card.number.slice(-4) }}
+                </div>
+              </div>
+              <button
+                mat-icon-button
+                color="warn"
+                class="delete-btn"
+                (click)="deleteCard(card.number)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+          <p *ngIf="creditCards.length === 0" class="no-cards-text">
+            No credit cards saved.
+          </p>
+        </div>
+        <button
+          mat-flat-button
+          color="primary"
+          class="add-card-button"
+          (click)="openAddCardDialog()"
+        >
+          <mat-icon>add</mat-icon> Add New Card
         </button>
       </section>
     </div>

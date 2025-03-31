@@ -1,0 +1,72 @@
+<div class="manage_card_form">
+  <h2>{{ dialogTitle }}</h2>
+  <form [formGroup]="manageCardForm" (ngSubmit)="onSave()">
+    <div class="form-grid">
+      <!-- Card Number -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Card Number</mat-label>
+        <input 
+          matInput 
+          type="text" 
+          formControlName="number" 
+          required 
+          [readonly]="isEditMode" 
+          [disabled]="isEditMode" />
+        <mat-error *ngIf="manageCardForm.get('number')?.invalid">
+          {{ getErrorMessage("number") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Owner Name -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Owner Name</mat-label>
+        <input matInput type="text" formControlName="owner_name" required readonly="false"/>
+        <mat-error *ngIf="manageCardForm.get('owner_name')?.invalid">
+          {{ getErrorMessage("owner_name") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Expiration Date -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Expiration Date (MM/YY)</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="expiration_date"
+          required
+          readonly="false"
+        />
+        <mat-error *ngIf="manageCardForm.get('expiration_date')?.invalid">
+          {{ getErrorMessage("expiration_date") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Card Alias -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Card Alias (Optional)</mat-label>
+        <input matInput type="text" formControlName="card_alias" readonly="false" />
+      </mat-form-field>
+    </div>
+
+    <!-- Save and Cancel Buttons -->
+    <div class="form-buttons">
+      <button
+        mat-stroked-button
+        color="warn"
+        type="button"
+        (click)="onCancel()"
+      >
+        Cancel
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        (click)="onAccept()"
+        [disabled]="manageCardForm.invalid"
+      >
+        Save
+      </button>
+    </div>
+  </form>
+</div>

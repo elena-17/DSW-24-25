@@ -6,6 +6,7 @@ import { MatListModule } from "@angular/material/list";
 import { CommonModule } from "@angular/common";
 import { MatDialog } from "@angular/material/dialog";
 import { DeleteAccountDialogComponent } from "./delete-account-dialog/delete-account-dialog.component";
+import { ManageCreditcardsComponent } from "./manage-creditcards/manage-creditcards.component";
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -19,9 +20,11 @@ import { PasswordValidators } from "../password.validators";
 import { Router } from "@angular/router";
 import { MaterialModule } from "../material.module";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatTabsModule } from "@angular/material/tabs";
 
 @Component({
   selector: "app-profile-page",
+  standalone: true,
   imports: [
     CommonModule,
     ToolbarComponent,
@@ -31,6 +34,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    MatTabsModule,
   ],
   templateUrl: "./profile-page.component.html",
   styleUrl: "./profile-page.component.scss",
@@ -43,6 +47,8 @@ export class ProfilePageComponent {
   showPasswordForm: boolean = false;
   hidePassword = true;
   hideConfirmPassword = true;
+  creditCards: any[] = [];
+  activeSection: string = "profile"; // 'profile' default
 
   constructor(
     private dialog: MatDialog,
@@ -80,6 +86,28 @@ export class ProfilePageComponent {
         ),
       },
     );
+
+    //Create an example for credit cards
+    /*this.creditCards = [
+      {
+        number: "1234567890123456",
+        owner_name: "John Doe",
+        expiration_date: "12/25",
+        card_alias: "Personal Card",
+      },
+      {
+        number: "9876543210987654",
+        owner_name: "Jane Smith",
+        expiration_date: "11/24",
+        card_alias: "Business Card",
+      },
+      {
+        number: "5555 4444 3333 2222",
+        owner_name: "Alice Johnson",
+        expiration_date: "10/23",
+        card_alias: "Travel Card",
+      },
+    ];*/
   }
 
   ngOnInit(): void {
@@ -88,6 +116,7 @@ export class ProfilePageComponent {
       return;
     }
     this.loadUserInfo();
+    this.loadCreditCards();
     this.settingsForm.valueChanges.subscribe(() => {
       this.checkFormChanges();
     });
@@ -99,9 +128,45 @@ export class ProfilePageComponent {
     this.isDesktop = event.target.innerWidth > 768;
   }
 
+  setActiveSection(section: string): void {
+    this.activeSection = section;
+  }
+
   deleteAccount() {
     const dialogRef = this.dialog.open(DeleteAccountDialogComponent, {
       width: "270px",
+      data: { type: "account" },
+    });
+  }
+
+  openAddCardDialog() {
+    const dialogRef = this.dialog.open(ManageCreditcardsComponent, {
+      data: { title: "Add New Credit Card" },
+      width: "75%",
+      height: "40%",
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.creditCards.push(result);
+      }
+    });
+  }
+
+  editCard(card: any) {
+    const dialogRef = this.dialog.open(ManageCreditcardsComponent, {
+      data: {
+        title: "Edit Credit Card",
+        card: card,
+      },
+      width: "75%",
+      height: "40%",
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadCreditCards();
+      }
     });
   }
 
@@ -139,6 +204,32 @@ export class ProfilePageComponent {
       },
     });
   }
+
+  loadCreditCards(): void {
+    this.userService.getCreditCards().subscribe({
+      next: (response) => {
+        this.creditCards = response;
+      },
+      error: () => {
+        this.snackBar.open("Failed to load credit cards.", "Close", {
+          duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      },
+    });
+  }
+
+  deleteCard(card: any): void {
+    const dialogRef = this.dialog.open(DeleteAccountDialogComponent, {
+      width: "300px",
+      data: { type: "creditCard", card: card },
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      this.loadCreditCards();
+    });
+  }
+
   checkFormChanges(): void {
     this.isFormModified = Object.keys(this.settingsForm.controls).some(
       (key) =>

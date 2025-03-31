@@ -8,11 +8,18 @@ import { HttpHeaders } from "@angular/common/http";
 })
 export class UserService {
   private baseApiUrl = "http://localhost:8000/user";
+  private creditApiUrl = "http://localhost:8000/creditcards";
 
   private urlUserProfile = `${this.baseApiUrl}/profile/`;
   private urlUpdateUserProfile = `${this.baseApiUrl}/profile/update/`;
   private urlDeleteUserAccount = `${this.baseApiUrl}/profile/delete/`;
   private urlChangePassword = `${this.baseApiUrl}/profile/password/`;
+
+  // URL for credit cards
+  private urlAddCreditCard = `${this.creditApiUrl}/create/`;
+  private urlUpdateCreditCard = `${this.creditApiUrl}/update/`;
+  private urlDeleteCreditCard = `${this.creditApiUrl}/delete/`;
+  private urlGetCreditCards = `${this.creditApiUrl}/`;
 
   constructor(private http: HttpClient) {}
 
@@ -44,7 +51,33 @@ export class UserService {
 
   deleteUserAccount(): Observable<any> {
     return this.http.delete<any>(this.urlDeleteUserAccount, {
-      withCredentials: true, // Si necesitas enviar cookies
+      withCredentials: true,
+    });
+  }
+
+  getCreditCards(): Observable<any> {
+    return this.http.get<any>(this.urlGetCreditCards, {
+      withCredentials: true,
+    });
+  }
+
+  addCreditCard(cardData: any): Observable<any> {
+    return this.http.post<any>(this.urlAddCreditCard, cardData, {
+      withCredentials: true,
+    });
+  }
+
+  updateCreditCard(cardData: any): Observable<any> {
+    return this.http.put<any>(this.urlUpdateCreditCard, cardData, {
+      withCredentials: true,
+    });
+  }
+
+  deleteCreditCard(card: any): Observable<any> {
+    const body = { number: card }; 
+    return this.http.delete<any>(this.urlDeleteCreditCard, {
+      body: body, 
+      withCredentials: true,
     });
   }
 }
