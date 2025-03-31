@@ -8,7 +8,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 
 import { UserService } from "../../services/user.service";
-import { AuthService } from "../../services/auth.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
 

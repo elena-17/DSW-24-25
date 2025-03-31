@@ -74,9 +74,9 @@ export class UserService {
   }
 
   deleteCreditCard(card: any): Observable<any> {
-    const body = { number: card }; // Asegúrate de enviar el cuerpo con el número de tarjeta
+    const body = { number: card }; 
     return this.http.delete<any>(this.urlDeleteCreditCard, {
-      body: body, // Aquí se pasa el cuerpo de la solicitud
+      body: body, 
       withCredentials: true,
     });
   }
