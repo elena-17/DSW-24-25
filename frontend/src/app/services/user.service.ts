@@ -74,11 +74,12 @@ export class UserService {
   }
 
   deleteCreditCard(card: any): Observable<any> {
-    // Usamos 'http.request' para hacer un DELETE con un cuerpo
-    return this.http.request('DELETE', this.urlDeleteCreditCard, {
-      body: { number: card.number },  // Pasamos el número de tarjeta en el cuerpo
+    const body = { number: card };  // Asegúrate de enviar el cuerpo con el número de tarjeta
+    return this.http.delete<any>(this.urlDeleteCreditCard, {
+      body: body,  // Aquí se pasa el cuerpo de la solicitud
       withCredentials: true,
     });
   }
+  
   
 }
