@@ -1,11 +1,33 @@
 <app-toolbar></app-toolbar>
 
 <mat-tab-group animationDuration="0ms">
-  <mat-tab label="Sent">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon" style="color: #f44336"
+        >call_made</mat-icon
+      >
+      Sent
+    </ng-template>
     <div *ngIf="loading" class="loading-container">
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
     <div class="page-container">
+      <div class="underlined-title">
+        <div class="title-buttons">
+          <h2>Sent Transactions</h2>
+          <div class="money-buttons">
+            <button mat-flat-button (click)="sendTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Send Money
+            </button>
+            <button mat-stroked-button (click)="requestTransaction()">
+              <mat-icon>quiz</mat-icon>
+              Ask for Money
+            </button>
+          </div>
+        </div>
+        <hr />
+      </div>
       <app-table
         [columns]="columns"
         [data]="sender"
@@ -15,11 +37,21 @@
       </app-table>
     </div>
   </mat-tab>
-  <mat-tab label="Received">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon" style="color: #4caf50"
+        >call_received</mat-icon
+      >
+      Received
+    </ng-template>
     <div *ngIf="loading" class="loading-container">
       <mat-spinner></mat-spinner>
     </div>
     <div class="page-container">
+      <div class="underlined-title">
+        <h2>Received Transactions</h2>
+        <hr />
+      </div>
       <app-table
         [columns]="columns"
         [data]="receiver"

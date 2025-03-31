@@ -5,7 +5,9 @@ import {
   EventEmitter,
   ViewChild,
   AfterViewInit,
+  OnChanges,
   OnInit,
+  SimpleChanges,
 } from "@angular/core";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
@@ -22,7 +24,7 @@ import { TableColumn } from "./table-column.model";
   styleUrls: ["./table.component.scss"],
   imports: [MaterialModule, CommonModule, BadgeComponent],
 })
-export class TableComponent<T> implements AfterViewInit, OnInit {
+export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
   @Input() columns: TableColumn<T>[] = [];
 
   @Input() data: T[] = [];
@@ -51,6 +53,12 @@ export class TableComponent<T> implements AfterViewInit, OnInit {
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["data"]) {
+      this.dataSource.data = this.data;
+    }
   }
 
   isAllSelected(): boolean {

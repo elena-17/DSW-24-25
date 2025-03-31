@@ -13,37 +13,53 @@ import { TableComponent } from "../shared/table/table.component";
 const SENDER_DATA = [
   {
     id: 1,
-    user: "user1",
+    receiver: "user1",
     date: "2023-01-01",
     amount: 100,
     title: "Transaction 1",
-    status: "Completed",
+    status: "Approved",
   },
   {
     id: 2,
-    user: "user2",
+    receiver: "user2",
     date: "2023-01-02",
     amount: 200,
     title: "Transaction 2",
     status: "Pending",
   },
+  {
+    id: 2,
+    receiver: "user2",
+    date: "2023-01-02",
+    amount: 200,
+    title: "Transaction 2",
+    status: "Rejected",
+  },
 ];
 const RECEIVER_DATA = [
   {
     id: 1,
-    user: "user3",
+    sender: "user3",
     date: "2023-01-03",
     amount: 150,
     title: "Transaction 3",
-    status: "Completed",
+    status: "Approved",
   },
   {
     id: 2,
-    user: "user4",
+    sender: "user4",
     date: "2023-01-04",
     amount: 250,
     title: "Transaction 4",
     status: "Pending",
+  },
+  {
+    id: 3,
+    sender: "user4",
+    date: "2023-01-04",
+    amount: 250,
+    title: "Transaction 4",
+    status: "Rejected",
   },
 ];
 
@@ -70,12 +86,17 @@ export class TransactionsComponent implements OnInit {
     {
       columnDef: "title",
       header: "Title",
-      cell: (element: any) => `${element.title}`,
+      cell: (element: any) => element.title,
+      component: "text-icon",
+      getComponentProps: (element: any) => ({
+        text: element.title,
+        icon: element.sender ? "call_received" : "call_made",
+      }),
     },
     {
       columnDef: "user",
       header: "User",
-      cell: (element: any) => `${element.user}`,
+      cell: (element: any) => `${element.sender || element.receiver}`,
     },
     {
       columnDef: "amount",
@@ -90,7 +111,13 @@ export class TransactionsComponent implements OnInit {
     {
       columnDef: "status",
       header: "Status",
-      cell: (element: any) => `${element.status}`,
+      cell: (element: any) => element.status,
+      component: "badge",
+      getComponentProps: (element: any) => ({
+        text: element.status,
+        icon: this.getStatusIcon(element.status),
+        class: element.status.toLowerCase(),
+      }),
     },
   ];
 
@@ -117,4 +144,34 @@ export class TransactionsComponent implements OnInit {
     //   this.loading = false;
     // });
   }
+
+  getStatusIcon(status: string): string {
+    switch (status.toLowerCase()) {
+      case "approved":
+        return "task_alt";
+      case "pending":
+        return "hourglass_empty";
+      case "rejected":
+        return "block";
+      default:
+        return "help_outline";
+    }
+  }
+
+  sendTransaction() {
+    console.log("Send transaction clicked");
+    const defaultTransaction = {
+      id: this.sender.length + 1,
+      receiver: "user1",
+      date: "2023-01-01",
+      amount: 100,
+      title: "Transaction 1",
+      status: "Approved",
+    };
+    console.log(this.sender);
+    this.sender = [defaultTransaction, ...this.sender];
+    console.log(this.sender);
+  }
+
+  requestTransaction() {}
 }
