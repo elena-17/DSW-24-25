@@ -5,7 +5,13 @@
       <!-- Card Number -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Card Number</mat-label>
-        <input matInput type="text" formControlName="number" required />
+        <input 
+          matInput 
+          type="text" 
+          formControlName="number" 
+          required 
+          [readonly]="isEditMode" 
+          [disabled]="isEditMode" />
         <mat-error *ngIf="manageCardForm.get('number')?.invalid">
           {{ getErrorMessage("number") }}
         </mat-error>
@@ -14,7 +20,7 @@
       <!-- Owner Name -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Owner Name</mat-label>
-        <input matInput type="text" formControlName="owner_name" required />
+        <input matInput type="text" formControlName="owner_name" required readonly="false"/>
         <mat-error *ngIf="manageCardForm.get('owner_name')?.invalid">
           {{ getErrorMessage("owner_name") }}
         </mat-error>
@@ -28,6 +34,7 @@
           type="text"
           formControlName="expiration_date"
           required
+          readonly="false"
         />
         <mat-error *ngIf="manageCardForm.get('expiration_date')?.invalid">
           {{ getErrorMessage("expiration_date") }}
@@ -37,7 +44,7 @@
       <!-- Card Alias -->
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Card Alias (Optional)</mat-label>
-        <input matInput type="text" formControlName="card_alias" />
+        <input matInput type="text" formControlName="card_alias" readonly="false" />
       </mat-form-field>
     </div>
 
