@@ -88,7 +88,7 @@ export class ProfilePageComponent {
     );
 
     //Create an example for credit cards
-    this.creditCards = [
+    /*this.creditCards = [
       {
         number: "1234567890123456",
         owner_name: "John Doe",
@@ -107,7 +107,7 @@ export class ProfilePageComponent {
         expiration_date: "10/23",
         card_alias: "Travel Card",
       },
-    ];
+    ];*/
   }
 
   ngOnInit(): void {
@@ -213,7 +213,19 @@ export class ProfilePageComponent {
   }
 
   loadCreditCards(): void {
-    // Implement API call if necessary
+    this.userService.getCreditCards().subscribe({
+      next: (response) => {
+        this.creditCards = response;
+      },
+      error: () => {
+        this.snackBar.open("Failed to load credit cards.", "Close", {
+          duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      },
+    });
+
   }
 
   deleteCard(card: any): void {

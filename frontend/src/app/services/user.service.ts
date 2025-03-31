@@ -8,7 +8,7 @@ import { HttpHeaders } from "@angular/common/http";
 })
 export class UserService {
   private baseApiUrl = "http://localhost:8000/user";
-  private creditApiUrl = "http://localhost:8000/creditcard";
+  private creditApiUrl = "http://localhost:8000/creditcards";
 
   private urlUserProfile = `${this.baseApiUrl}/profile/`;
   private urlUpdateUserProfile = `${this.baseApiUrl}/profile/update/`;
