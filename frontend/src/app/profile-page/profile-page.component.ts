@@ -143,12 +143,12 @@ export class ProfilePageComponent {
     const dialogRef = this.dialog.open(ManageCreditcardsComponent, {
       data: { title: "Add New Credit Card" },
       width: "75%",
-      height: "40%",
+      height: "50%",
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.creditCards.push(result);
+        this.loadCreditCards();
       }
     });
   }
@@ -160,7 +160,7 @@ export class ProfilePageComponent {
         card: card,
       },
       width: "75%",
-      height: "40%",
+      height: "50%",
     });
 
     dialogRef.afterClosed().subscribe((result) => {
