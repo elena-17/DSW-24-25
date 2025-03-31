@@ -1,9 +1,17 @@
-<h2 mat-dialog-title>Delete Account</h2>
+<h2 mat-dialog-title>
+  {{ data.type === "account" ? "Delete Account" : "Delete Credit Card" }}
+</h2>
 
 <mat-dialog-content>
-  <p>To confirm, type <strong>DELETE</strong> below:</p>
+  <p>
+    {{
+      data.type === "account"
+        ? "To confirm, type DELETE below:"
+        : "Are you sure you want to delete this credit card?"
+    }}
+  </p>
 
-  <mat-form-field appearance="outline" class="full-width">
+  <mat-form-field *ngIf="data.type === 'account'" appearance="outline" class="full-width">
     <mat-label>Type DELETE</mat-label>
     <input matInput [(ngModel)]="confirmationText" />
   </mat-form-field>
@@ -14,9 +22,10 @@
   <button
     mat-flat-button
     class="confirm-button"
-    (click)="deleteAccount()"
-    [disabled]="confirmationText !== 'DELETE'"
+    (click)="confirmDeletion()"
+    [disabled]="data.type === 'account' && confirmationText !== 'DELETE'"
   >
     Delete
   </button>
 </mat-dialog-actions>
+

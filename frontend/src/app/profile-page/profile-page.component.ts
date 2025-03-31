@@ -135,6 +135,7 @@ export class ProfilePageComponent {
   deleteAccount() {
     const dialogRef = this.dialog.open(DeleteAccountDialogComponent, {
       width: "270px",
+      data: { type: "account" },
     });
   }
 
@@ -164,13 +165,16 @@ export class ProfilePageComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        //Here you can handle the result, like updating the card in the list
-        console.log("Tarjeta editada:", result);
+        // Update the card in the list
         const index = this.creditCards.findIndex(
-          (c) => c.number === result.number,
+          (c) => c.number === card.number,
         );
+        // If the card was found, update it
         if (index !== -1) {
           this.creditCards[index] = result;
+        } else {
+          // If not found, add the new card to the list
+          this.creditCards.push(result);
         }
       }
     });
@@ -228,7 +232,17 @@ export class ProfilePageComponent {
   }
 
   deleteCard(card: any): void {
-    // Implement API call if necessary
+    const dialogRef = this.dialog.open(DeleteAccountDialogComponent, {
+      width: "300px",
+      data: { type: "creditCard", card: card },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.creditCards = this.creditCards.filter(
+          (c) => c.number !== card.number
+        );
+      }
+    });
   }
 
   checkFormChanges(): void {

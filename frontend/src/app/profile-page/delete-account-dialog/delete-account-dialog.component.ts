@@ -1,5 +1,5 @@
-import { Component } from "@angular/core";
-import { MatDialogRef } from "@angular/material/dialog";
+import { Component, Inject } from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA  } from "@angular/material/dialog";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
@@ -33,10 +33,19 @@ export class DeleteAccountDialogComponent {
     private userService: UserService,
     private snackBar: MatSnackBar,
     private router: Router,
+    @Inject(MAT_DIALOG_DATA) public data: { type: "account" | "creditCard"; card?: string },
   ) {}
 
   close() {
     this.dialogRef.close();
+  }
+
+  confirmDeletion(): void {
+    if (this.data.type === "account") {
+      this.deleteAccount();
+    } else if (this.data.type === "creditCard" && this.data.card) {
+      this.deleteCreditCard(this.data.card);
+    }
   }
 
   deleteAccount() {
@@ -58,4 +67,24 @@ export class DeleteAccountDialogComponent {
     });
     this.dialogRef.close();
   }
+
+  deleteCreditCard(cardNumber: string) {
+    this.userService.deleteCreditCard(cardNumber).subscribe({
+      next: () => {
+        this.snackBar.open("Credit card deleted successfully.", "Close", {
+          duration: 2000,
+        });
+      },
+      error: () => {
+        this.snackBar.open("Failed to delete credit card.", "Close", {
+          duration: 3000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      },
+    });
+    this.dialogRef.close();
+  }
+
+
 }
