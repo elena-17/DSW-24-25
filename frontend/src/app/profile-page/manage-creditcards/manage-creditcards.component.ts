@@ -7,6 +7,7 @@ import { MatInputModule } from "@angular/material/input";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { UserService } from "../../services/user.service";
 @Component({
   selector: "app-manage-creditcards",
@@ -30,6 +31,7 @@ export class ManageCreditcardsComponent {
   constructor(
     private dialogRef: MatDialogRef<ManageCreditcardsComponent>,
     private formBuilder: FormBuilder,
+    private matSnackBar: MatSnackBar,
     private userService: UserService, // Usamos UserService
     @Inject(MAT_DIALOG_DATA) public data: { title: string; card?: any },
   ) {
@@ -60,21 +62,37 @@ export class ManageCreditcardsComponent {
       if (this.isEditMode) {
         this.userService.updateCreditCard(formData).subscribe(
           (response) => {
-            console.log("Card updated successfully:", response);
+            this.matSnackBar.open("Card updated successfully", "Close", {
+              duration: 2000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
             this.dialogRef.close(response);
           },
-          (error) => {
-            console.error("Error updating card:", error);
+          () => {
+            this.matSnackBar.open("Error updating card", "Close", {
+              duration: 3000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
           },
         );
       } else {
         this.userService.addCreditCard(formData).subscribe(
           (response) => {
-            console.log("Card added successfully:", response);
+            this.matSnackBar.open("Card added successfully", "Close", {
+              duration: 2000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
             this.dialogRef.close(response);
           },
-          (error) => {
-            console.error("Error adding card:", error);
+          () => {
+            this.matSnackBar.open("Error adding card", "Close", {
+              duration: 3000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
           },
         );
       }

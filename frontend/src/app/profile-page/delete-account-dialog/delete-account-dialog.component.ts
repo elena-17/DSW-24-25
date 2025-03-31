@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA  } from "@angular/material/dialog";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
@@ -33,7 +33,8 @@ export class DeleteAccountDialogComponent {
     private userService: UserService,
     private snackBar: MatSnackBar,
     private router: Router,
-    @Inject(MAT_DIALOG_DATA) public data: { type: "account" | "creditCard"; card?: string },
+    @Inject(MAT_DIALOG_DATA)
+    public data: { type: "account" | "creditCard"; card?: string },
   ) {}
 
   close() {
@@ -53,6 +54,7 @@ export class DeleteAccountDialogComponent {
       next: () => {
         this.snackBar.open("Account deleted successfully.", "Close", {
           duration: 2000,
+          verticalPosition: "top",
         });
         this.router.navigate([""]);
         sessionStorage.clear();
@@ -73,6 +75,7 @@ export class DeleteAccountDialogComponent {
       next: () => {
         this.snackBar.open("Credit card deleted successfully.", "Close", {
           duration: 2000,
+          verticalPosition: "top",
         });
       },
       error: () => {
@@ -85,6 +88,4 @@ export class DeleteAccountDialogComponent {
     });
     this.dialogRef.close();
   }
-
-
 }

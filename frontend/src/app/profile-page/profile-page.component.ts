@@ -165,17 +165,7 @@ export class ProfilePageComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // Update the card in the list
-        const index = this.creditCards.findIndex(
-          (c) => c.number === card.number,
-        );
-        // If the card was found, update it
-        if (index !== -1) {
-          this.creditCards[index] = result;
-        } else {
-          // If not found, add the new card to the list
-          this.creditCards.push(result);
-        }
+        this.loadCreditCards();
       }
     });
   }
@@ -228,7 +218,6 @@ export class ProfilePageComponent {
         });
       },
     });
-
   }
 
   deleteCard(card: any): void {
@@ -236,12 +225,8 @@ export class ProfilePageComponent {
       width: "300px",
       data: { type: "creditCard", card: card },
     });
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.creditCards = this.creditCards.filter(
-          (c) => c.number !== card.number
-        );
-      }
+    dialogRef.afterClosed().subscribe((result) => {
+      this.loadCreditCards();
     });
   }
 
