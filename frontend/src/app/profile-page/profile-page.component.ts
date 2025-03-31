@@ -209,6 +209,7 @@ export class ProfilePageComponent {
     this.userService.getCreditCards().subscribe({
       next: (response) => {
         this.creditCards = response;
+        this.creditCards.sort((a, b) => a.number.localeCompare(b.number));
       },
       error: () => {
         this.snackBar.open("Failed to load credit cards.", "Close", {
