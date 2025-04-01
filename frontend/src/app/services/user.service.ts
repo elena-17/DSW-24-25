@@ -74,9 +74,9 @@ export class UserService {
   }
 
   deleteCreditCard(card: any): Observable<any> {
-    const body = { number: card }; 
+    const body = { number: card };
     return this.http.delete<any>(this.urlDeleteCreditCard, {
-      body: body, 
+      body: body,
       withCredentials: true,
     });
   }

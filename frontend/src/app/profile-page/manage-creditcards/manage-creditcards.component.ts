@@ -32,7 +32,7 @@ export class ManageCreditcardsComponent {
     private dialogRef: MatDialogRef<ManageCreditcardsComponent>,
     private formBuilder: FormBuilder,
     private matSnackBar: MatSnackBar,
-    private userService: UserService, 
+    private userService: UserService,
     @Inject(MAT_DIALOG_DATA) public data: { title: string; card?: any },
   ) {
     this.dialogTitle = data.title;
@@ -41,7 +41,7 @@ export class ManageCreditcardsComponent {
     this.manageCardForm = this.formBuilder.group({
       number: [
         data.card?.number,
-        [Validators.required, Validators.pattern(/^\d{16}$/)], 
+        [Validators.required, Validators.pattern(/^\d{16}$/)],
       ],
       owner_name: [
         data.card?.owner_name,
@@ -51,7 +51,7 @@ export class ManageCreditcardsComponent {
         data.card?.expiration_date,
         [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)], // MM/YY
       ],
-      card_alias: [data.card?.card_alias, [Validators.maxLength(100)]], 
+      card_alias: [data.card?.card_alias, [Validators.maxLength(100)]],
     });
   }
 

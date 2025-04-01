@@ -143,7 +143,7 @@ export class ProfilePageComponent {
     const dialogRef = this.dialog.open(ManageCreditcardsComponent, {
       data: { title: "Add New Credit Card" },
       width: "75%",
-      height: "50%",
+      height: "55%",
     });
 
     dialogRef.afterClosed().subscribe((result) => {
