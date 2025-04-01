@@ -8,6 +8,9 @@ import { TransactionsService } from "../services/transactions.service";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { CommonModule } from "@angular/common";
 import { TableComponent } from "../shared/table/table.component";
+import { MatDialog } from "@angular/material/dialog";
+import { CreateTransactionComponent } from "./create-transaction/create-transaction.component";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 //test data
 const SENDER_DATA = [
@@ -122,9 +125,11 @@ export class TransactionsComponent implements OnInit {
   ];
 
   constructor(
+    private dialog: MatDialog,
     private router: Router,
     private authService: AuthService,
     private transactionsService: TransactionsService,
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit() {
@@ -132,17 +137,18 @@ export class TransactionsComponent implements OnInit {
       this.router.navigate(["error-page"]);
       return;
     }
-    this.sender = SENDER_DATA; // Replace with actual data fetching logic
-    this.receiver = RECEIVER_DATA; // Replace with actual data fetching logic
-    // this.transactionsService.getLoading().subscribe(isLoading => {
-    //   this.loading = isLoading;
-    // });
+    // this.sender = []; // Replace with actual data fetching logic
+    // this.receiver = RECEIVER_DATA; // Replace with actual data fetching logic
+    this.transactionsService.getLoading().subscribe(isLoading => {
+      this.loading = isLoading;
+    });
 
-    // this.transactionsService.fetch().subscribe(({ receiver, sender }) => {
-    //   this.receiver = receiver;
-    //   this.sender = sender;
-    //   this.loading = false;
-    // });
+    this.transactionsService.fetch().subscribe(({ receiver, sender }) => {
+      console.log("Sender:", sender);
+      this.receiver = [...receiver];
+      this.sender = [...sender];
+      this.loading = false;
+    });
   }
 
   getStatusIcon(status: string): string {
@@ -173,5 +179,36 @@ export class TransactionsComponent implements OnInit {
     console.log(this.sender);
   }
 
-  requestTransaction() {}
+  requestTransaction() {
+     const dialogRef = this.dialog.open(CreateTransactionComponent, {
+          data: { title: "Ask for Money" },
+          width: "75%",
+          height: "55%",
+        });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log("Transaction requested:", result);
+          this.transactionsService.requestMoney(result.user, result.amount, result.title).subscribe({
+            next: (response) => {
+             console.log("Transaction requested successfully:", response);
+             this.receiver = [response, ...this.receiver];
+            },
+            error: (error) => {
+              console.error("Registration failed:", error);
+              console.error("Error message:", error.error);
+              this.snackBar.open(
+                "Registration failed. Please try again.",
+                "OK",
+                {
+                  duration: 5000,
+                  horizontalPosition: "center",
+                  verticalPosition: "top",
+                },
+              );
+            },
+          });
+        
+      }
+    });
+  }
 }

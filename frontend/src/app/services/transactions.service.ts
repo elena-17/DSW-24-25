@@ -21,10 +21,13 @@ export class TransactionsService {
   private loading = new BehaviorSubject<boolean>(false);
   private loadingSender = new BehaviorSubject<boolean>(false);
   private loadingReceiver = new BehaviorSubject<boolean>(false);
-  private baseApiUrl = "http://localhost:8000/transacciones";
-  //check if this is the correct url
-  private urlSender = `${this.baseApiUrl}/transactions/sender`;
-  private urlReceiver = `${this.baseApiUrl}/transactions/receiver`;
+  
+  private baseApiUrl = "http://localhost:8000/transactions";
+
+  private urlSender = `${this.baseApiUrl}/sender/`;
+  private urlReceiver = `${this.baseApiUrl}/receiver/`;
+  private urlSendMoney = `${this.baseApiUrl}/send-money/`;
+  private urlRequestMoney = `${this.baseApiUrl}/request-money/`;
 
   constructor(private http: HttpClient) {}
 
@@ -38,8 +41,11 @@ export class TransactionsService {
       }).pipe(
         tap({
           next: ({ receiver, sender }) => {
-            this.receiver.next(receiver);
-            this.sender.next(sender);
+            console.log("Receiver-:", receiver);
+            console.log("Sender-:", sender);
+
+            this.receiver.next([...receiver]);
+            this.sender.next([...sender]);
             this.loading.next(false);
           },
         }),
@@ -73,4 +79,34 @@ export class TransactionsService {
   getLoading(): Observable<boolean> {
     return this.loading.asObservable();
   }
+
+  sendMoney(receivers: string[], amount: number, title: string, description?: string): Observable<any> {
+    const payload = {
+      receivers: Array.isArray(receivers) ? receivers : [receivers],
+      amount,
+      title,
+      description,
+    };
+
+    return this.http.post<any>(this.urlSendMoney, payload).pipe(
+      tap((response) => {
+        console.log("Money sent successfully:", response);
+      }),
+    );
+  }
+
+  requestMoney(senders: string[], amount: number, title: string, description?: string): Observable<any> {
+    const payload = {
+      senders: Array.isArray(senders) ? senders : [senders],
+      amount,
+      title,
+      description,
+    };
+
+    return this.http.post<any>(this.urlRequestMoney, payload).pipe(
+      tap((response) => {
+        console.log("Money requested successfully:", response);
+      }),
+    );
+  } 
 }
