@@ -23,20 +23,10 @@ class TransactionSerializer(serializers.ModelSerializer):
 
 
 class SendTransactionSerializer(serializers.Serializer):
-    sender = serializers.EmailField(required=True)
     receivers = serializers.ListField(child=serializers.EmailField(), required=True, allow_empty=False)
     amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=True)
     title = serializers.CharField(max_length=100, required=True)
     description = serializers.CharField(max_length=500, required=False, allow_blank=True)
-
-    class Meta:
-        model = Transaction
-        fields = ["sender", "receivers", "amount", "title", "description"]
-
-    def validate_sender(self, value):
-        if not User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Sender does not exist.")
-        return value
 
     def validate_receivers(self, value):
         receivers = User.objects.filter(email__in=value)
@@ -49,7 +39,7 @@ class SendTransactionSerializer(serializers.Serializer):
 
     def validate(self, data):
         # sender and receivers are already validated
-        sender = User.objects.get(email=data["sender"])
+        sender = self.context["request"].user
         receivers = User.objects.filter(email__in=data["receivers"])
         total_amount = data["amount"] * len(receivers)
 
@@ -78,19 +68,9 @@ class SendTransactionSerializer(serializers.Serializer):
 
 class RequestTransactionSerializer(serializers.Serializer):
     senders = serializers.ListField(child=serializers.EmailField(), required=True, allow_empty=False)
-    receiver = serializers.EmailField(required=True)
     amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=True)
     title = serializers.CharField(max_length=100, required=True)
     description = serializers.CharField(max_length=500, required=False, allow_blank=True)
-
-    class Meta:
-        model = Transaction
-        fields = ["senders", "receiver", "amount", "title", "description"]
-
-    def validate_receiver(self, value):
-        if not User.objects.filter(email=value).exists():
-            raise serializers.ValidationError(f"User with email {value} does not exist.")
-        return value
 
     def validate_senders(self, value):
         users = User.objects.filter(email__in=value)
@@ -103,7 +83,7 @@ class RequestTransactionSerializer(serializers.Serializer):
 
     def validate(self, data):
         senders = User.objects.filter(email__in=data["senders"])
-        receiver = User.objects.get(email=data["receiver"])
+        receiver = self.context["request"].user
 
         data["senders"] = senders
         data["receiver"] = receiver

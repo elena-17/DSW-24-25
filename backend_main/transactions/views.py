@@ -45,7 +45,9 @@ def get_all_transactions_receiver(request):
 
 @api_view(["POST"])
 def send_money(request):
-    serializer = SendTransactionSerializer(data=request.data)
+    request_data = request.data.copy()
+    request_data["sender"] = request.user
+    serializer = SendTransactionSerializer(data=request_data, context={"request": request})
 
     if serializer.is_valid():
         transactions = serializer.save()
@@ -59,7 +61,9 @@ def send_money(request):
 
 @api_view(["POST"])
 def request_money(request):
-    serializer = RequestTransactionSerializer(data=request.data)
+    request_data = request.data.copy()
+    request_data["receiver"] = request.user
+    serializer = RequestTransactionSerializer(data=request_data, context={"request": request})
 
     if serializer.is_valid():
         transactions = serializer.save()
@@ -74,6 +78,12 @@ def request_money(request):
 @api_view(["PUT"])
 def update_transaction_status(request, id):
     transaction = get_object_or_404(Transaction, pk=id)
+
+    if transaction.sender != request.user and transaction.receiver != request.user:
+        return Response(
+            {"error": "You are not authorized to update this transaction."}, status=status.HTTP_403_FORBIDDEN
+        )
+
     serializer = TransactionStatusUpdateSerializer(transaction, data=request.data, partial=True)
 
     if serializer.is_valid():

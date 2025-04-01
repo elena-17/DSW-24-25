@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from users.models import User
 
-from .models import Transaction
+from transactions.models import Transaction
 
 
 class TransactionAPI(APITestCase):
@@ -69,7 +69,6 @@ class TransactionAPI(APITestCase):
 
         # Define the payload for the request
         payload = {
-            "sender": self.user1.email,
             "receivers": [self.user2.email],
             "amount": 50,
             "title": "Payment",
@@ -99,10 +98,9 @@ class TransactionAPI(APITestCase):
     def test_request_money(self):
         request_money_url = reverse("request_money")
 
-        # Define the payload for the request
+        # Define the payload for the request, using user1 as requester
         payload = {
-            "senders": [self.user1.email],
-            "receiver": self.user2.email,
+            "senders": [self.user2.email],
             "amount": 50,
             "title": "Payment",
             "description": "Payment for services",
@@ -119,8 +117,8 @@ class TransactionAPI(APITestCase):
 
         # Verify the transaction was created in the database
         transaction = Transaction.objects.get(id=data["transactions"][0])
-        self.assertEqual(transaction.sender, self.user1)
-        self.assertEqual(transaction.receiver, self.user2)
+        self.assertEqual(transaction.sender, self.user2)
+        self.assertEqual(transaction.receiver, self.user1)
         self.assertEqual(transaction.amount, 50)
         self.assertEqual(transaction.title, "Payment")
         self.assertEqual(transaction.description, "Payment for services")
