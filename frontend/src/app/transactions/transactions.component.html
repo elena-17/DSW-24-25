@@ -35,7 +35,7 @@
       </div>
       <app-table
         [columns]="columns"
-        [data]="pending_receiver"
+        [data]="pendingMyApproval"
         [enableSelection]="false"
         [enableActions]="true"
         (action1)="approveTransaction($event)"
@@ -49,7 +49,7 @@
       </div>
       <app-table
         [columns]="columns"
-        [data]="pending_sender"
+        [data]="pendingOthers"
         [enableSelection]="false"
         [enableActions]="false"
         (action1)="approveTransaction($event)"

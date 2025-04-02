@@ -40,6 +40,7 @@ import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 export class CreateTransactionComponent {
   form: FormGroup;
   contactForm: FormGroup;
+  amountForm: FormGroup;
   dialogTitle: string;
   emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
@@ -55,7 +56,7 @@ export class CreateTransactionComponent {
       contact: ["", [Validators.required, Validators.email]],
     });
 
-    this.form = this.formBuilder.group({
+    this.amountForm = this.formBuilder.group({
       amount: [
         "",
         [
@@ -65,6 +66,9 @@ export class CreateTransactionComponent {
           Validators.pattern(/^\d+(\.\d{1,2})?$/),
         ],
       ],
+    });
+
+    this.form = this.formBuilder.group({
       title: ["", [Validators.required]],
       description: [""],
     });
@@ -79,24 +83,10 @@ export class CreateTransactionComponent {
     if (this.contactForm.valid && this.form.valid) {
       const formData = {
         user: [this.contactForm.value.contact],
+        amount: this.amountForm.value.amount,
         ...this.form.value,
       };
-      console.log("Datos del envío:", formData);
-      // Aquí puedes procesar los datos, llamar a un servicio, etc.
       this.dialogRef.close(formData);
     }
-  }
-
-  //CHECK this
-  getErrorMessage(controlName: string): string {
-    const control = this.form.get(controlName);
-    if (control?.hasError("required")) {
-      return "You must enter a value";
-    } else if (control?.hasError("email")) {
-      return "Not a valid email";
-    } else if (control?.hasError("min")) {
-      return "Amount must be greater than 0";
-    }
-    return "";
   }
 }

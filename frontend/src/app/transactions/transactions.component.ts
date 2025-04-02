@@ -13,6 +13,7 @@ import { CreateTransactionComponent } from "./create-transaction/create-transact
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DatePipe } from "@angular/common";
 import { NotificationService } from "../services/notification.service";
+import { ConfirmDialogComponent } from "../shared/confirm-dialog/confirm-dialog.component";
 
 //test data
 const SENDER_DATA = [
@@ -85,10 +86,9 @@ const RECEIVER_DATA = [
 export class TransactionsComponent implements OnInit {
   sender: any[] = [];
   receiver: any[] = [];
-  pending_sender: any[] = [];
-  pending_receiver: any[] = [];
+  pendingOthers: any[] = [];
+  pendingMyApproval: any[] = [];
   loading: boolean = false;
-  loadingReceiver: boolean = false;
 
   columns = [
     {
@@ -122,7 +122,7 @@ export class TransactionsComponent implements OnInit {
       header: "Date",
       cell: (element: any) =>
         this.datePipe.transform(new Date(element.created_at), "dd/MM/yyyy") ||
-        "Invalid Date",
+        "",
     },
     {
       columnDef: "status",
@@ -166,19 +166,35 @@ export class TransactionsComponent implements OnInit {
       this.receiver = [...receiver];
       this.sender = [...sender];
       this.loading = false;
-      this.pending_receiver = receiver
-        ? receiver.filter(
-            (transaction: { status?: string }) =>
-              transaction.status === "pending",
-          )
-        : [];
-
-      this.pending_sender = sender
-        ? sender.filter(
-            (transaction: { status?: string }) =>
-              transaction.status === "pending",
-          )
-        : [];
+      if (!this.sender || !this.receiver) {
+        this.pendingMyApproval = [];
+        this.pendingOthers = [];
+        return;
+      }
+      this.pendingOthers = [
+        ...this.sender.filter(
+          (transaction) =>
+            transaction.status.toLowerCase() === "pending" &&
+            transaction.type === "send",
+        ),
+        ...this.receiver.filter(
+          (transaction) =>
+            transaction.status.toLowerCase() === "pending" &&
+            transaction.type === "request",
+        ),
+      ];
+      this.pendingMyApproval = [
+        ...this.sender.filter(
+          (transaction) =>
+            transaction.status.toLowerCase() === "pending" &&
+            transaction.type === "request",
+        ),
+        ...this.receiver.filter(
+          (transaction) =>
+            transaction.status.toLowerCase() === "pending" &&
+            transaction.type === "send",
+        ),
+      ];
     });
   }
 
@@ -203,21 +219,24 @@ export class TransactionsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log("Transaction sent:", result);
         this.transactionsService
           .sendMoney(result.user, result.amount, result.title)
           .subscribe({
             next: (response) => {
-              console.log("Transaction sent successfully:", response);
-              this.sender = [response, ...this.sender];
+              this.sender = [...response.transactions, ...this.sender];
+              this.pendingOthers = [
+                ...response.transactions,
+                ...this.pendingOthers,
+              ];
+              this.notificationService.showSuccessMessage(
+                "Transaction sent successfully",
+              );
             },
             error: (error) => {
               console.error("Error message:", error.error);
-              this.snackBar.open("Transaction could not be send.", "OK", {
-                duration: 5000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-              });
+              this.notificationService.showErrorMessage(
+                `Sent operation could not be completed`,
+              );
             },
           });
       }
@@ -232,22 +251,24 @@ export class TransactionsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log("Transaction requested:", result);
         this.transactionsService
           .requestMoney(result.user, result.amount, result.title)
           .subscribe({
             next: (response) => {
-              console.log("Transaction requested successfully:", response);
-              this.receiver = [response, ...this.receiver];
+              this.receiver = [...response.transactions, ...this.receiver];
+              this.pendingOthers = [
+                ...response.transactions,
+                ...this.pendingOthers,
+              ];
+              this.notificationService.showSuccessMessage(
+                "Transaction requested successfully",
+              );
             },
             error: (error) => {
-              console.error("Registration failed:", error);
               console.error("Error message:", error.error);
-              this.snackBar.open("Transaction could not be requested.", "OK", {
-                duration: 5000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-              });
+              this.notificationService.showErrorMessage(
+                `Request operation could not be completed`,
+              );
             },
           });
       }
@@ -258,40 +279,30 @@ export class TransactionsComponent implements OnInit {
     const senderTransaction = this.sender.find((t) => t.id === transaction.id);
     if (senderTransaction) {
       senderTransaction.status = status;
-      console.log("Transaction status updated in sender:", senderTransaction);
     }
 
-    // Buscar en la lista de receiver
     const receiverTransaction = this.receiver.find(
       (t) => t.id === transaction.id,
     );
     if (receiverTransaction) {
       receiverTransaction.status = status;
-      console.log(
-        "Transaction status updated in receiver:",
-        receiverTransaction,
-      );
     }
-    // Eliminar de pending_sender si existe
-    this.pending_sender = this.pending_sender.filter(
+    this.pendingOthers = this.pendingOthers.filter(
       (t) => t.id !== transaction.id,
     );
 
-    // Eliminar de pending_receiver si existe
-    this.pending_receiver = this.pending_receiver.filter(
+    this.pendingMyApproval = this.pendingMyApproval.filter(
       (t) => t.id !== transaction.id,
     );
   }
 
   approveTransaction(transaction: any) {
-    console.log("Transaction approved:", transaction);
     this.transactionsService
       .updateTransaction(transaction.id, "approved")
       .subscribe({
         next: (response) => {
-          console.log("Transaction approved successfully:", response);
-          this.filterTransactionChangeStatus(transaction, "approved");
           this.notificationService.showSuccessMessage("Transaction approved");
+          this.filterTransactionChangeStatus(transaction, "approved");
         },
         error: (error) => {
           console.error("Error approving transaction:", error);
@@ -303,14 +314,13 @@ export class TransactionsComponent implements OnInit {
   }
 
   rejectTransaction(transaction: any) {
-    console.log("Transaction rejected:", transaction);
     this.transactionsService
       .updateTransaction(transaction.id, "rejected")
       .subscribe({
         next: (response) => {
-          console.log("Transaction rejected successfully:", response);
           this.filterTransactionChangeStatus(transaction, "rejected");
           this.notificationService.showSuccessMessage("Transaction rejected");
+          this.blockUser(transaction);
         },
         error: (error) => {
           console.error("Error rejecting transaction:", error);
@@ -319,5 +329,22 @@ export class TransactionsComponent implements OnInit {
           );
         },
       });
+  }
+
+  blockUser(transaction: any) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: "Block User",
+        message:
+          "You have rejected a transaction. Do you also want to block this user?",
+      },
+      width: "25%",
+      height: "25%",
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.notificationService.showSuccessMessage("To be done...");
+      }
+    });
   }
 }
