@@ -31,18 +31,14 @@ def get_all_transactions(request):
 
 @api_view(["GET"])
 def get_all_transactions_sender(request):
-    print(request.user)
     transactions = Transaction.objects.filter(sender=request.user)
-    print("sender", transactions.values_list())
     serializer = TransactionSerializer(transactions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
 def get_all_transactions_receiver(request):
-    print(request.user)
     transactions = Transaction.objects.filter(receiver=request.user)
-    print("receiver", transactions.values_list())
     serializer = TransactionSerializer(transactions, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
