@@ -1,18 +1,27 @@
 import { Component } from "@angular/core";
 import { ToolbarComponent } from "../../toolbar/toolbar.component";
-import { Router, RouterOutlet } from "@angular/router";
+import { Router} from "@angular/router";
 import { AuthService } from "../../services/auth.service";
-
+import { UserService } from "../../services/user.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { CommonModule } from "@angular/common";
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: "app-homepage",
-  imports: [ToolbarComponent, RouterOutlet],
+  standalone: true,
+  imports: [ToolbarComponent, CommonModule, MatIconModule, MatButtonModule, MatCardModule],
   templateUrl: "./homepage.component.html",
   styleUrl: "./homepage.component.scss",
 })
 export class HomepageComponent {
+  balance: number = 0; //Default balance
   constructor(
     private router: Router,
     private authService: AuthService,
+    private userService: UserService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -20,5 +29,38 @@ export class HomepageComponent {
       this.router.navigate(["error-page"]);
       return;
     }
+    this.loadBalance();
   }
+
+  loadBalance(): void {
+    this.userService.getAccountBalance().subscribe({
+      next: (response) => {
+        this.balance = response.balance;
+      },
+      error: () => {
+        this.snackBar.open("Failed to load balance.", "Close", {
+          duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      },
+    });
+  }
+
+  depositFunds(): void {
+    this.snackBar.open("Deposit feature coming soon!", "Close", {
+      duration: 2000,
+      horizontalPosition: "center",
+      verticalPosition: "top",
+    });
+  }
+
+  withdrawFunds(): void {
+    this.snackBar.open("Withdraw feature coming soon!", "Close", {
+      duration: 2000,
+      horizontalPosition: "center",
+      verticalPosition: "top",
+    });
+  }
+
 }

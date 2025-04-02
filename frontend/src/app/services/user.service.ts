@@ -21,6 +21,9 @@ export class UserService {
   private urlDeleteCreditCard = `${this.creditApiUrl}/delete/`;
   private urlGetCreditCards = `${this.creditApiUrl}/`;
 
+  // URL for account balance
+  private urlGetAccountBalance = `${this.baseApiUrl}/balance/`; // Ajusta esto según la URL real
+
   constructor(private http: HttpClient) {}
 
   isAuthenticated(): boolean {
@@ -77,6 +80,12 @@ export class UserService {
     const body = { number: card };
     return this.http.delete<any>(this.urlDeleteCreditCard, {
       body: body,
+      withCredentials: true,
+    });
+  }
+
+  getAccountBalance(): Observable<any> {
+    return this.http.get<any>(this.urlGetAccountBalance, {
       withCredentials: true,
     });
   }
