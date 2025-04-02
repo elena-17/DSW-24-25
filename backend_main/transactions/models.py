@@ -7,7 +7,7 @@ class Transaction(models.Model):
     class Meta:
         db_table = "transactions"
         get_latest_by = "created_at"
-        ordering = ["created_at"]
+        ordering = ["-created_at"]  # newest first
 
     STATUS_CHOICES = [
         ("pending", "Pending"),
