@@ -60,9 +60,9 @@ class SendTransactionSerializer(serializers.Serializer):
                 amount=validated_data["amount"],
                 title=validated_data["title"],
                 description=validated_data.get("description", ""),
-                status="approved",  # By default, set to approved
                 type="send",
             )
+            # transaction.approve()
             transactions.append(transaction)
 
         return transactions

@@ -54,6 +54,14 @@ class Transaction(models.Model):
 
     def reject(self):
 
+        if self.status == "approved":
+            # If the transaction was approved, we need to revert the balances
+            self.sender.account.balance += self.amount
+            self.sender.account.save()
+
+            self.receiver.account.balance -= self.amount
+            self.receiver.account.save()
+
         self.status = "rejected"
         self.save()
 

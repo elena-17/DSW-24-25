@@ -55,7 +55,6 @@ class TransactionAPI(APITestCase):
         transaction_url = reverse("get_transaction", kwargs={"id": self.transaction.id})
         response = self.client.get(transaction_url)
 
-        # Verify the response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["id"], self.transaction.id)
         self.assertEqual(response.data["sender"], self.user1.email)
@@ -69,7 +68,6 @@ class TransactionAPI(APITestCase):
     def test_send_money(self):
         send_money_url = reverse("send_money")
 
-        # Define the payload for the request
         payload = {
             "receivers": [self.user2.email],
             "amount": 50,
@@ -78,22 +76,20 @@ class TransactionAPI(APITestCase):
         }
         response = self.client.post(send_money_url, data=payload, format="json")
 
-        # Verify the response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         data = response.data
-        # Verify the response contains only the transaction ID
         self.assertIn("transactions", data)
         self.assertEqual(len(data["transactions"]), 1)
 
-        # Verify the transaction was created in the database
         transaction = Transaction.objects.get(id=data["transactions"][0]["id"])
         self.assertEqual(transaction.sender, self.user1)
         self.assertEqual(transaction.receiver, self.user2)
         self.assertEqual(transaction.amount, 50)
         self.assertEqual(transaction.title, "Payment")
         self.assertEqual(transaction.description, "Payment for services")
-        self.assertEqual(transaction.status, "approved")
+        # self.assertEqual(transaction.status, "approved")
+        self.assertEqual(transaction.status, "pending")
         self.assertEqual(transaction.type, "send")
 
         self.assertEqual(data["transactions"][0]["id"], transaction.id)
@@ -117,7 +113,6 @@ class TransactionAPI(APITestCase):
     def test_request_money(self):
         request_money_url = reverse("request_money")
 
-        # Define the payload for the request, using user1 as requester
         payload = {
             "senders": [self.user2.email],
             "amount": 50,
@@ -126,15 +121,12 @@ class TransactionAPI(APITestCase):
         }
         response = self.client.post(request_money_url, data=payload, format="json")
 
-        # Verify the response
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         data = response.data
-        # Verify the response contains only the transaction ID
         self.assertIn("transactions", data)
         self.assertEqual(len(data["transactions"]), 1)
 
-        # Verify the transaction was created in the database
         transaction = Transaction.objects.get(id=data["transactions"][0]["id"])
         self.assertEqual(transaction.sender, self.user2)
         self.assertEqual(transaction.receiver, self.user1)
@@ -161,7 +153,6 @@ class TransactionAPI(APITestCase):
         payload = {"status": "approved"}
         response = self.client.put(update_url, data=payload, format="json")
 
-        # Verify the response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.transaction.refresh_from_db()
         self.assertEqual(self.transaction.status, "approved")
