@@ -8,4 +8,5 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         # Add extra info to token
         token["name"] = user.name
         token["role"] = user.role
+        token["email"] = user.email
         return token

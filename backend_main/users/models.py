@@ -1,3 +1,4 @@
+from account.models import Account
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -20,6 +21,10 @@ class CustomUserManager(BaseUserManager):
         user = self.model(id_number=id_number, email=email, phone=phone, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+
+        # Automatically create an associated account for the user
+        Account.objects.create(user=user)
+
         return user
 
     def create_superuser(self, id_number, email, phone, password=None, **extra_fields):
