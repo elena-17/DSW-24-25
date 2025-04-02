@@ -74,12 +74,10 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
   }
 
   action1Row(row: T): void {
-    console.log("Edit row:", row);
     this.action1.emit(row);
   }
 
   action2Row(row: T): void {
-    console.log("Delete row:", row);
     this.action2.emit(row);
   }
 }
