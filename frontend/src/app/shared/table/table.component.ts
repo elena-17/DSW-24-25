@@ -30,9 +30,11 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
   @Input() data: T[] = [];
   @Input() enableSelection: boolean = false;
   @Input() enableActions: boolean = false;
+  @Input() action1Icon: string = "edit";
+  @Input() action2Icon: string = "delete";
 
-  @Output() edit = new EventEmitter<T>();
-  @Output() delete = new EventEmitter<T>();
+  @Output() action1 = new EventEmitter<T>();
+  @Output() action2 = new EventEmitter<T>();
 
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<T>([]);
@@ -71,13 +73,13 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
       : this.dataSource.data.forEach((row) => this.selection.select(row));
   }
 
-  editRow(row: T): void {
+  action1Row(row: T): void {
     console.log("Edit row:", row);
-    this.edit.emit(row);
+    this.action1.emit(row);
   }
 
-  deleteRow(row: T): void {
+  action2Row(row: T): void {
     console.log("Delete row:", row);
-    this.delete.emit(row);
+    this.action2.emit(row);
   }
 }

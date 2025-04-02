@@ -84,7 +84,8 @@ const RECEIVER_DATA = [
 export class TransactionsComponent implements OnInit {
   sender: any[] = [];
   receiver: any[] = [];
-  pending: any[] = [];
+  pending_sender: any[] = [];
+  pending_receiver: any[] = [];
   loading: boolean = false;
   loadingReceiver: boolean = false;
 
@@ -163,17 +164,19 @@ export class TransactionsComponent implements OnInit {
       this.receiver = [...receiver];
       this.sender = [...sender];
       this.loading = false;
-      this.pending = [
-        ...this.sender.filter(
-          (transaction) => transaction.status === "pending",
-        ),
-        ...this.receiver.filter(
-          (transaction) => transaction.status === "pending",
-        ),
-      ].sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-      );
+      this.pending_receiver = receiver
+        ? receiver.filter(
+            (transaction: { status?: string }) =>
+              transaction.status === "pending",
+          )
+        : [];
+
+      this.pending_sender = sender
+        ? sender.filter(
+            (transaction: { status?: string }) =>
+              transaction.status === "pending",
+          )
+        : [];
     });
   }
 
@@ -246,6 +249,24 @@ export class TransactionsComponent implements OnInit {
             },
           });
       }
+    });
+  }
+
+  approveTransaction(transaction: any) {
+    console.log("Transaction approved:", transaction);
+    this.snackBar.open("Transaction approved successfully.", "OK", {
+      duration: 3000,
+      horizontalPosition: "center",
+      verticalPosition: "top",
+    });
+  }
+
+  rejectTransaction(transaction: any) {
+    console.log("Transaction rejected:", transaction);
+    this.snackBar.open("Transaction rejected successfully.", "OK", {
+      duration: 3000,
+      horizontalPosition: "center",
+      verticalPosition: "top",
     });
   }
 }

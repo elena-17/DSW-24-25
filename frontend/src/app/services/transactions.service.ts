@@ -19,8 +19,6 @@ export class TransactionsService {
   private sender = new BehaviorSubject<any>(null);
   private receiver = new BehaviorSubject<any>(null);
   private loading = new BehaviorSubject<boolean>(false);
-  private loadingSender = new BehaviorSubject<boolean>(false);
-  private loadingReceiver = new BehaviorSubject<boolean>(false);
 
   private baseApiUrl = "http://localhost:8000/transactions";
 
@@ -49,25 +47,6 @@ export class TransactionsService {
         },
       }),
     );
-  }
-
-  fetchReceiver(): Observable<any> {
-    if (!this.receiver.value) {
-      this.loadingReceiver.next(true);
-
-      return this.http.get<any>(this.urlReceiver).pipe(
-        tap((transactions) => {
-          this.receiver.next(transactions);
-          this.loadingReceiver.next(false);
-        }),
-      );
-    } else {
-      return this.receiver.asObservable();
-    }
-  }
-
-  getSender(): Observable<any> {
-    return this.sender.asObservable();
   }
 
   getLoading(): Observable<boolean> {
@@ -112,5 +91,16 @@ export class TransactionsService {
         console.log("Money requested successfully:", response);
       }),
     );
+  }
+
+  updateTransaction(transactionId: number, status: string): Observable<any> {
+    const payload = { status };
+    return this.http
+      .put<any>(`${this.baseApiUrl}/${transactionId}/`, payload)
+      .pipe(
+        tap((response) => {
+          console.log("Transaction updated successfully:", response);
+        }),
+      );
   }
 }
