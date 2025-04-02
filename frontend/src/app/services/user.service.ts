@@ -9,7 +9,9 @@ import { HttpHeaders } from "@angular/common/http";
 export class UserService {
   private baseApiUrl = "http://localhost:8000/user";
   private creditApiUrl = "http://localhost:8000/creditcards";
+  private accountApiUrl = "http://localhost:8000/account";
 
+  // URL for user profile
   private urlUserProfile = `${this.baseApiUrl}/profile/`;
   private urlUpdateUserProfile = `${this.baseApiUrl}/profile/update/`;
   private urlDeleteUserAccount = `${this.baseApiUrl}/profile/delete/`;
@@ -22,7 +24,7 @@ export class UserService {
   private urlGetCreditCards = `${this.creditApiUrl}/`;
 
   // URL for account balance
-  private urlGetAccountBalance = `${this.baseApiUrl}/balance/`; // Ajusta esto según la URL real
+  private urlGetAccountBalance = `${this.accountApiUrl}/`; 
 
   constructor(private http: HttpClient) {}
 
