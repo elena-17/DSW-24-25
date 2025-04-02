@@ -52,12 +52,12 @@ export class CreateTransactionComponent {
     this.dialogTitle = data.title;
 
     this.contactForm = this.formBuilder.group({
-      contact: ["user@example.com", [Validators.required]],
+      contact: ["", [Validators.required, Validators.email]],
     });
 
     this.form = this.formBuilder.group({
       amount: [
-        "8",
+        "",
         [
           Validators.required,
           Validators.min(0.01),
@@ -65,7 +65,7 @@ export class CreateTransactionComponent {
           Validators.pattern(/^\d+(\.\d{1,2})?$/),
         ],
       ],
-      title: ["test", [Validators.required]],
+      title: ["", [Validators.required]],
       description: [""],
     });
   }

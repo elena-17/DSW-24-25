@@ -4,7 +4,7 @@
     <!-- Paso 1: Seleccionar Contacto -->
     <mat-step [stepControl]="contactForm">
       <form [formGroup]="contactForm">
-        <ng-template matStepLabel>Select users</ng-template>
+        <ng-template matStepLabel>Users</ng-template>
         <!-- Aquí puedes reemplazar el input por un componente de búsqueda más complejo -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>User</mat-label>
@@ -33,7 +33,7 @@
     <!-- Paso 2: Detalles del Envío -->
     <mat-step [stepControl]="form">
       <form [formGroup]="form">
-        <ng-template matStepLabel>Details</ng-template>
+        <ng-template matStepLabel>Amount</ng-template>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Amount</mat-label>
           <input
@@ -49,6 +49,18 @@
             The amount must be greater than 0
           </mat-error>
         </mat-form-field>
+
+        <div class="transaction_form_buttons">
+          <button mat-stroked-button matStepperPrevious>Back</button>
+          <button mat-stroked-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Paso 3: Mensaje -->
+    <mat-step [stepControl]="form">
+      <form [formGroup]="form">
+        <ng-template matStepLabel>Message</ng-template>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Title</mat-label>
           <input
@@ -60,6 +72,15 @@
             This field is required
           </mat-error>
         </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            placeholder="Enter a message for the transaction"
+          ></textarea>
+        </mat-form-field>
+
         <div class="transaction_form_buttons">
           <button mat-stroked-button matStepperPrevious>Back</button>
           <button mat-stroked-button matStepperNext>Next</button>
@@ -67,7 +88,7 @@
       </form>
     </mat-step>
 
-    <!-- Paso 3: Confirmación -->
+    <!-- Paso 4: Confirmación -->
     <mat-step>
       <ng-template matStepLabel>Confirmation</ng-template>
       <div class="confirmation-message">

@@ -37,6 +37,13 @@ button {
   }
 }
 
+:root {
+  --mat-dialog-container-max-width: 600px;
+  :root {
+    --mat-dialog-container-max-width: 300px;
+  }
+}
+
 .container {
   box-shadow: $box-shadow;
   padding: 20px;

@@ -12,6 +12,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { CreateTransactionComponent } from "./create-transaction/create-transaction.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { DatePipe } from "@angular/common";
+import { NotificationService } from "../services/notification.service";
 
 //test data
 const SENDER_DATA = [
@@ -143,6 +144,7 @@ export class TransactionsComponent implements OnInit {
     private transactionsService: TransactionsService,
     private snackBar: MatSnackBar,
     private datePipe: DatePipe,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit() {
@@ -196,8 +198,8 @@ export class TransactionsComponent implements OnInit {
   sendTransaction() {
     const dialogRef = this.dialog.open(CreateTransactionComponent, {
       data: { title: "Send Money" },
-      width: "75%",
-      height: "55%",
+      width: "90%",
+      height: "60%",
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -225,8 +227,8 @@ export class TransactionsComponent implements OnInit {
   requestTransaction() {
     const dialogRef = this.dialog.open(CreateTransactionComponent, {
       data: { title: "Ask for Money" },
-      width: "75%",
-      height: "55%",
+      width: "90%",
+      height: "60%",
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
@@ -252,21 +254,70 @@ export class TransactionsComponent implements OnInit {
     });
   }
 
+  filterTransactionChangeStatus(transaction: any, status: string) {
+    const senderTransaction = this.sender.find((t) => t.id === transaction.id);
+    if (senderTransaction) {
+      senderTransaction.status = status;
+      console.log("Transaction status updated in sender:", senderTransaction);
+    }
+
+    // Buscar en la lista de receiver
+    const receiverTransaction = this.receiver.find(
+      (t) => t.id === transaction.id,
+    );
+    if (receiverTransaction) {
+      receiverTransaction.status = status;
+      console.log(
+        "Transaction status updated in receiver:",
+        receiverTransaction,
+      );
+    }
+    // Eliminar de pending_sender si existe
+    this.pending_sender = this.pending_sender.filter(
+      (t) => t.id !== transaction.id,
+    );
+
+    // Eliminar de pending_receiver si existe
+    this.pending_receiver = this.pending_receiver.filter(
+      (t) => t.id !== transaction.id,
+    );
+  }
+
   approveTransaction(transaction: any) {
     console.log("Transaction approved:", transaction);
-    this.snackBar.open("Transaction approved successfully.", "OK", {
-      duration: 3000,
-      horizontalPosition: "center",
-      verticalPosition: "top",
-    });
+    this.transactionsService
+      .updateTransaction(transaction.id, "approved")
+      .subscribe({
+        next: (response) => {
+          console.log("Transaction approved successfully:", response);
+          this.filterTransactionChangeStatus(transaction, "approved");
+          this.notificationService.showSuccessMessage("Transaction approved");
+        },
+        error: (error) => {
+          console.error("Error approving transaction:", error);
+          this.notificationService.showErrorMessage(
+            `Transaction could not be approved`,
+          );
+        },
+      });
   }
 
   rejectTransaction(transaction: any) {
     console.log("Transaction rejected:", transaction);
-    this.snackBar.open("Transaction rejected successfully.", "OK", {
-      duration: 3000,
-      horizontalPosition: "center",
-      verticalPosition: "top",
-    });
+    this.transactionsService
+      .updateTransaction(transaction.id, "rejected")
+      .subscribe({
+        next: (response) => {
+          console.log("Transaction rejected successfully:", response);
+          this.filterTransactionChangeStatus(transaction, "rejected");
+          this.notificationService.showSuccessMessage("Transaction rejected");
+        },
+        error: (error) => {
+          console.error("Error rejecting transaction:", error);
+          this.notificationService.showErrorMessage(
+            `Transaction could not be rejected`,
+          );
+        },
+      });
   }
 }

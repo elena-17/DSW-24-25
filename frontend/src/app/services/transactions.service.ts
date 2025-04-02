@@ -96,7 +96,7 @@ export class TransactionsService {
   updateTransaction(transactionId: number, status: string): Observable<any> {
     const payload = { status };
     return this.http
-      .put<any>(`${this.baseApiUrl}/${transactionId}/`, payload)
+      .put<any>(`${this.baseApiUrl}/${transactionId}/update-status/`, payload)
       .pipe(
         tap((response) => {
           console.log("Transaction updated successfully:", response);
