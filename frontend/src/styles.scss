@@ -37,6 +37,13 @@ button {
   }
 }
 
+:root {
+  --mat-dialog-container-max-width: 600px;
+  :root {
+    --mat-dialog-container-max-width: 300px;
+  }
+}
+
 .container {
   box-shadow: $box-shadow;
   padding: 20px;
@@ -47,6 +54,7 @@ button {
 .page-container {
   padding-left: 50px;
   padding-right: 50px;
+  margin-bottom: 90px;
 }
 
 .underlined-title {

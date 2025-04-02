@@ -1,0 +1,57 @@
+.transaction_form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  margin: 0px auto;
+  padding: 0px;
+  border-radius: 8px;
+  gap: 0px;
+}
+
+.transaction_form h2 {
+  width: 100%;
+  text-align: center;
+}
+
+::ng-deep .mat-horizontal-stepper-header-container {
+  padding: 0 10px 10px 10px !important; /* Elimina el padding */
+}
+::ng-deep .mat-horizontal-conten-container {
+  padding: 0 10px 10px 10px !important; /* Elimina el padding */
+}
+
+// ::ng-deep .mat-horizontal-stepper-header {
+//   padding: 0 20px 0 20px !important; /* Elimina el padding */
+// }
+
+::ng-deep .mat-step-label {
+  font-size: 14px !important; /* Reduce el tamaño de la etiqueta */
+}
+
+.transaction_form_buttons {
+  display: flex;
+  justify-content: space-between;
+  /* Alinea a la derecha */
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.confirmation-message {
+  text-align: center;
+}
+
+.amount-highlight {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--mat-sys-primary);
+}
+
+.contact-highlight {
+  font-weight: bold;
+  color: black;
+}

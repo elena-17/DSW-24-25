@@ -31,45 +31,6 @@ export interface User {
   phone: string;
 }
 
-//test data
-// const users: User[] = [
-//   {
-//     id_number: 1,
-//     name: "John Doe",
-//     email: "john.doe@example.com",
-//     role: "Admin",
-//     phone: "123-456-7890",
-//   },
-//   {
-//     id_number: 2,
-//     name: "Jane Smith",
-//     email: "jane.smith@example.com",
-//     role: "User",
-//     phone: "987-654-3210",
-//   },
-//   {
-//     id_number: 3,
-//     name: "Alice Johnson",
-//     email: "alice.johnson@example.com",
-//     role: "seller",
-//     phone: "555-123-4567",
-//   },
-//   {
-//     id_number: 4,
-//     name: "Alice Johnson",
-//     email: "alice.johnson@example.com",
-//     role: "other",
-//     phone: "555-123-4567",
-//   },
-//   {
-//     id_number: 5,
-//     name: "Alice Johnson",
-//     email: "alice.johnson@example.com",
-//     role: "seller",
-//     phone: "555-123-4567",
-//   },
-// ];
-
 @Component({
   selector: "app-admin-users",
   imports: [
@@ -90,7 +51,6 @@ export class AdminUsersComponent implements AfterViewInit, OnInit {
     private snackBar: MatSnackBar,
   ) {}
 
-  // borrar esto cuando sea funcional
   columns = [
     {
       columnDef: "email",

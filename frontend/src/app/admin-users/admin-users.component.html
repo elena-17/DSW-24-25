@@ -85,7 +85,7 @@
           <td mat-cell *matCellDef="let row">
             <ng-container [ngSwitch]="column.columnDef">
               <ng-container *ngSwitchCase="'role'">
-                <app-badge [role]="row.role" [type]="row.role"></app-badge>
+                <app-badge [text]="row.role" [class]="row.role"></app-badge>
               </ng-container>
               <ng-container *ngSwitchDefault>
                 {{ row[column.columnDef] }}
