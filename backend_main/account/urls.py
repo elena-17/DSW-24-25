@@ -1,11 +1,11 @@
 from django.urls import path
 
-from .views import addingMoney, get_account, subtractingMoney
+from .views import adding_money, get_account, subtracting_money
 
 app_name = "account"
 
 urlpatterns = [
     path("", get_account, name="get-account"),
-    path("recharge/", addingMoney, name="adding-money"),
-    path("withdraw/", subtractingMoney, name="subtracting-money"),
+    path("recharge/", adding_money, name="adding-money"),
+    path("withdraw/", subtracting_money, name="subtracting-money"),
 ]

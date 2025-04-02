@@ -19,7 +19,7 @@ def get_account(request):
 
 
 @api_view(["PUT"])
-def addingMoney(request):
+def adding_money(request):
     try:
         account = Account.objects.get(user=request.user)
         amount = Decimal(request.data.get("amount"))
@@ -32,7 +32,7 @@ def addingMoney(request):
 
 
 @api_view(["PUT"])
-def subtractingMoney(request):
+def subtracting_money(request):
     try:
         account = Account.objects.get(user=request.user)
         amount = Decimal(request.data.get("amount"))
