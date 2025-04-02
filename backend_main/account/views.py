@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -12,5 +14,34 @@ def get_account(request):
         account = Account.objects.get(user=request.user)
         serializer = AccountSerializer(account)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    except Account.DoesNotExist:
+        return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["PUT"])
+def addingMoney(request):
+    try:
+        account = Account.objects.get(user=request.user)
+        amount = Decimal(request.data.get("amount"))
+        account.balance += amount
+        account.save()
+        serializer = AccountSerializer(account)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Account.DoesNotExist:
+        return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["PUT"])
+def subtractingMoney(request):
+    try:
+        account = Account.objects.get(user=request.user)
+        amount = Decimal(request.data.get("amount"))
+        if account.balance >= amount:
+            account.balance -= amount
+            account.save()
+            serializer = AccountSerializer(account)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
     except Account.DoesNotExist:
         return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
