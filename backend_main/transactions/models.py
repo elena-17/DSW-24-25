@@ -40,8 +40,7 @@ class Transaction(models.Model):
     def approve(self):
 
         if self.sender.account.balance < self.amount:
-            raise ValidationError("Insuficient balance for this transaction.")
-
+            raise ValidationError("Insufficient balance for this transaction.")
         # Actualizar los saldos
         self.sender.account.balance -= self.amount
         self.sender.account.save()
