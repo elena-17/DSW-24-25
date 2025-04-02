@@ -10,14 +10,12 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["id", "sender", "receiver", "amount", "created_at", "title", "description", "status", "updated_at"]
+        fields = "__all__"
         extra_kwargs = {
             "sender": {"required": True},
             "receiver": {"required": True},
             "amount": {"required": True},
             "title": {"required": True},
-            "description": {"required": False},
-            "status": {"required": False},
         }
         read_only_fields = ["id", "created_at", "updated_at"]
 
@@ -48,6 +46,8 @@ class SendTransactionSerializer(serializers.Serializer):
 
         data["sender"] = sender
         data["receivers"] = receivers
+        if sender in receivers:
+            raise serializers.ValidationError({"sender": "Sender and receiver cannot be the same."})
         return data
 
     def create(self, validated_data):
@@ -60,6 +60,8 @@ class SendTransactionSerializer(serializers.Serializer):
                 amount=validated_data["amount"],
                 title=validated_data["title"],
                 description=validated_data.get("description", ""),
+                status="approved",  # By default, set to approved
+                type="send",
             )
             transactions.append(transaction)
 
@@ -87,6 +89,8 @@ class RequestTransactionSerializer(serializers.Serializer):
 
         data["senders"] = senders
         data["receiver"] = receiver
+        if receiver in senders:
+            raise serializers.ValidationError({"receiver": "Sender and receiver cannot be the same."})
         return data
 
     def create(self, validated_data):
@@ -99,6 +103,7 @@ class RequestTransactionSerializer(serializers.Serializer):
                 amount=validated_data["amount"],
                 title=validated_data["title"],
                 description=validated_data.get("description", ""),
+                type="request",
             )
             transactions.append(transaction)
 

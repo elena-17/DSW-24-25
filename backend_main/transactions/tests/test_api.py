@@ -49,6 +49,7 @@ class TransactionAPI(APITestCase):
             title="Sample Transaction",
             description="This is a test transaction",
             status="pending",
+            type="send",
         )
 
         transaction_url = reverse("get_transaction", kwargs={"id": self.transaction.id})
@@ -63,6 +64,7 @@ class TransactionAPI(APITestCase):
         self.assertEqual(response.data["title"], "Sample Transaction")
         self.assertEqual(response.data["description"], "This is a test transaction")
         self.assertEqual(response.data["status"], "pending")
+        self.assertEqual(response.data["type"], "send")
 
     def test_send_money(self):
         send_money_url = reverse("send_money")
@@ -85,15 +87,32 @@ class TransactionAPI(APITestCase):
         self.assertEqual(len(data["transactions"]), 1)
 
         # Verify the transaction was created in the database
-        transaction = Transaction.objects.get(id=data["transactions"][0])
+        transaction = Transaction.objects.get(id=data["transactions"][0]["id"])
         self.assertEqual(transaction.sender, self.user1)
         self.assertEqual(transaction.receiver, self.user2)
         self.assertEqual(transaction.amount, 50)
         self.assertEqual(transaction.title, "Payment")
         self.assertEqual(transaction.description, "Payment for services")
-        self.assertEqual(transaction.status, "pending")
+        self.assertEqual(transaction.status, "approved")
+        self.assertEqual(transaction.type, "send")
 
-        self.assertEqual(data["transactions"][0], transaction.id)
+        self.assertEqual(data["transactions"][0]["id"], transaction.id)
+
+    def test_send_money_same_user(self):
+        send_money_url = reverse("send_money")
+
+        payload = {
+            "receivers": [self.user1.email],
+            "amount": 50,
+            "title": "Payment",
+            "description": "Payment for services",
+        }
+        response = self.client.post(send_money_url, data=payload, format="json")
+
+        # Verify the response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("sender", response.data)
+        self.assertEqual(response.data["sender"], ["Sender and receiver cannot be the same."])
 
     def test_request_money(self):
         request_money_url = reverse("request_money")
@@ -116,15 +135,16 @@ class TransactionAPI(APITestCase):
         self.assertEqual(len(data["transactions"]), 1)
 
         # Verify the transaction was created in the database
-        transaction = Transaction.objects.get(id=data["transactions"][0])
+        transaction = Transaction.objects.get(id=data["transactions"][0]["id"])
         self.assertEqual(transaction.sender, self.user2)
         self.assertEqual(transaction.receiver, self.user1)
         self.assertEqual(transaction.amount, 50)
         self.assertEqual(transaction.title, "Payment")
         self.assertEqual(transaction.description, "Payment for services")
         self.assertEqual(transaction.status, "pending")
+        self.assertEqual(transaction.type, "request")
 
-        self.assertEqual(data["transactions"][0], transaction.id)
+        self.assertEqual(data["transactions"][0]["id"], transaction.id)
 
     def test_update_transaction_approved(self):
         # Create a transaction for testing

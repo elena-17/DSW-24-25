@@ -1,6 +1,7 @@
 from django.test import TestCase
-from transactions.models import Transaction
 from users.models import User
+
+from transactions.models import Transaction
 
 
 class TransactionTest(TestCase):
@@ -29,6 +30,7 @@ class TransactionTest(TestCase):
             amount=100,
             title="Test transaction",
             description="Test transaction description",
+            type="send",
         )
 
         self.assertEqual(transaction.sender, self.user1)
@@ -37,3 +39,4 @@ class TransactionTest(TestCase):
         self.assertEqual(transaction.title, "Test transaction")
         self.assertEqual(transaction.description, "Test transaction description")
         self.assertEqual(transaction.status, "pending")
+        self.assertEqual(transaction.type, "send")

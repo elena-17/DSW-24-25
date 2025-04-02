@@ -8,6 +8,12 @@ class Transaction(models.Model):
         db_table = "transactions"
         get_latest_by = "created_at"
         ordering = ["-created_at"]  # newest first
+        constraints = [
+            models.CheckConstraint(
+                check=~models.Q(sender=models.F("receiver")),
+                name="sender_receiver_different",
+            ),
+        ]
 
     STATUS_CHOICES = [
         ("pending", "Pending"),
@@ -15,6 +21,12 @@ class Transaction(models.Model):
         ("rejected", "Rejected"),
     ]
 
+    TYPE_CHOICES = [
+        ("send", "Send"),
+        ("request", "Request"),
+    ]
+
+    # sender = always the user who sends the money
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="transactions_sent")
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="transactions_received")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -23,6 +35,7 @@ class Transaction(models.Model):
     description = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
     updated_at = models.DateTimeField(auto_now=True)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
 
     def approve(self):
 
