@@ -51,8 +51,9 @@ def send_money(request):
 
     if serializer.is_valid():
         transactions = serializer.save()
+        tr_serialized = TransactionSerializer(transactions, many=True)
         return Response(
-            {"message": "Transaction successful", "transactions": [t.id for t in transactions]},
+            {"message": "Transaction successful", "transactions": tr_serialized},
             status=status.HTTP_201_CREATED,
         )
 
@@ -67,8 +68,9 @@ def request_money(request):
 
     if serializer.is_valid():
         transactions = serializer.save()
+        tr_serialized = TransactionSerializer(transactions, many=True)
         return Response(
-            {"message": "Transaction successful", "transactions": [t.id for t in transactions]},
+            {"message": "Transaction successful", "transactions": tr_serialized},
             status=status.HTTP_201_CREATED,
         )
 
