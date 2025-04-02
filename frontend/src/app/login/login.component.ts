@@ -78,6 +78,7 @@ export class LoginComponent {
 
           const payload = this.authService.decodeToken(response.access);
           sessionStorage.setItem("userName", payload.name);
+          sessionStorage.setItem("userEmail", payload.email);
           sessionStorage.setItem("userRole", payload.role);
           if (payload.role === "admin") {
             this.router.navigate(["admin"]);

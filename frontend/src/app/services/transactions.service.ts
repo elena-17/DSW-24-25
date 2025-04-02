@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { BehaviorSubject, Observable, forkJoin } from "rxjs";
+import { BehaviorSubject, Observable, combineLatest, forkJoin } from "rxjs";
 import { tap } from "rxjs/operators";
 
 interface Transaction {
@@ -21,7 +21,7 @@ export class TransactionsService {
   private loading = new BehaviorSubject<boolean>(false);
   private loadingSender = new BehaviorSubject<boolean>(false);
   private loadingReceiver = new BehaviorSubject<boolean>(false);
-  
+
   private baseApiUrl = "http://localhost:8000/transactions";
 
   private urlSender = `${this.baseApiUrl}/sender/`;
@@ -31,30 +31,24 @@ export class TransactionsService {
 
   constructor(private http: HttpClient) {}
 
-  fetch(): Observable<any> {
-    if (!this.receiver.value || !this.sender.value) {
-      this.loading.next(true); // Iniciar loading
+  fetch(refresh: boolean = true): Observable<any> {
+    this.loading.next(true);
 
-      return forkJoin({
-        receiver: this.http.get<Transaction[]>(this.urlReceiver),
-        sender: this.http.get<Transaction[]>(this.urlSender),
-      }).pipe(
-        tap({
-          next: ({ receiver, sender }) => {
-            console.log("Receiver-:", receiver);
-            console.log("Sender-:", sender);
-
-            this.receiver.next([...receiver]);
-            this.sender.next([...sender]);
-            this.loading.next(false);
-          },
-        }),
-      );
-    }
     return forkJoin({
-      sender: this.sender.asObservable(),
-      receiver: this.receiver.asObservable(),
-    });
+      receiver: this.http.get<Transaction[]>(this.urlReceiver),
+      sender: this.http.get<Transaction[]>(this.urlSender),
+    }).pipe(
+      tap({
+        next: ({ receiver, sender }) => {
+          this.receiver.next([...receiver]);
+          this.sender.next([...sender]);
+          this.loading.next(false);
+        },
+        complete: () => {
+          this.loading.next(false);
+        },
+      }),
+    );
   }
 
   fetchReceiver(): Observable<any> {
@@ -80,7 +74,12 @@ export class TransactionsService {
     return this.loading.asObservable();
   }
 
-  sendMoney(receivers: string[], amount: number, title: string, description?: string): Observable<any> {
+  sendMoney(
+    receivers: string[],
+    amount: number,
+    title: string,
+    description?: string,
+  ): Observable<any> {
     const payload = {
       receivers: Array.isArray(receivers) ? receivers : [receivers],
       amount,
@@ -95,7 +94,12 @@ export class TransactionsService {
     );
   }
 
-  requestMoney(senders: string[], amount: number, title: string, description?: string): Observable<any> {
+  requestMoney(
+    senders: string[],
+    amount: number,
+    title: string,
+    description?: string,
+  ): Observable<any> {
     const payload = {
       senders: Array.isArray(senders) ? senders : [senders],
       amount,
@@ -108,5 +112,5 @@ export class TransactionsService {
         console.log("Money requested successfully:", response);
       }),
     );
-  } 
+  }
 }

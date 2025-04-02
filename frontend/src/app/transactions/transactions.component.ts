@@ -11,13 +11,14 @@ import { TableComponent } from "../shared/table/table.component";
 import { MatDialog } from "@angular/material/dialog";
 import { CreateTransactionComponent } from "./create-transaction/create-transaction.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { DatePipe } from "@angular/common";
 
 //test data
 const SENDER_DATA = [
   {
     id: 1,
     receiver: "user1",
-    date: "2023-01-01",
+    created_at: "2023-01-01",
     amount: 100,
     title: "Transaction 1",
     status: "Approved",
@@ -25,7 +26,7 @@ const SENDER_DATA = [
   {
     id: 2,
     receiver: "user2",
-    date: "2023-01-02",
+    created_at: "2023-01-02",
     amount: 200,
     title: "Transaction 2",
     status: "Pending",
@@ -33,7 +34,7 @@ const SENDER_DATA = [
   {
     id: 2,
     receiver: "user2",
-    date: "2023-01-02",
+    created_at: "2023-01-02",
     amount: 200,
     title: "Transaction 2",
     status: "Rejected",
@@ -43,7 +44,7 @@ const RECEIVER_DATA = [
   {
     id: 1,
     sender: "user3",
-    date: "2023-01-03",
+    created_at: "2023-01-03",
     amount: 150,
     title: "Transaction 3",
     status: "Approved",
@@ -51,7 +52,7 @@ const RECEIVER_DATA = [
   {
     id: 2,
     sender: "user4",
-    date: "2023-01-04",
+    created_at: "2023-01-04",
     amount: 250,
     title: "Transaction 4",
     status: "Pending",
@@ -59,7 +60,7 @@ const RECEIVER_DATA = [
   {
     id: 3,
     sender: "user4",
-    date: "2023-01-04",
+    created_at: "2023-01-04",
     amount: 250,
     title: "Transaction 4",
     status: "Rejected",
@@ -68,6 +69,7 @@ const RECEIVER_DATA = [
 
 @Component({
   selector: "app-transactions",
+  providers: [DatePipe],
   imports: [
     ToolbarComponent,
     MaterialModule,
@@ -82,6 +84,7 @@ const RECEIVER_DATA = [
 export class TransactionsComponent implements OnInit {
   sender: any[] = [];
   receiver: any[] = [];
+  pending: any[] = [];
   loading: boolean = false;
   loadingReceiver: boolean = false;
 
@@ -93,13 +96,19 @@ export class TransactionsComponent implements OnInit {
       component: "text-icon",
       getComponentProps: (element: any) => ({
         text: element.title,
-        icon: element.sender ? "call_received" : "call_made",
+        icon:
+          element.sender === sessionStorage.getItem("userEmail")
+            ? "call_made"
+            : "call_received",
       }),
     },
     {
       columnDef: "user",
       header: "User",
-      cell: (element: any) => `${element.sender || element.receiver}`,
+      cell: (element: any) =>
+        element.sender === sessionStorage.getItem("userEmail")
+          ? element.receiver
+          : element.sender,
     },
     {
       columnDef: "amount",
@@ -109,7 +118,9 @@ export class TransactionsComponent implements OnInit {
     {
       columnDef: "date",
       header: "Date",
-      cell: (element: any) => `${element.date}`,
+      cell: (element: any) =>
+        this.datePipe.transform(new Date(element.created_at), "dd/MM/yyyy") ||
+        "Invalid Date",
     },
     {
       columnDef: "status",
@@ -130,6 +141,7 @@ export class TransactionsComponent implements OnInit {
     private authService: AuthService,
     private transactionsService: TransactionsService,
     private snackBar: MatSnackBar,
+    private datePipe: DatePipe,
   ) {}
 
   ngOnInit() {
@@ -139,15 +151,29 @@ export class TransactionsComponent implements OnInit {
     }
     // this.sender = []; // Replace with actual data fetching logic
     // this.receiver = RECEIVER_DATA; // Replace with actual data fetching logic
-    this.transactionsService.getLoading().subscribe(isLoading => {
+    this.loadTransactions();
+  }
+
+  loadTransactions() {
+    this.transactionsService.getLoading().subscribe((isLoading) => {
       this.loading = isLoading;
     });
 
-    this.transactionsService.fetch().subscribe(({ receiver, sender }) => {
-      console.log("Sender:", sender);
+    this.transactionsService.fetch(true).subscribe(({ receiver, sender }) => {
       this.receiver = [...receiver];
       this.sender = [...sender];
       this.loading = false;
+      this.pending = [
+        ...this.sender.filter(
+          (transaction) => transaction.status === "pending",
+        ),
+        ...this.receiver.filter(
+          (transaction) => transaction.status === "pending",
+        ),
+      ].sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
     });
   }
 
@@ -165,49 +191,60 @@ export class TransactionsComponent implements OnInit {
   }
 
   sendTransaction() {
-    console.log("Send transaction clicked");
-    const defaultTransaction = {
-      id: this.sender.length + 1,
-      receiver: "user1",
-      date: "2023-01-01",
-      amount: 100,
-      title: "Transaction 1",
-      status: "Approved",
-    };
-    console.log(this.sender);
-    this.sender = [defaultTransaction, ...this.sender];
-    console.log(this.sender);
+    const dialogRef = this.dialog.open(CreateTransactionComponent, {
+      data: { title: "Send Money" },
+      width: "75%",
+      height: "55%",
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log("Transaction sent:", result);
+        this.transactionsService
+          .sendMoney(result.user, result.amount, result.title)
+          .subscribe({
+            next: (response) => {
+              console.log("Transaction sent successfully:", response);
+              this.sender = [response, ...this.sender];
+            },
+            error: (error) => {
+              console.error("Error message:", error.error);
+              this.snackBar.open("Transaction could not be send.", "OK", {
+                duration: 5000,
+                horizontalPosition: "center",
+                verticalPosition: "top",
+              });
+            },
+          });
+      }
+    });
   }
 
   requestTransaction() {
-     const dialogRef = this.dialog.open(CreateTransactionComponent, {
-          data: { title: "Ask for Money" },
-          width: "75%",
-          height: "55%",
-        });
+    const dialogRef = this.dialog.open(CreateTransactionComponent, {
+      data: { title: "Ask for Money" },
+      width: "75%",
+      height: "55%",
+    });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log("Transaction requested:", result);
-          this.transactionsService.requestMoney(result.user, result.amount, result.title).subscribe({
+        this.transactionsService
+          .requestMoney(result.user, result.amount, result.title)
+          .subscribe({
             next: (response) => {
-             console.log("Transaction requested successfully:", response);
-             this.receiver = [response, ...this.receiver];
+              console.log("Transaction requested successfully:", response);
+              this.receiver = [response, ...this.receiver];
             },
             error: (error) => {
               console.error("Registration failed:", error);
               console.error("Error message:", error.error);
-              this.snackBar.open(
-                "Registration failed. Please try again.",
-                "OK",
-                {
-                  duration: 5000,
-                  horizontalPosition: "center",
-                  verticalPosition: "top",
-                },
-              );
+              this.snackBar.open("Transaction could not be requested.", "OK", {
+                duration: 5000,
+                horizontalPosition: "center",
+                verticalPosition: "top",
+              });
             },
           });
-        
       }
     });
   }

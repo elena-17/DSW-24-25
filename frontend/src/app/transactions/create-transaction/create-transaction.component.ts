@@ -17,37 +17,37 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatStepperModule } from "@angular/material/stepper";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 
-
 @Component({
-  selector: 'app-create-transaction',
+  selector: "app-create-transaction",
   providers: [
     {
       provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: {showError: true},
+      useValue: { showError: true },
     },
   ],
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     MatFormFieldModule,
     ReactiveFormsModule,
     MaterialModule,
     MatSelectModule,
     MatChipsModule,
-    MatStepperModule
+    MatStepperModule,
   ],
-  templateUrl: './create-transaction.component.html',
-  styleUrl: './create-transaction.component.scss'
+  templateUrl: "./create-transaction.component.html",
+  styleUrl: "./create-transaction.component.scss",
 })
 export class CreateTransactionComponent {
   form: FormGroup;
   contactForm: FormGroup;
   dialogTitle: string;
-  emailCtrl = new FormControl('', [Validators.email]);
+  emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
 
   constructor(
     private dialogRef: MatDialogRef<CreateTransactionComponent>,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string;},
+    @Inject(MAT_DIALOG_DATA) public data: { title: string },
   ) {
     this.dialogTitle = data.title;
 
@@ -56,12 +56,19 @@ export class CreateTransactionComponent {
     });
 
     this.form = this.formBuilder.group({
-      amount: ["8", [Validators.required, Validators.min(0.01), Validators.max(1000000), Validators.pattern(/^\d+(\.\d{1,2})?$/) ]],
+      amount: [
+        "8",
+        [
+          Validators.required,
+          Validators.min(0.01),
+          Validators.max(1000000),
+          Validators.pattern(/^\d+(\.\d{1,2})?$/),
+        ],
+      ],
       title: ["test", [Validators.required]],
       description: [""],
     });
   }
-
 
   onCancel() {
     this.form.reset();
@@ -72,15 +79,13 @@ export class CreateTransactionComponent {
     if (this.contactForm.valid && this.form.valid) {
       const formData = {
         user: [this.contactForm.value.contact],
-        ...this.form.value
+        ...this.form.value,
       };
-      console.log('Datos del envío:', formData);
+      console.log("Datos del envío:", formData);
       // Aquí puedes procesar los datos, llamar a un servicio, etc.
       this.dialogRef.close(formData);
-
     }
   }
-
 
   //CHECK this
   getErrorMessage(controlName: string): string {

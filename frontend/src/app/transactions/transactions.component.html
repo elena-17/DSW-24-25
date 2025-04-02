@@ -62,6 +62,21 @@
     </div>
   </mat-tab>
   <mat-tab label="Pending">
-    <!-- Aquí se muestra el componente -->
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner [diameter]="60"></mat-spinner>
+    </div>
+    <div *ngIf="!loading" class="page-container">
+      <div class="underlined-title">
+        <h2>Pending Transactions</h2>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="pending"
+        [enableSelection]="false"
+        [enableActions]="false"
+      >
+      </app-table>
+    </div>
   </mat-tab>
 </mat-tab-group>
