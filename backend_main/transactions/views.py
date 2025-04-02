@@ -70,7 +70,7 @@ def request_money(request):
         transactions = serializer.save()
         tr_serialized = TransactionSerializer(transactions, many=True)
         return Response(
-            {"message": "Transaction successful", "transactions": tr_serialized},
+            {"message": "Transaction successful", "transactions": tr_serialized.data},
             status=status.HTTP_201_CREATED,
         )
 
