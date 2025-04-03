@@ -28,6 +28,8 @@ export class UserService {
 
   // URL for account balance
   private urlGetAccountBalance = `${this.accountApiUrl}/`;
+  private urlDepositFunds = `${this.accountApiUrl}/recharge/`;
+  private urlWithdrawFunds = `${this.accountApiUrl}/withdraw/`;
 
   constructor(private http: HttpClient) {}
 
@@ -97,5 +99,9 @@ export class UserService {
 
   validateCard(requestData: any): Observable<any> {
     return this.http.post(this.urlValidateCard, requestData);
+  }
+
+  addMoney(amount: number): Observable<any> {
+    return this.http.put(this.accountApiUrl, { amount });
   }
 }

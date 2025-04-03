@@ -152,13 +152,16 @@ export class ChangeAccountBalanceComponent {
   }
 
   onSubmit() {
-    if (this.creditForm.valid && this.form.valid) {
-      const formData = {
-        user: [this.creditForm.value.contact],
-        amount: this.amountForm.value.amount,
-        ...this.form.value,
-      };
-      this.dialogRef.close(formData);
+    if (this.creditForm.valid && this.amountForm.valid) {
+      const amount = this.amountForm.value.amount;
+      this.userService.addMoney(amount).subscribe({
+        next: (response) => {
+          this.dialogRef.close(response);
+        },
+        error: (error) => {
+          this.dialogRef.close(error);
+        },
+      });
     }
   }
 

@@ -62,6 +62,23 @@ export class HomepageComponent {
       width: "90%",
       height: "60%",
     });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.snackBar.open("Deposit successful!", "Close", {
+          duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+        this.loadBalance();
+      } else {
+        this.snackBar.open("Deposit failed.", "Close", {
+          duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+      }
+    });
   }
 
   withdrawFunds(): void {
