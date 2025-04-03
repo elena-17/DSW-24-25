@@ -15,60 +15,6 @@ import { DatePipe } from "@angular/common";
 import { NotificationService } from "../services/notification.service";
 import { ConfirmDialogComponent } from "../shared/confirm-dialog/confirm-dialog.component";
 
-//test data
-const SENDER_DATA = [
-  {
-    id: 1,
-    receiver: "user1",
-    created_at: "2023-01-01",
-    amount: 100,
-    title: "Transaction 1",
-    status: "Approved",
-  },
-  {
-    id: 2,
-    receiver: "user2",
-    created_at: "2023-01-02",
-    amount: 200,
-    title: "Transaction 2",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    receiver: "user2",
-    created_at: "2023-01-02",
-    amount: 200,
-    title: "Transaction 2",
-    status: "Rejected",
-  },
-];
-const RECEIVER_DATA = [
-  {
-    id: 1,
-    sender: "user3",
-    created_at: "2023-01-03",
-    amount: 150,
-    title: "Transaction 3",
-    status: "Approved",
-  },
-  {
-    id: 2,
-    sender: "user4",
-    created_at: "2023-01-04",
-    amount: 250,
-    title: "Transaction 4",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    sender: "user4",
-    created_at: "2023-01-04",
-    amount: 250,
-    title: "Transaction 4",
-    status: "Rejected",
-  },
-];
-
 @Component({
   selector: "app-transactions",
   providers: [DatePipe],
@@ -146,7 +92,6 @@ export class TransactionsComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private transactionsService: TransactionsService,
-    private snackBar: MatSnackBar,
     private datePipe: DatePipe,
     private notificationService: NotificationService,
   ) {}
@@ -156,8 +101,6 @@ export class TransactionsComponent implements OnInit {
       this.router.navigate(["error-page"]);
       return;
     }
-    // this.sender = []; // Replace with actual data fetching logic
-    // this.receiver = RECEIVER_DATA; // Replace with actual data fetching logic
     this.loadTransactions();
   }
 
@@ -238,9 +181,20 @@ export class TransactionsComponent implements OnInit {
             },
             error: (error) => {
               console.error("Error message:", error.error);
-              this.notificationService.showErrorMessage(
-                `Sent operation could not be completed`,
-              );
+
+              if (
+                error.error?.amount?.includes(
+                  "Insufficient balance for this transaction.",
+                )
+              ) {
+                this.notificationService.showErrorMessage(
+                  "You don't have enough balance to send this amount",
+                );
+              } else {
+                this.notificationService.showErrorMessage(
+                  `Sent operation could not be completed`,
+                );
+              }
             },
           });
       }

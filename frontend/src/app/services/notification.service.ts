@@ -9,7 +9,7 @@ export class NotificationService {
 
   showSuccessMessage(message: string = "Success!") {
     this.snackBar.open(message, "OK", {
-      duration: 3000,
+      duration: 5000,
       horizontalPosition: "center",
       verticalPosition: "top",
     });
@@ -17,7 +17,7 @@ export class NotificationService {
 
   showErrorMessage(message: string = "An error occurred.") {
     this.snackBar.open(`An error occurred. ${message}`, "OK", {
-      duration: 3000,
+      duration: 5000,
       horizontalPosition: "center",
       verticalPosition: "top",
       panelClass: ["error-snackbar"],
