@@ -1,17 +1,25 @@
 import { Component } from "@angular/core";
 import { ToolbarComponent } from "../../toolbar/toolbar.component";
-import { Router} from "@angular/router";
+import { Router } from "@angular/router";
 import { AuthService } from "../../services/auth.service";
 import { UserService } from "../../services/user.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { CommonModule } from "@angular/common";
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatCardModule } from "@angular/material/card";
+import { MatDialog } from "@angular/material/dialog";
+import { ChangeAccountBalanceComponent } from "./change-account-balance/change-account-balance.component";
 @Component({
   selector: "app-homepage",
   standalone: true,
-  imports: [ToolbarComponent, CommonModule, MatIconModule, MatButtonModule, MatCardModule],
+  imports: [
+    ToolbarComponent,
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatCardModule,
+  ],
   templateUrl: "./homepage.component.html",
   styleUrl: "./homepage.component.scss",
 })
@@ -21,7 +29,8 @@ export class HomepageComponent {
     private router: Router,
     private authService: AuthService,
     private userService: UserService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -48,10 +57,10 @@ export class HomepageComponent {
   }
 
   depositFunds(): void {
-    this.snackBar.open("Deposit feature coming soon!", "Close", {
-      duration: 2000,
-      horizontalPosition: "center",
-      verticalPosition: "top",
+    const dialogRef = this.dialog.open(ChangeAccountBalanceComponent, {
+      data: { title: "Deposit money" },
+      width: "90%",
+      height: "60%",
     });
   }
 
@@ -62,5 +71,4 @@ export class HomepageComponent {
       verticalPosition: "top",
     });
   }
-
 }

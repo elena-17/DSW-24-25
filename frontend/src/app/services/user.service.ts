@@ -11,6 +11,9 @@ export class UserService {
   private creditApiUrl = "http://localhost:8000/creditcards";
   private accountApiUrl = "http://localhost:8000/account";
 
+  // URL for validation in bank
+  private urlValidateCard = `${this.creditApiUrl}/validate/`;
+
   // URL for user profile
   private urlUserProfile = `${this.baseApiUrl}/profile/`;
   private urlUpdateUserProfile = `${this.baseApiUrl}/profile/update/`;
@@ -24,7 +27,7 @@ export class UserService {
   private urlGetCreditCards = `${this.creditApiUrl}/`;
 
   // URL for account balance
-  private urlGetAccountBalance = `${this.accountApiUrl}/`; 
+  private urlGetAccountBalance = `${this.accountApiUrl}/`;
 
   constructor(private http: HttpClient) {}
 
@@ -90,5 +93,9 @@ export class UserService {
     return this.http.get<any>(this.urlGetAccountBalance, {
       withCredentials: true,
     });
+  }
+
+  validateCard(requestData: any): Observable<any> {
+    return this.http.post(this.urlValidateCard, requestData);
   }
 }
