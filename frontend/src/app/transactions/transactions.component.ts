@@ -14,6 +14,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { DatePipe } from "@angular/common";
 import { NotificationService } from "../services/notification.service";
 import { ConfirmDialogComponent } from "../shared/confirm-dialog/confirm-dialog.component";
+import { DetailsTransactionComponent } from "./details-transaction/details-transaction.component";
 
 @Component({
   selector: "app-transactions",
@@ -287,6 +288,20 @@ export class TransactionsComponent implements OnInit {
           );
         },
       });
+  }
+
+  openDetails(transaction: any) {
+    console.log(transaction);
+    transaction.formattedDate =
+      this.datePipe.transform(
+        new Date(transaction.created_at),
+        "dd MMM yyyy, HH:mm",
+      ) || "";
+    const dialogRef = this.dialog.open(DetailsTransactionComponent, {
+      data: transaction,
+      width: "33%",
+      height: "65%",
+    });
   }
 
   blockUser(transaction: any) {

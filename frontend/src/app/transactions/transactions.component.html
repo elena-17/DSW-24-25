@@ -1,6 +1,7 @@
 <app-toolbar></app-toolbar>
 
 <mat-tab-group animationDuration="500ms">
+  <!-- tab 1 - pending transactions -->
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon" style="color: #e38100fe"
@@ -8,10 +9,14 @@
       >
       Pending
     </ng-template>
+    <!-- if loading -->
     <div *ngIf="loading" class="loading-container">
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
+
+    <!-- already loaded -->
     <div *ngIf="!loading" class="page-container">
+      <!-- title -->
       <div class="underlined-title">
         <div class="title-buttons">
           <h2>Create Transaction</h2>
@@ -28,24 +33,33 @@
         </div>
         <hr />
       </div>
+
       <span style="display: block; height: 20px"></span>
+
       <div class="underlined-title">
         <h2>Transactions you need to approve</h2>
         <hr />
       </div>
+      <!-- table 1 -->
       <app-table
         [columns]="columns"
         [data]="pendingMyApproval"
         [enableSelection]="false"
         [enableActions]="true"
-        (action1)="approveTransaction($event)"
-        (action2)="rejectTransaction($event)"
-        [action1Icon]="'task_alt'"
-        [action2Icon]="'block'"
-        [action1Color]="'green'"
-        [action2Color]="'red'"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
+        (action2)="approveTransaction($event)"
+        [action2Icon]="'task_alt'"
+        [action2Tooltip]="'Approve transaction'"
+        (action3)="rejectTransaction($event)"
+        [action3Icon]="'block'"
+        [action3Tooltip]="'Reject transaction'"
+        [action2Color]="'green'"
+        [action3Color]="'red'"
       />
       <div class="underlined-title">
+        <!-- table 2 -->
         <h2>Transactions pending for others</h2>
         <hr />
       </div>
@@ -54,14 +68,22 @@
         [data]="pendingOthers"
         [enableSelection]="false"
         [enableActions]="false"
-        (action1)="approveTransaction($event)"
-        (action2)="rejectTransaction($event)"
-        [action1Icon]="'task_alt'"
-        [action2Icon]="'block'"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
+        (action2)="approveTransaction($event)"
+        [action2Icon]="'task_alt'"
+        [action2Tooltip]="'Approve transaction'"
+        (action3)="rejectTransaction($event)"
+        [action3Icon]="'block'"
+        [action3Tooltip]="'Reject transaction'"
+        [action2Color]="'green'"
+        [action3Color]="'red'"
       />
     </div>
   </mat-tab>
 
+  <!-- tab 2 - sender transactions -->
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon" style="color: #f44336"
@@ -72,6 +94,7 @@
     <div *ngIf="loading" class="loading-container">
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
+    <!-- already loaded -->
     <div *ngIf="!loading" class="page-container">
       <div class="underlined-title">
         <div class="title-buttons">
@@ -89,15 +112,22 @@
         </div>
         <hr />
       </div>
+      <!-- end title -->
+
       <app-table
         [columns]="columns"
         [data]="sender"
         [enableSelection]="false"
-        [enableActions]="false"
+        [enableActions]="true"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
       >
       </app-table>
     </div>
   </mat-tab>
+
+  <!-- tab 3 - receiver transactions -->
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon" style="color: #4caf50"
@@ -108,6 +138,7 @@
     <div *ngIf="loading" class="loading-container">
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
+    <!-- already loaded -->
     <div *ngIf="!loading" class="page-container">
       <div class="underlined-title">
         <div class="title-buttons">
@@ -125,11 +156,15 @@
         </div>
         <hr />
       </div>
+
       <app-table
         [columns]="columns"
         [data]="receiver"
         [enableSelection]="false"
-        [enableActions]="false"
+        [enableActions]="true"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
       >
       </app-table>
     </div>

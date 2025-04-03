@@ -61,6 +61,7 @@
         *ngIf="action1Icon"
         mat-icon-button
         (click)="$event.stopPropagation(); action1Row(row)"
+        matTooltip="{{ action1Tooltip }}"
       >
         <mat-icon [ngStyle]="{ color: action1Color }">{{
           action1Icon
@@ -70,9 +71,21 @@
         *ngIf="action2Icon"
         mat-icon-button
         (click)="$event.stopPropagation(); action2Row(row)"
+        matTooltip="{{ action2Tooltip }}"
       >
         <mat-icon [ngStyle]="{ color: action2Color }">{{
           action2Icon
+        }}</mat-icon>
+      </button>
+
+      <button
+        *ngIf="action3Icon"
+        mat-icon-button
+        (click)="$event.stopPropagation(); action3Row(row)"
+        matTooltip="{{ action3Tooltip }}"
+      >
+        <mat-icon [ngStyle]="{ color: action3Color }">{{
+          action3Icon
         }}</mat-icon>
       </button>
     </td>

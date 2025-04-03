@@ -12,6 +12,7 @@ import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
+import { MatTooltip } from "@angular/material/tooltip";
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import { MatChipsModule } from "@angular/material/chips";
     MatSortModule,
     MatCheckboxModule,
     MatChipsModule,
+    MatTooltip,
   ],
   exports: [
     MatCardModule,
@@ -41,6 +43,7 @@ import { MatChipsModule } from "@angular/material/chips";
     MatSortModule,
     MatCheckboxModule,
     MatChipsModule,
+    MatTooltip,
   ],
 })
 export class MaterialModule {}
