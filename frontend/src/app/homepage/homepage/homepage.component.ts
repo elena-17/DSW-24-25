@@ -58,34 +58,29 @@ export class HomepageComponent {
 
   depositFunds(): void {
     const dialogRef = this.dialog.open(ChangeAccountBalanceComponent, {
-      data: { title: "Deposit money" },
+      data: { title: "Deposit money", action: "deposit" },
       width: "90%",
       height: "60%",
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.snackBar.open("Deposit successful!", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
         this.loadBalance();
-      } else {
-        this.snackBar.open("Deposit failed.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
       }
     });
   }
 
   withdrawFunds(): void {
-    this.snackBar.open("Withdraw feature coming soon!", "Close", {
-      duration: 2000,
-      horizontalPosition: "center",
-      verticalPosition: "top",
+    const dialogRef = this.dialog.open(ChangeAccountBalanceComponent, {
+      data: { title: "Withdraw money", action: "withdraw" },
+      width: "90%",
+      height: "60%",
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadBalance();
+      }
     });
   }
 }

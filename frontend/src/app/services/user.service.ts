@@ -102,6 +102,10 @@ export class UserService {
   }
 
   addMoney(amount: number): Observable<any> {
-    return this.http.put(this.accountApiUrl, { amount });
+    return this.http.put(this.urlDepositFunds, { amount });
+  }
+
+  withdrawMoney(amount: number): Observable<any> {
+    return this.http.put(this.urlWithdrawFunds, { amount });
   }
 }

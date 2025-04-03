@@ -46,15 +46,17 @@ export class ChangeAccountBalanceComponent {
   isCardValidated: boolean = false; // Variable para controlar si el primer botón fue presionado
   emailCtrl = new FormControl("", [Validators.email]);
   creditCards: any[] = []; // Arreglo para guardar las tarjetas de crédito
+  action: string;
 
   constructor(
     private dialogRef: MatDialogRef<ChangeAccountBalanceComponent>,
     private formBuilder: FormBuilder,
     private userService: UserService,
     private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string },
+    @Inject(MAT_DIALOG_DATA) public data: { title: string; action: string },
   ) {
     this.dialogTitle = data.title;
+    this.action = data.action || "deposit";
 
     this.creditForm = this.formBuilder.group({
       card: ["", [Validators.required]],
@@ -148,20 +150,56 @@ export class ChangeAccountBalanceComponent {
 
   onCancel() {
     this.form.reset();
-    this.dialogRef.close();
+    this.closeDialog();
   }
 
   onSubmit() {
     if (this.creditForm.valid && this.amountForm.valid) {
       const amount = this.amountForm.value.amount;
-      this.userService.addMoney(amount).subscribe({
-        next: (response) => {
-          this.dialogRef.close(response);
-        },
-        error: (error) => {
-          this.dialogRef.close(error);
-        },
-      });
+
+      if (this.action === "deposit") {
+        this.userService.addMoney(amount).subscribe({
+          next: (response) => {
+            this.closeDialog();
+            this.snackBar.open("Deposit successful!", "Close", {
+              duration: 2000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
+          },
+          error: (error) => {
+            this.closeDialog();
+            this.snackBar.open("Deposit failed. Please try again.", "Close", {
+              duration: 2000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
+          },
+        });
+      } else if (this.action === "withdraw") {
+        this.userService.withdrawMoney(amount).subscribe({
+          next: (response) => {
+            this.closeDialog();
+            this.snackBar.open("Withdrawal successful!", "Close", {
+              duration: 2000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
+          },
+          error: (error) => {
+            this.closeDialog();
+            this.snackBar.open(
+              "Withdrawal failed. Please try again.",
+              "Close",
+              {
+                duration: 2000,
+                horizontalPosition: "center",
+                verticalPosition: "top",
+              },
+            );
+          },
+        });
+      }
     }
   }
 
