@@ -25,8 +25,12 @@
 .title-buttons {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Título a la izquierda, botones a la derecha */
+  justify-content: space-between;
   width: 100%;
+  margin-bottom: 0.2rem;
+  h2 {
+    margin-bottom: 0px;
+  }
 }
 
 .money-buttons {
@@ -34,5 +38,4 @@
   justify-content: flex-start;
   gap: 20px;
   align-items: center;
-  margin-top: 28.22px;
 }

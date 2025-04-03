@@ -2,7 +2,7 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 6px 16px;
+  padding: 4px 14px;
   font-size: 14px;
   border-radius: 20px;
   text-transform: capitalize;
@@ -10,6 +10,10 @@
   border: 1px solid;
   gap: 6px;
   white-space: nowrap;
+
+  .material-icons {
+    font-size: 18px;
+  }
 }
 
 /* Colores al pasar el mouse */
