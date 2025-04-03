@@ -12,7 +12,7 @@ export class UserService {
   private accountApiUrl = "http://localhost:8000/account";
 
   // URL for validation in bank
-  private urlValidateCard = `${this.creditApiUrl}/validate/`;
+  private urlValidateCard = "http://localhost:8080/api/validate/";
 
   // URL for user profile
   private urlUserProfile = `${this.baseApiUrl}/profile/`;
@@ -102,10 +102,10 @@ export class UserService {
   }
 
   addMoney(amount: number): Observable<any> {
-    return this.http.put(this.urlDepositFunds, { amount });
+    return this.http.put(this.urlDepositFunds, { amount }, {withCredentials: true});
   }
 
   withdrawMoney(amount: number): Observable<any> {
-    return this.http.put(this.urlWithdrawFunds, { amount });
+    return this.http.put(this.urlWithdrawFunds, { amount }, {withCredentials: true});
   }
 }

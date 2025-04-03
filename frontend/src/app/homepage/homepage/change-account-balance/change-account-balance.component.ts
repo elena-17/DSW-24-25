@@ -102,12 +102,15 @@ export class ChangeAccountBalanceComponent {
   }
 
   validateCard(): void {
-    const formData = this.creditForm.value;
+    const formData = this.creditForm.value.card;
+    const cvv = this.creditForm.value.cvv;
     const amount = this.amountForm.value.amount;
 
     const requestData = {
-      card: formData.card,
-      cvv: formData.cvv,
+      number: formData.number,
+      expiration_date: formData.expiration_date,
+      owner_name: formData.owner_name,
+      cvv: cvv,
       amount: amount,
     };
 

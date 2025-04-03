@@ -40,7 +40,7 @@
         <ng-template matStepLabel>Select a credit card</ng-template>
         <mat-label>Credit Card</mat-label>
         <mat-select formControlName="card" placeholder="Select a credit card">
-          <mat-option *ngFor="let card of creditCards" [value]="card.number">
+          <mat-option *ngFor="let card of creditCards" [value]="card">
             {{ card.card_alias || "Unnamed Card" }} - {{ card.owner_name }} -
             **** **** **** {{ card.number.slice(-4) }}
           </mat-option>
@@ -108,7 +108,7 @@
           mat-flat-button
           color="primary"
           (click)="onSubmit()"
-          [disabled]="form.invalid || creditForm.invalid"
+          [disabled]="amountForm.invalid || creditForm.invalid"
         >
           Confirm
         </button>
