@@ -102,6 +102,10 @@ export class TransactionsComponent implements OnInit {
           element.sender === sessionStorage.getItem("userEmail")
             ? "call_made"
             : "call_received",
+        color:
+          element.sender === sessionStorage.getItem("userEmail")
+            ? "green"
+            : "red",
       }),
     },
     {

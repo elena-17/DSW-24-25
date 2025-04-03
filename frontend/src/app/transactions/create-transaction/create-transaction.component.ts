@@ -62,14 +62,14 @@ export class CreateTransactionComponent {
         [
           Validators.required,
           Validators.min(0.01),
-          Validators.max(1000000),
+          Validators.max(1000001),
           Validators.pattern(/^\d+(\.\d{1,2})?$/),
         ],
       ],
     });
 
     this.form = this.formBuilder.group({
-      title: ["", [Validators.required]],
+      title: ["", [Validators.required, Validators.maxLength(100)]],
       description: [""],
     });
   }
