@@ -30,8 +30,10 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
   @Input() data: T[] = [];
   @Input() enableSelection: boolean = false;
   @Input() enableActions: boolean = false;
-  @Input() action1Icon: string = "edit";
-  @Input() action2Icon: string = "delete";
+  @Input() action1Icon?: string;
+  @Input() action2Icon?: string;
+  @Input() action1Color?: string;
+  @Input() action2Color?: string;
 
   @Output() action1 = new EventEmitter<T>();
   @Output() action2 = new EventEmitter<T>();
