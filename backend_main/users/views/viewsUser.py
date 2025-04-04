@@ -21,11 +21,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 @permission_classes([AllowAny])
 def register_user(request) -> Response:
     serializer = RegisterSerializer(data=request.data)
-
     if serializer.is_valid():
         serializer.save()
-
-        invitation_link = generate_invitation_link(request.data.get("email"))
+        invitation_link = generate_invitation_link(serializer.validated_data['email'])
+        print(f"Invitation link: {invitation_link}")
         # Crear el cuerpo del correo
         subject = 'Invitación para completar tu registro'
         message = f'''
@@ -37,17 +36,15 @@ def register_user(request) -> Response:
         </body>
         </html>
         '''
-
-         # Enviar el correo
+        # Enviar el correo electrónico
+        # Enviar el correo
         send_mail(
             subject,
             '',
             settings.DEFAULT_FROM_EMAIL,
-            [request.data.email],
-            fail_silently=False,
+            [serializer.validated_data['email']],
             html_message=message
         )
-
 
         return Response({"message": "User registered successfully, invitation email sent!"}, status=status.HTTP_201_CREATED)
 
@@ -56,7 +53,7 @@ def register_user(request) -> Response:
 def generate_invitation_link(email: str) -> str:
     # Aquí puedes generar el enlace de invitación con un token, por ejemplo:
     token = urlsafe_base64_encode(email.encode())  # Este es solo un ejemplo, puedes usar un token más seguro
-    invitation_link = f'https://localhost:4200/confirm-register/?email={email}&token={token}'
+    invitation_link = f'http://localhost:4200/confirm-register/?email={email}&token={token}'
     return invitation_link
 
 @api_view(["GET"])
