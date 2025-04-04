@@ -10,6 +10,7 @@ from .views.viewsUser import (
     get_user_profile,
     register_user,
     update_user_profile,
+    confirm_user_registration,
 )
 
 app_name = "user"
@@ -20,6 +21,7 @@ router.register(r"users", UserViewSet, basename="user")
 
 urlpatterns = [
     path("register/", register_user, name="register_user"),
+    path("confirm/", confirm_user_registration, name="confirm_user_registration"),
     path("login/", CustomTokenObtainPairView.as_view(), name="login_user"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("profile/", get_user_profile, name="get_user_profile"),

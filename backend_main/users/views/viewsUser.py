@@ -1,7 +1,12 @@
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from backend_main.users.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from users.serializers.register import RegisterSerializer
 from users.serializers.token import CustomTokenObtainPairSerializer
@@ -20,10 +25,51 @@ def register_user(request) -> Response:
     if serializer.is_valid():
         serializer.save()
 
-        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        invitation_link = generate_invitation_link(request.data.get("email"))
+        # Crear el cuerpo del correo
+        subject = 'Invitación para completar tu registro'
+        message = f'''
+        <html>
+        <body>
+            <p>Has sido invitado a completar tu registro. Para hacerlo, haz clic en el siguiente enlace:</p>
+            <a href="{invitation_link}" style="background-color:#4CAF50;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Aceptar Invitación</a>
+            <p>Si no esperabas esta invitación, por favor ignora este correo.</p>
+        </body>
+        </html>
+        '''
+
+         # Enviar el correo
+        send_mail(
+            subject,
+            '',
+            settings.DEFAULT_FROM_EMAIL,
+            [request.data.email],
+            fail_silently=False,
+            html_message=message
+        )
+
+
+        return Response({"message": "User registered successfully, invitation email sent!"}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def generate_invitation_link(email: str) -> str:
+    # Aquí puedes generar el enlace de invitación con un token, por ejemplo:
+    token = urlsafe_base64_encode(email.encode())  # Este es solo un ejemplo, puedes usar un token más seguro
+    invitation_link = f'https://localhost:4200/confirm-register/?email={email}&token={token}'
+    return invitation_link
+
+@api_view(["GET"])
+def confirm_user_registration(request):
+    email = request.data.get("email")
+    user = User.objects.filter(email=email).first()
+
+    if user:
+        user.is_confirmed = True
+        user.save()
+        return Response({"message": "User confirmed successfully."}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Invalid confirmation link."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["GET"])
 def get_user_profile(request):
