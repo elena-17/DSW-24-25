@@ -1,0 +1,116 @@
+<div class="transaction_form">
+  <h2 id="title">{{ dialogTitle }}</h2>
+  <mat-horizontal-stepper [linear]="false" #stepper>
+    <!-- Paso 1: Seleccionar Contacto -->
+    <mat-step [stepControl]="contactForm">
+      <form [formGroup]="contactForm">
+        <ng-template matStepLabel>Users</ng-template>
+        <!-- Aquí puedes reemplazar el input por un componente de búsqueda más complejo -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>User</mat-label>
+          <input
+            matInput
+            formControlName="contact"
+            placeholder="Email, Phone or Name"
+          />
+          <mat-error *ngIf="contactForm.get('contact')?.hasError('required')">
+            This field is required
+          </mat-error>
+        </mat-form-field>
+        <div class="transaction_form_buttons">
+          <button mat-stroked-button (click)="onCancel()">Cancel</button>
+          <button mat-stroked-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Paso 2: Detalles del Envío -->
+    <mat-step [stepControl]="amountForm">
+      <form [formGroup]="amountForm">
+        <ng-template matStepLabel>Amount</ng-template>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Amount</mat-label>
+          <input
+            matInput
+            formControlName="amount"
+            type="number"
+            placeholder="Ex. 1.00"
+          />
+          <mat-error *ngIf="amountForm.get('amount')?.hasError('required')">
+            This field is required
+          </mat-error>
+          <mat-error *ngIf="amountForm.get('amount')?.hasError('min')">
+            The amount must be greater than 0
+          </mat-error>
+          <mat-error *ngIf="amountForm.get('amount')?.hasError('max')">
+            The amount must be less than 1000000
+          </mat-error>
+        </mat-form-field>
+
+        <div class="transaction_form_buttons">
+          <button mat-stroked-button matStepperPrevious>Back</button>
+          <button mat-stroked-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Paso 3: Mensaje -->
+    <mat-step [stepControl]="form">
+      <form [formGroup]="form">
+        <ng-template matStepLabel>Message</ng-template>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input
+            matInput
+            formControlName="title"
+            placeholder="Enter title for this transaction"
+          />
+          <mat-error *ngIf="form.get('title')?.hasError('required')">
+            This field is required
+          </mat-error>
+          <mat-error *ngIf="form.get('title')?.hasError('maxlength')">
+            This title is too long
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            placeholder="Optionally send a message for this transaction"
+          ></textarea>
+        </mat-form-field>
+
+        <div class="transaction_form_buttons">
+          <button mat-stroked-button matStepperPrevious>Back</button>
+          <button mat-stroked-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Paso 4: Confirmación -->
+    <mat-step>
+      <ng-template matStepLabel>Confirmation</ng-template>
+      <div class="confirmation-message">
+        <p>You're about to {{ dialogTitle | lowercase }}</p>
+        <p class="amount-highlight">{{ amountForm.value.amount }} €</p>
+        <p>
+          to
+          <span class="contact-highlight">{{ contactForm.value.contact }}</span>
+        </p>
+      </div>
+
+      <div class="transaction_form_buttons">
+        <button mat-stroked-button matStepperPrevious>Back</button>
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="onSubmit()"
+          [disabled]="form.invalid || contactForm.invalid"
+        >
+          Confirm
+        </button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>

@@ -2,21 +2,26 @@
 
 $hover-color: rgba(255, 255, 255, 0.2);
 $box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-$background-image: linear-gradient(0deg, #d9afd9 0%, #97d9e1 100%);
+$background-image: linear-gradient(
+  180deg,
+  rgba(0, 184, 196, 1) 25%,
+  rgba(255, 194, 74, 1) 93%
+);
 
 @use "@angular/material" as mat;
 
 html {
   color-scheme: light;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$cyan-palette,
-        theme-type: light,
-      ),
-    )
-  );
+  // @include mat.theme(
+  //   (
+  //     color: (
+  //       primary: mat.$azure-palette,
+  //       tertiary: mat.$cyan-palette,
+  //       theme-type: light,
+  //     ),
+  //   )
+  // );
+  --mat-sys-primary: #00b8c4;
 }
 
 html,
@@ -37,6 +42,18 @@ button {
   }
 }
 
+:root {
+  --mat-dialog-container-max-width: 600px;
+}
+
+h2 {
+  font-weight: normal;
+}
+
+h4 {
+  font-weight: normal;
+}
+
 .container {
   box-shadow: $box-shadow;
   padding: 20px;
@@ -45,20 +62,23 @@ button {
 }
 
 .page-container {
-  padding-left: 50px;
-  padding-right: 50px;
+  padding-top: 30px;
+  padding-left: 80px;
+  padding-right: 80px;
+  margin-bottom: 90px;
+
+  @media (max-width: 768px) {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
 }
 
 .underlined-title {
   h2 {
-    font-size: 2rem;
-    font-weight: normal;
     margin-bottom: 0.2rem;
   }
 
   h4 {
-    font-size: 1rem;
-    font-weight: normal;
     color: #666;
     margin-top: 0.25rem;
     margin-bottom: 0.5rem;

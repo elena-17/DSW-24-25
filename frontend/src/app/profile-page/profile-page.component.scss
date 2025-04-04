@@ -1,17 +1,17 @@
 .container {
   height: 90vh;
   padding: 0%;
-}
 
-mat-sidenav {
-  width: 250px;
-  background-color: var(--mat-sys-surface-container-low);
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
+  .mat-sidenav {
+    width: 250px;
+    background-color: var(--mat-sys-surface-container-low);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
 
-mat-toolbar {
-  background-color: transparent;
-  color: black;
+  .mat-toolbar {
+    background-color: transparent;
+    color: black;
+  }
 }
 
 .delete-button {
@@ -99,6 +99,7 @@ mat-toolbar {
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .form-grid-password {
     mat-form-field {
       width: 100%;

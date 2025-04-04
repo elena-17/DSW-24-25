@@ -29,7 +29,7 @@
   top: 35%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(12deg);
-  background-color: #ff6a3d;
+  background-color: var(--mat-sys-primary);
   padding: 0.5rem 0.5rem;
   border-radius: 4px;
   color: #fff;
@@ -37,8 +37,8 @@
 }
 
 .home-button {
-  background-color: #ff6a3d !important;
-  border: 2px solid #ff6a3d;
+  background-color: var(--mat-sys-primary) !important;
+  border: 2px solid var(--mat-sys-primary);
   color: #fff !important;
   box-shadow: none;
 }
