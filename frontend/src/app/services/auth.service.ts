@@ -10,6 +10,7 @@ export class AuthService {
   private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
   private urlRegister = `${this.baseApiUrl}/register/`;
   private urlLogin = `${this.baseApiUrl}/login/`;
+  private urlConfirmRegister = `${this.baseApiUrl}/confirm/`;
 
   constructor(private http: HttpClient) {}
 
@@ -81,5 +82,9 @@ export class AuthService {
     return this.http.post<any>(this.urlLogin, info, {
       withCredentials: true,
     });
+  }
+
+  confirmRegistration(email: string) {
+    return this.http.post(this.urlConfirmRegister, { email });
   }
 }

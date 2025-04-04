@@ -10,8 +10,8 @@ import { Error404Component } from "./error404/error404.component";
 import { AdminHomepageComponent } from "./homepage/admin-homepage/admin-homepage.component";
 import { AdminGuard } from "./guards/admin.guard";
 import { AdminUsersComponent } from "./admin-users/admin-users.component";
-
 import { ProfilePageComponent } from "./profile-page/profile-page.component";
+import { ConfirmRegisterComponent } from "./register/confirm-register/confirm-register.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
@@ -28,6 +28,7 @@ export const routes: Routes = [
     data: { role: "admin" },
   },
   { path: "register", component: RegisterComponent },
+  { path: "confirm-register", component: ConfirmRegisterComponent },
   { path: "homepage", component: HomepageComponent },
   { path: "friends", component: FriendsComponent },
   { path: "profile", component: ProfilePageComponent },
