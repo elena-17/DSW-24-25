@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { Router } from "@angular/router";
 import { AuthService } from "../services/auth.service";
@@ -10,15 +10,28 @@ import { CommonModule } from "@angular/common";
 import { TableComponent } from "../shared/table/table.component";
 import { MatDialog } from "@angular/material/dialog";
 import { CreateTransactionComponent } from "./create-transaction/create-transaction.component";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { DatePipe } from "@angular/common";
 import { NotificationService } from "../services/notification.service";
 import { ConfirmDialogComponent } from "../shared/confirm-dialog/confirm-dialog.component";
 import { DetailsTransactionComponent } from "./details-transaction/details-transaction.component";
+import { MatSidenav, MatSidenavModule } from "@angular/material/sidenav";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatSelectModule } from "@angular/material/select";
+import { FormsModule } from "@angular/forms";
+import { provideNativeDateAdapter } from "@angular/material/core";
+import { Overlay } from "@angular/cdk/overlay";
+
+import { MAT_DATEPICKER_SCROLL_STRATEGY } from "@angular/material/datepicker";
+import { Provider } from "@angular/core";
+import { MatNativeDateModule } from "@angular/material/core";
+
+export function scrollStrategy(overlay: Overlay): () => any {
+  return () => overlay.scrollStrategies.reposition();
+}
 
 @Component({
   selector: "app-transactions",
-  providers: [DatePipe],
+  providers: [DatePipe, provideNativeDateAdapter()],
   imports: [
     ToolbarComponent,
     MaterialModule,
@@ -26,6 +39,11 @@ import { DetailsTransactionComponent } from "./details-transaction/details-trans
     MatProgressSpinnerModule,
     CommonModule,
     TableComponent,
+    MatSidenavModule,
+    MatDatepickerModule,
+    MatSelectModule,
+    FormsModule,
+    MatNativeDateModule,
   ],
   templateUrl: "./transactions.component.html",
   styleUrl: "./transactions.component.scss",
@@ -36,6 +54,7 @@ export class TransactionsComponent implements OnInit {
   pendingOthers: any[] = [];
   pendingMyApproval: any[] = [];
   loading: boolean = false;
+  filterOpen: boolean = false;
 
   columns = [
     {
@@ -87,6 +106,14 @@ export class TransactionsComponent implements OnInit {
       }),
     },
   ];
+
+  filters = {
+    startDate: null,
+    endDate: null,
+    status: "",
+    amount: null,
+  };
+  @ViewChild("sidenav") sidenav!: MatSidenav;
 
   constructor(
     private dialog: MatDialog,
@@ -319,5 +346,31 @@ export class TransactionsComponent implements OnInit {
         this.notificationService.showSuccessMessage("To be done...");
       }
     });
+  }
+
+  //
+  // filters
+  //
+  toggleFilters() {
+    this.filterOpen = !this.filterOpen;
+  }
+
+  closeFilters() {
+    this.filterOpen = false;
+  }
+
+  applyFilters() {
+    console.log("Applying filters:", this.filters);
+    // Aquí puedes emitir eventos o actualizar la tabla con los filtros
+    this.closeFilters();
+  }
+
+  clearFilters() {
+    this.filters = {
+      startDate: null,
+      endDate: null,
+      status: "",
+      amount: null,
+    };
   }
 }

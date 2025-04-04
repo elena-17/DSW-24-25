@@ -39,3 +39,63 @@
   gap: 20px;
   align-items: center;
 }
+
+.filter-fab {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 700;
+  background-color: var(--mat-sys-primary-darker);
+  color: white;
+}
+
+.filter-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* Fondo semitransparente */
+  display: flex;
+  justify-content: flex-end; /* Posiciona el panel a la derecha */
+  z-index: 800;
+  animation: fadeIn 0.35s ease;
+  overflow: visible; /* Permite que se muestren elementos fuera del contenedor */
+}
+
+.filter-panel {
+  width: 500px;
+  height: 100%;
+  background-color: #fff;
+  padding: 20px;
+  padding-left: 40px;
+  box-shadow: -4px 0 6px rgba(0, 0, 0, 0.2);
+  overflow: visible;
+  animation: slideIn 0.35s cubic-bezier(0.3, 0.85, 0.5, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Keyframes para slideIn del panel */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}

@@ -1,5 +1,60 @@
 <app-toolbar></app-toolbar>
 
+<button mat-fab color="primary" class="filter-fab" (click)="toggleFilters()">
+  <mat-icon>filter_alt</mat-icon>
+</button>
+
+<!-- Panel de filtros -->
+<div class="filter-overlay" *ngIf="true" (click)="closeFilters()">
+  <div class="filter-panel" (click)="$event.stopPropagation()">
+    <header class="filter-header">
+      <h3>Filters</h3>
+      <button mat-icon-button (click)="closeFilters()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <mat-form-field>
+      <mat-label>Enter a date range</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate placeholder="Start date" />
+        <input matEndDate placeholder="End date" />
+      </mat-date-range-input>
+      <mat-hint>DD/MM/YYYY – DD/MM/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+
+    <section class="example-section">
+      <h4>Select your toppings:</h4>
+      <p><mat-checkbox>Pepperoni</mat-checkbox></p>
+      <p><mat-checkbox>Extra Cheese</mat-checkbox></p>
+      <p><mat-checkbox>Mushroom</mat-checkbox></p>
+    </section>
+
+    <!-- <mat-form-field appearance="fill">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="filters.status">
+        <mat-option value="">All</mat-option>
+        <mat-option value="pending">Pending</mat-option>
+        <mat-option value="approved">Approved</mat-option>
+        <mat-option value="rejected">Rejected</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Amount Range</mat-label>
+      <mat-slider [(ngModel)]="filters.amount" min="0" max="10000" step="100" thumbLabel></mat-slider>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="applyFilters()">Apply</button>
+    <button mat-stroked-button color="warn" (click)="clearFilters()">Clear</button> -->
+  </div>
+</div>
+
 <mat-tab-group animationDuration="500ms">
   <!-- tab 1 - pending transactions -->
   <mat-tab>
@@ -34,6 +89,17 @@
         <hr />
       </div>
 
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" />
+        <mat-hint>MM/DD/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #picker panelClass="custom-datepicker"></mat-datepicker>
+      </mat-form-field>
+
       <span style="display: block; height: 20px"></span>
 
       <div class="underlined-title">
@@ -67,7 +133,7 @@
         [columns]="columns"
         [data]="pendingOthers"
         [enableSelection]="false"
-        [enableActions]="false"
+        [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
         [action1Tooltip]="'View details'"
