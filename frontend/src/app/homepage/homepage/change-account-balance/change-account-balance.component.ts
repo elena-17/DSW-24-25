@@ -139,7 +139,7 @@ export class ChangeAccountBalanceComponent {
       error: (err) => {
         this.closeDialog();
         this.snackBar.open(
-          "Card validation failed. Please check your inputs.",
+          err.error.message,
           "Close",
           {
             duration: 2000,
@@ -172,7 +172,7 @@ export class ChangeAccountBalanceComponent {
           },
           error: (error) => {
             this.closeDialog();
-            this.snackBar.open("Deposit failed. Please try again.", "Close", {
+            this.snackBar.open(error.error.message, "Close", {
               duration: 2000,
               horizontalPosition: "center",
               verticalPosition: "top",
@@ -192,7 +192,7 @@ export class ChangeAccountBalanceComponent {
           error: (error) => {
             this.closeDialog();
             this.snackBar.open(
-              "Withdrawal failed. Please try again.",
+              error.error.message,
               "Close",
               {
                 duration: 2000,
