@@ -1,0 +1,116 @@
+.transaction_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 8px;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.transaction_form h2 {
+  width: 100%;
+  text-align: center;
+  font-size: 1.75rem;
+  margin-bottom: 30px;
+}
+
+::ng-deep .mat-horizontal-stepper-header-container {
+  padding: 0 10px 10px 10px !important;
+}
+
+::ng-deep .mat-horizontal-stepper-header {
+  padding: 0 20px 0 20px !important;
+}
+
+::ng-deep .mat-step-label {
+  font-size: 14px !important;
+  font-weight: bold;
+}
+
+.transaction_form_buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Márgenes para los botones */
+.transaction_form_buttons button {
+  margin: 10px 0;
+}
+
+.confirmation-message {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.amount-highlight {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--mat-sys-primary);
+  margin-top: 20px;
+}
+
+.contact-highlight {
+  font-weight: bold;
+  color: black;
+  margin-top: 10px;
+}
+
+::ng-deep .mat-form-field {
+  margin-bottom: 20px;
+}
+
+::ng-deep .mat-select {
+  margin-bottom: 20px;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .transaction_form {
+    width: 90%;
+  }
+
+  .transaction_form_buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .amount-highlight {
+    font-size: 1.5rem;
+  }
+
+  .transaction_form h2 {
+    font-size: 1.5rem;
+  }
+
+  ::ng-deep .mat-horizontal-stepper-header-container {
+    padding: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .transaction_form h2 {
+    font-size: 1.2rem;
+  }
+
+  .amount-highlight {
+    font-size: 1.2rem;
+  }
+
+  .transaction_form_buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+}

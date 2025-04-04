@@ -9,7 +9,12 @@ import { HttpHeaders } from "@angular/common/http";
 export class UserService {
   private baseApiUrl = "http://localhost:8000/user";
   private creditApiUrl = "http://localhost:8000/creditcards";
+  private accountApiUrl = "http://localhost:8000/account";
 
+  // URL for validation in bank
+  private urlValidateCard = "http://localhost:8080/api/validate/";
+
+  // URL for user profile
   private urlUserProfile = `${this.baseApiUrl}/profile/`;
   private urlUpdateUserProfile = `${this.baseApiUrl}/profile/update/`;
   private urlDeleteUserAccount = `${this.baseApiUrl}/profile/delete/`;
@@ -20,6 +25,11 @@ export class UserService {
   private urlUpdateCreditCard = `${this.creditApiUrl}/update/`;
   private urlDeleteCreditCard = `${this.creditApiUrl}/delete/`;
   private urlGetCreditCards = `${this.creditApiUrl}/`;
+
+  // URL for account balance
+  private urlGetAccountBalance = `${this.accountApiUrl}/`;
+  private urlDepositFunds = `${this.accountApiUrl}/recharge/`;
+  private urlWithdrawFunds = `${this.accountApiUrl}/withdraw/`;
 
   constructor(private http: HttpClient) {}
 
@@ -79,5 +89,23 @@ export class UserService {
       body: body,
       withCredentials: true,
     });
+  }
+
+  getAccountBalance(): Observable<any> {
+    return this.http.get<any>(this.urlGetAccountBalance, {
+      withCredentials: true,
+    });
+  }
+
+  validateCard(requestData: any): Observable<any> {
+    return this.http.post(this.urlValidateCard, requestData);
+  }
+
+  addMoney(amount: number): Observable<any> {
+    return this.http.put(this.urlDepositFunds, { amount }, {withCredentials: true});
+  }
+
+  withdrawMoney(amount: number): Observable<any> {
+    return this.http.put(this.urlWithdrawFunds, { amount }, {withCredentials: true});
   }
 }
