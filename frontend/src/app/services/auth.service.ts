@@ -85,6 +85,6 @@ export class AuthService {
   }
 
   confirmRegistration(email: string) {
-    return this.http.post(this.urlConfirmRegister, { email });
+    return this.http.put(this.urlConfirmRegister, { email });
   }
 }
