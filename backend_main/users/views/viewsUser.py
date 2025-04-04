@@ -1,4 +1,3 @@
-from account.models import Account
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -21,7 +20,6 @@ def register_user(request) -> Response:
     if serializer.is_valid():
         serializer.save()
 
-        Account.objects.create(user=serializer.instance)
         return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
