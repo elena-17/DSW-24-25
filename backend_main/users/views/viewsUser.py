@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from backend_main.users.models import User
+from users.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from users.serializers.register import RegisterSerializer
 from users.serializers.token import CustomTokenObtainPairSerializer
