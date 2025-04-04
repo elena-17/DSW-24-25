@@ -65,7 +65,7 @@ export class HomepageComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.loadBalance(); //NOT LOADED, WE NEED TO REFRESH PAGE RIGHT NOW TO SEE THE UPDATE
+        this.balance = result.balance;
       }
     });
   }

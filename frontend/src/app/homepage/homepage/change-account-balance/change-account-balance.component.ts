@@ -163,12 +163,12 @@ export class ChangeAccountBalanceComponent {
       if (this.action === "deposit") {
         this.userService.addMoney(amount).subscribe({
           next: (response) => {
-            this.closeDialog();
             this.snackBar.open("Deposit successful!", "Close", {
               duration: 2000,
               horizontalPosition: "center",
               verticalPosition: "top",
             });
+            this.dialogRef.close(response);
           },
           error: (error) => {
             this.closeDialog();
@@ -182,12 +182,12 @@ export class ChangeAccountBalanceComponent {
       } else if (this.action === "withdraw") {
         this.userService.withdrawMoney(amount).subscribe({
           next: (response) => {
-            this.closeDialog();
             this.snackBar.open("Withdrawal successful!", "Close", {
               duration: 2000,
               horizontalPosition: "center",
               verticalPosition: "top",
             });
+            this.dialogRef.close(response);
           },
           error: (error) => {
             this.closeDialog();
