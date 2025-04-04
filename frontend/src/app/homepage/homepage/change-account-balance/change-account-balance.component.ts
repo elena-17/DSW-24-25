@@ -172,7 +172,7 @@ export class ChangeAccountBalanceComponent {
           },
           error: (error) => {
             this.closeDialog();
-            this.snackBar.open(error.error.message, "Close", {
+            this.snackBar.open(error.error.error, "Close", {
               duration: 2000,
               horizontalPosition: "center",
               verticalPosition: "top",
@@ -192,7 +192,7 @@ export class ChangeAccountBalanceComponent {
           error: (error) => {
             this.closeDialog();
             this.snackBar.open(
-              error.error.message,
+              error.error.error,
               "Close",
               {
                 duration: 2000,
