@@ -57,6 +57,7 @@ def generate_invitation_link(email: str) -> str:
     return invitation_link
 
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def confirm_user_registration(request):
     email = request.data.get("email")
     user = User.objects.filter(email=email).first()
