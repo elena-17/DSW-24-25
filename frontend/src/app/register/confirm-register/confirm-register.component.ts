@@ -34,7 +34,7 @@ export class ConfirmRegisterComponent implements OnInit{
   confirmRegister(): void {
     this.authService.confirmRegistration(this.email).subscribe({
       next: (response) => {
-        this.snackBar.open('Usuario confirmado correctamente. Se va a proceder a cerrar esta ventana', 'Close', {
+        this.snackBar.open((response as any).message, 'Close', {
           duration: 3000,
           horizontalPosition: 'center',
           verticalPosition: 'top',

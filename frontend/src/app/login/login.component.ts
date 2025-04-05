@@ -56,7 +56,7 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    alert("Se notificará al administrador.");
+    alert("We will notificate the admin.");
     this.fmodal.reset();
     this.closeModal();
   }
