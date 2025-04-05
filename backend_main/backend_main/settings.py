@@ -184,11 +184,10 @@ SIMPLE_JWT = {
 # Email Settings #
 ####################
 
-# Configuración del servidor SMTP (para enviar correos)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Usa SMTP para enviar correos
-EMAIL_HOST = 'smtp-relay.brevo.com'  # Cambia a tu servidor SMTP
-EMAIL_PORT = 587 
-EMAIL_USE_TLS = True  # Usar TLS para asegurar la conexión
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "7e55f9001@smtp-brevo.com")  
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "k6jJQGK3Y5ScTAHV")  
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Antonio.Campallo@alu.uclm.es")  
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp-relay.brevo.com"  # SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True  # Secure connection
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
