@@ -1,7 +1,14 @@
+from email.utils import quote
+import threading
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from users.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
 from users.serializers.register import RegisterSerializer
 from users.serializers.token import CustomTokenObtainPairSerializer
@@ -16,14 +23,53 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 @permission_classes([AllowAny])
 def register_user(request) -> Response:
     serializer = RegisterSerializer(data=request.data)
-
     if serializer.is_valid():
         serializer.save()
+        email = serializer.validated_data['email']
+        invitation_link = generate_invitation_link(email)
+        threading.Thread(target=send_invitation_email, args=(email, invitation_link)).start()
 
-        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "User registered successfully, invitation email sent!"}, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def generate_invitation_link(email: str) -> str:
+    encoded_email = quote(email)
+    token = urlsafe_base64_encode(email.encode())  
+    invitation_link = f'http://localhost:4200/confirm-register/?email={encoded_email}&token={token}'
+    return invitation_link
+
+def send_invitation_email(email: str, invitation_link: str) -> None:
+    subject = 'Complete Your Registration on ZAP'
+    message = f'''
+        <html>
+        <body>
+            <p>You have been invited to complete your registration. To do so, please click the following link:</p>
+            <a href="{invitation_link}" style="background-color:#00b8c4;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Go to confirm my registration</a>
+            <p>If you were not expecting this invitation, please ignore this email.</p>
+        </body>
+        </html>
+    '''
+
+    send_mail(
+        subject,
+        '',
+        settings.DEFAULT_FROM_EMAIL,
+        [email],
+        html_message=message
+    )
+    
+@api_view(["PUT"])
+@permission_classes([AllowAny])
+def confirm_user_registration(request):
+    email = request.data.get("email")
+    user = User.objects.filter(email=email).first()
+    if user:
+        user.is_confirmed = True
+        user.save()
+        return Response({"message": "User confirmed successfully."}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Invalid confirmation link."}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["GET"])
 def get_user_profile(request):

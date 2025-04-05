@@ -41,6 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=10, choices=USER_ROLES, default="user")
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_confirmed = models.BooleanField(default=False)  # Nuevo campo
 
     objects = CustomUserManager()
 
