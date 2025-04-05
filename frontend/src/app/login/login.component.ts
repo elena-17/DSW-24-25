@@ -91,7 +91,7 @@ export class LoginComponent {
             this.router.navigate(["homepage"]);
           }
         },
-        error: (error) => {
+        error: () => {
           this.snackBar.open("Login failed. Check your credentials or confirm your account.", "Close", {
             duration: 3000,
             horizontalPosition: "center",
