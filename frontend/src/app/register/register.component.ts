@@ -162,7 +162,7 @@ export class RegisterComponent {
       )
       .subscribe({
         next: (response) => {
-          this.snackBar.open("User registered successfully", "OK", {
+          this.snackBar.open((response as any).message, "OK", {
             duration: 2000,
             horizontalPosition: "center",
             verticalPosition: "top",

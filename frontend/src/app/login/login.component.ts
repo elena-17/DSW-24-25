@@ -56,7 +56,7 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    alert("Se notificará al administrador.");
+    alert("We will notify the admin.");
     this.fmodal.reset();
     this.closeModal();
   }
@@ -91,8 +91,8 @@ export class LoginComponent {
             this.router.navigate(["homepage"]);
           }
         },
-        error: () => {
-          this.snackBar.open("Login failed. Check your credentials.", "Close", {
+        error: (error) => {
+          this.snackBar.open(error.error?.detail, "Close", {
             duration: 3000,
             horizontalPosition: "center",
             verticalPosition: "top",
