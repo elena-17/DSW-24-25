@@ -92,7 +92,7 @@ export class LoginComponent {
           }
         },
         error: (error) => {
-          this.snackBar.open(error.error.message, "Close", {
+          this.snackBar.open("Login failed. Check your credentials or confirm your account.", "Close", {
             duration: 3000,
             horizontalPosition: "center",
             verticalPosition: "top",
