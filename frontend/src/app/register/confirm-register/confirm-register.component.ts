@@ -46,7 +46,7 @@ export class ConfirmRegisterComponent implements OnInit{
         }, 3000); 
       },  
       error: (error) => {
-        this.snackBar.open(error.error.message || 'Error al confirmar usuario.', 'Close', {
+        this.snackBar.open(error.error.message || 'Error while confirming user.', 'Close', {
           duration: 3000,
           horizontalPosition: 'center',
           verticalPosition: 'top',
