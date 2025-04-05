@@ -1,12 +1,18 @@
-<div class="container">
-    <h2>Confirmando tu cuenta...</h2>
-    <mat-spinner *ngIf="!success"></mat-spinner>
-    <div *ngIf="success">
-      <p>¡Tu cuenta ha sido confirmada exitosamente!</p>
+<div class="confirm_form">
+  <div class="confirm_card">
+    <h2>Confirming your account</h2>
+
+    <div *ngIf="!success" class="spinner-container">
+      <mat-spinner class="spinner"></mat-spinner>
+      <p>Loading, please wait...</p>
+      <div>
+        <p>Click the button below to confirm your registration.</p>
+        <button mat-raised-button color="primary" (click)="confirmRegister()">Confirm Registration</button>
+      </div>
     </div>
-    <div *ngIf="!success">
-      <p>Haz clic en el siguiente botón para confirmar tu registro.</p>
-      <button mat-raised-button color="primary" (click)="confirmRegister()">Confirmar Registro</button>
+
+    <div *ngIf="success">
+      <p>Your account has been confirmed successfully!</p>
     </div>
   </div>
-  
+</div>
