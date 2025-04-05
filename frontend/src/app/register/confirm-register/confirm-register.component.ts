@@ -12,7 +12,7 @@ import { MatButton } from '@angular/material/button';
   standalone: true,
   imports: [MatButton, MatSpinner, FormsModule, ReactiveFormsModule, CommonModule],
   templateUrl: './confirm-register.component.html',
-  styleUrl: './confirm-register.component.scss'
+  styleUrls: ['./confirm-register.component.scss']
 })
 export class ConfirmRegisterComponent implements OnInit{
   message: string = '';
