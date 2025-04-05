@@ -58,7 +58,6 @@ def generate_invitation_link(email: str) -> str:
 def confirm_user_registration(request):
     email = request.data.get("email")
     user = User.objects.filter(email=email).first()
-    print(f"User: {user}")
     if user:
         user.is_confirmed = True
         user.save()
