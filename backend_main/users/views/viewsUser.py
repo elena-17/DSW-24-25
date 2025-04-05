@@ -25,7 +25,7 @@ def register_user(request) -> Response:
         serializer.save()
         invitation_link = generate_invitation_link(serializer.validated_data['email'])
 
-        subject = 'Invitation to Complete Your Registration'
+        subject = 'Complete Your Registration on ZAP'
         message = f'''
         <html>
         <body>
