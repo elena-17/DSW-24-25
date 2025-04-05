@@ -1,3 +1,5 @@
+from email.utils import quote
+import threading
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -23,10 +25,23 @@ def register_user(request) -> Response:
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        invitation_link = generate_invitation_link(serializer.validated_data['email'])
+        email = serializer.validated_data['email']
+        invitation_link = generate_invitation_link(email)
+        threading.Thread(target=send_invitation_email, args=(email, invitation_link)).start()
 
-        subject = 'Complete Your Registration on ZAP'
-        message = f'''
+        return Response({"message": "User registered successfully, invitation email sent!"}, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def generate_invitation_link(email: str) -> str:
+    encoded_email = quote(email)
+    token = urlsafe_base64_encode(email.encode())  
+    invitation_link = f'http://localhost:4200/confirm-register/?email={encoded_email}&token={token}'
+    return invitation_link
+
+def send_invitation_email(email: str, invitation_link: str) -> None:
+    subject = 'Complete Your Registration on ZAP'
+    message = f'''
         <html>
         <body>
             <p>You have been invited to complete your registration. To do so, please click the following link:</p>
@@ -34,25 +49,16 @@ def register_user(request) -> Response:
             <p>If you were not expecting this invitation, please ignore this email.</p>
         </body>
         </html>
-        '''
+    '''
 
-        send_mail(
-            subject,
-            '',
-            settings.DEFAULT_FROM_EMAIL,
-            [serializer.validated_data['email']],
-            html_message=message
-        )
-
-        return Response({"message": "User registered successfully, invitation email sent!"}, status=status.HTTP_201_CREATED)
-
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-def generate_invitation_link(email: str) -> str:
-    token = urlsafe_base64_encode(email.encode())  
-    invitation_link = f'http://localhost:4200/confirm-register/?email={email}&token={token}'
-    return invitation_link
-
+    send_mail(
+        subject,
+        '',
+        settings.DEFAULT_FROM_EMAIL,
+        [email],
+        html_message=message
+    )
+    
 @api_view(["PUT"])
 @permission_classes([AllowAny])
 def confirm_user_registration(request):
