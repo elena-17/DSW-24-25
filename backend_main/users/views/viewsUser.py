@@ -24,20 +24,18 @@ def register_user(request) -> Response:
     if serializer.is_valid():
         serializer.save()
         invitation_link = generate_invitation_link(serializer.validated_data['email'])
-        print(f"Invitation link: {invitation_link}")
-        # Crear el cuerpo del correo
-        subject = 'Invitación para completar tu registro'
+
+        subject = 'Invitation to Complete Your Registration'
         message = f'''
         <html>
         <body>
-            <p>Has sido invitado a completar tu registro. Para hacerlo, haz clic en el siguiente enlace:</p>
-            <a href="{invitation_link}" style="background-color:#4CAF50;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Aceptar Invitación</a>
-            <p>Si no esperabas esta invitación, por favor ignora este correo.</p>
+            <p>You have been invited to complete your registration. To do so, please click the following link:</p>
+            <a href="{invitation_link}" style="background-color:#00b8c4;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Go to confirm my registration</a>
+            <p>If you were not expecting this invitation, please ignore this email.</p>
         </body>
         </html>
         '''
-        # Enviar el correo electrónico
-        # Enviar el correo
+
         send_mail(
             subject,
             '',
@@ -51,8 +49,7 @@ def register_user(request) -> Response:
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def generate_invitation_link(email: str) -> str:
-    # Aquí puedes generar el enlace de invitación con un token, por ejemplo:
-    token = urlsafe_base64_encode(email.encode())  # Este es solo un ejemplo, puedes usar un token más seguro
+    token = urlsafe_base64_encode(email.encode())  
     invitation_link = f'http://localhost:4200/confirm-register/?email={email}&token={token}'
     return invitation_link
 
