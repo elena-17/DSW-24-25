@@ -1,0 +1,80 @@
+@import "../../../styles.scss";
+
+.confirm_form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #d9afd9;
+  background-image: $background-image;
+  padding: 20px;
+}
+
+.confirm_card {
+  width: 500px;
+  padding: 20px;
+  padding-top: 10px;
+  text-align: center;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  position: relative;
+  min-height: 300px;
+}
+
+.success-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 1;
+  height: 100%;
+  padding: 20px 0;
+  gap: 20px;
+}
+
+.success-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: pop-in 0.4s ease-out;
+}
+
+.spinner-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: white;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  padding: 20px;
+  z-index: 2;
+}
+
+.spinner {
+  width: 50px !important;
+  height: 50px !important;
+}
+
+button[mat-raised-button] {
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+/* 🔹 Responsive design */
+@media (max-width: 480px) {
+  .confirm_card {
+    width: 90%;
+    padding: 15px;
+  }
+}

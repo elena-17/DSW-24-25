@@ -1,0 +1,22 @@
+/* Estilo base para las badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  font-size: 14px;
+  border-radius: 20px;
+  text-transform: capitalize;
+  transition: background-color 0.3s ease;
+  border: 1px solid;
+  gap: 6px;
+  white-space: nowrap;
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+/* Colores al pasar el mouse */
+.badge:hover {
+  opacity: 0.8;
+}

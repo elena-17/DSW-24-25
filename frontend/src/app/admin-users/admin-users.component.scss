@@ -1,0 +1,44 @@
+.action-buttons {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 20px;
+  gap: 20px;
+  align-items: center;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.filters {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 50px;
+  align-items: center;
+  width: 100%;
+}
+
+::ng-deep .badge-admin {
+  background-color: #d894f5;
+  color: #8931af;
+  border: 1px solid #8931af;
+}
+
+::ng-deep .badge-user {
+  background-color: #f6ba82;
+  color: #db6e00;
+  border: 1px solid #db6e00;
+}
+
+::ng-deep .badge-seller {
+  background-color: #f1e895;
+  color: #c7a008;
+  border: 1px solid #c7a008;
+}
+
+::ng-deep .badge-default {
+  background-color: #ffcccc;
+  color: #d33f3f;
+  border: 1px solid #d33f3f;
+}

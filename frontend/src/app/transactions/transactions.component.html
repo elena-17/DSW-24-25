@@ -1,4 +1,137 @@
 <app-toolbar></app-toolbar>
-<div class="content">
-  <h1>TRANSACTIONS</h1>
-</div>
+
+<mat-tab-group animationDuration="500ms">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon" style="color: #e38100fe"
+        >hourglass_empty</mat-icon
+      >
+      Pending
+    </ng-template>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner [diameter]="60"></mat-spinner>
+    </div>
+    <div *ngIf="!loading" class="page-container">
+      <div class="underlined-title">
+        <div class="title-buttons">
+          <h2>Create Transaction</h2>
+          <div class="money-buttons">
+            <button mat-flat-button (click)="sendTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Send Money
+            </button>
+            <button mat-stroked-button (click)="requestTransaction()">
+              <mat-icon>quiz</mat-icon>
+              Ask for Money
+            </button>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <span style="display: block; height: 20px"></span>
+      <div class="underlined-title">
+        <h2>Transactions you need to approve</h2>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="pendingMyApproval"
+        [enableSelection]="false"
+        [enableActions]="true"
+        (action1)="approveTransaction($event)"
+        (action2)="rejectTransaction($event)"
+        [action1Icon]="'task_alt'"
+        [action2Icon]="'block'"
+        [action1Color]="'green'"
+        [action2Color]="'red'"
+      />
+      <div class="underlined-title">
+        <h2>Transactions pending for others</h2>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="pendingOthers"
+        [enableSelection]="false"
+        [enableActions]="false"
+        (action1)="approveTransaction($event)"
+        (action2)="rejectTransaction($event)"
+        [action1Icon]="'task_alt'"
+        [action2Icon]="'block'"
+      />
+    </div>
+  </mat-tab>
+
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon" style="color: #f44336"
+        >call_made</mat-icon
+      >
+      Sent
+    </ng-template>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner [diameter]="60"></mat-spinner>
+    </div>
+    <div *ngIf="!loading" class="page-container">
+      <div class="underlined-title">
+        <div class="title-buttons">
+          <h2>Sent Transactions</h2>
+          <div class="money-buttons">
+            <button mat-flat-button (click)="sendTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Send Money
+            </button>
+            <button mat-stroked-button (click)="requestTransaction()">
+              <mat-icon>quiz</mat-icon>
+              Ask for Money
+            </button>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="sender"
+        [enableSelection]="false"
+        [enableActions]="false"
+      >
+      </app-table>
+    </div>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon" style="color: #4caf50"
+        >call_received</mat-icon
+      >
+      Received
+    </ng-template>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner [diameter]="60"></mat-spinner>
+    </div>
+    <div *ngIf="!loading" class="page-container">
+      <div class="underlined-title">
+        <div class="title-buttons">
+          <h2>Received Transactions</h2>
+          <div class="money-buttons">
+            <button mat-flat-button (click)="sendTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Send Money
+            </button>
+            <button mat-stroked-button (click)="requestTransaction()">
+              <mat-icon>quiz</mat-icon>
+              Ask for Money
+            </button>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="receiver"
+        [enableSelection]="false"
+        [enableActions]="false"
+      >
+      </app-table>
+    </div>
+  </mat-tab>
+</mat-tab-group>

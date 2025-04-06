@@ -56,7 +56,7 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    alert("Se notificará al administrador.");
+    alert("We will notify the admin.");
     this.fmodal.reset();
     this.closeModal();
   }
@@ -78,9 +78,10 @@ export class LoginComponent {
 
           const payload = this.authService.decodeToken(response.access);
           sessionStorage.setItem("userName", payload.name);
+          sessionStorage.setItem("userEmail", payload.email);
           sessionStorage.setItem("userRole", payload.role);
           if (payload.role === "admin") {
-            window.location.href = "http://127.0.0.1:8000/admin/";
+            this.router.navigate(["admin"]);
           } else {
             // this.snackBar.open("Login successful!", "Close", {
             //   duration: 2000,
@@ -90,8 +91,8 @@ export class LoginComponent {
             this.router.navigate(["homepage"]);
           }
         },
-        error: () => {
-          this.snackBar.open("Login failed. Check your credentials.", "Close", {
+        error: (error) => {
+          this.snackBar.open(error.error?.detail, "Close", {
             duration: 3000,
             horizontalPosition: "center",
             verticalPosition: "top",
@@ -111,7 +112,7 @@ export class LoginComponent {
       return "Password must be at least 8 characters long.";
     }
     if (control?.hasError("passwordStrength")) {
-      return "Password must contain at least one number and one uppercase letter.";
+      return "Use at least one number and one uppercase letter.";
     }
     if (controlName === "password") {
       return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required.`;

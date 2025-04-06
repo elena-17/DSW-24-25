@@ -1,0 +1,41 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+::ng-deep .badge-approved {
+  background-color: #9cff80b4;
+  color: #208e02;
+  border: 1px solid #208e02;
+}
+
+::ng-deep .badge-rejected {
+  background-color: #ff4a4a74;
+  color: #c51313;
+  border: 1px solid #db6e00;
+}
+
+::ng-deep .badge-pending {
+  background-color: #ffbd3aa3;
+  color: #e38100fe;
+  border: 1px solid #847b03;
+}
+
+.title-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.2rem;
+  h2 {
+    margin-bottom: 0px;
+  }
+}
+
+.money-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
+  align-items: center;
+}

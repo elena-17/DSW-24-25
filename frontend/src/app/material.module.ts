@@ -7,6 +7,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatDialogModule } from "@angular/material/dialog";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatTableModule } from "@angular/material/table";
+import { MatSortModule } from "@angular/material/sort";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatChipsModule } from "@angular/material/chips";
 
 @NgModule({
   imports: [
@@ -17,6 +22,11 @@ import { MatDialogModule } from "@angular/material/dialog";
     MatIconModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MatCheckboxModule,
+    MatChipsModule,
   ],
   exports: [
     MatCardModule,
@@ -26,6 +36,11 @@ import { MatDialogModule } from "@angular/material/dialog";
     MatIconModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatSortModule,
+    MatCheckboxModule,
+    MatChipsModule,
   ],
 })
 export class MaterialModule {}

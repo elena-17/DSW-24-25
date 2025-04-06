@@ -125,7 +125,7 @@ export class RegisterComponent {
     }
 
     if (control?.hasError("passwordStrength")) {
-      return "Password must contain at least one number and one uppercase letter.";
+      return "Use at least one number and one uppercase letter.";
     }
     return "";
   }
@@ -156,13 +156,13 @@ export class RegisterComponent {
         this.registerForm.value.email,
         this.registerForm.value.phone_number,
         this.registerForm.value.name,
-        this.registerForm.value.id_number,
+        this.registerForm.value.id_number.toUpperCase(),
         this.registerForm.value.pwd1,
         "user",
       )
       .subscribe({
         next: (response) => {
-          this.snackBar.open("User registered successfully", "OK", {
+          this.snackBar.open((response as any).message, "OK", {
             duration: 2000,
             horizontalPosition: "center",
             verticalPosition: "top",
