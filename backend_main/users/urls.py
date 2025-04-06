@@ -11,6 +11,7 @@ from .views.viewsUser import (
     register_user,
     update_user_profile,
     confirm_user_registration,
+    send_reset_password_email,
 )
 
 app_name = "user"
@@ -34,4 +35,5 @@ urlpatterns = [
     path(
         "users/update/<str:email>/", UserViewSet.as_view({"put": "update_user_by_email"}), name="user-update-by-email"
     ),
+    path("reset-password/", send_reset_password_email, name="send_reset_password_email"),
 ]
