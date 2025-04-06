@@ -11,10 +11,13 @@ import { AdminHomepageComponent } from "./homepage/admin-homepage/admin-homepage
 import { AdminGuard } from "./guards/admin.guard";
 import { AdminUsersComponent } from "./admin-users/admin-users.component";
 import { ProfilePageComponent } from "./profile-page/profile-page.component";
+import { AuthGuard } from "./guards/auth.guard";
 import { ConfirmRegisterComponent } from "./register/confirm-register/confirm-register.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
+  { path: "register", component: RegisterComponent },
+  { path: "confirm-register", component: ConfirmRegisterComponent },
   {
     path: "admin",
     component: AdminHomepageComponent,
@@ -27,13 +30,17 @@ export const routes: Routes = [
     canActivate: [AdminGuard],
     data: { role: "admin" },
   },
-  { path: "register", component: RegisterComponent },
-  { path: "confirm-register", component: ConfirmRegisterComponent },
-  { path: "homepage", component: HomepageComponent },
-  { path: "friends", component: FriendsComponent },
-  { path: "profile", component: ProfilePageComponent },
-  { path: "settings", component: SettingsComponent },
-  { path: "help", component: HelppageComponent },
-  { path: "transactions", component: TransactionsComponent },
-  { path: "**", component: Error404Component },
+  {
+    path: "**",
+    canActivate: [AuthGuard],
+    children: [
+      { path: "homepage", component: HomepageComponent },
+      { path: "friends", component: FriendsComponent },
+      { path: "profile", component: ProfilePageComponent },
+      { path: "settings", component: SettingsComponent },
+      { path: "help", component: HelppageComponent },
+      { path: "transactions", component: TransactionsComponent },
+      { path: "**", component: Error404Component },
+    ],
+  },
 ];

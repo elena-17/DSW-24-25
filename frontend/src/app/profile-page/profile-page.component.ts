@@ -111,10 +111,6 @@ export class ProfilePageComponent {
   }
 
   ngOnInit(): void {
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(["error-page"]);
-      return;
-    }
     this.loadUserInfo();
     this.loadCreditCards();
     this.settingsForm.valueChanges.subscribe(() => {

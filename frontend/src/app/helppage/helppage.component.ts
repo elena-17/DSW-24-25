@@ -9,16 +9,9 @@ import { AuthService } from "../services/auth.service";
   templateUrl: "./helppage.component.html",
   styleUrl: "./helppage.component.scss",
 })
-export class HelppageComponent implements OnInit {
+export class HelppageComponent {
   constructor(
     private router: Router,
     private authService: AuthService,
   ) {}
-
-  ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(["error-page"]);
-      return;
-    }
-  }
 }

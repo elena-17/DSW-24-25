@@ -7,7 +7,6 @@ import { HttpHeaders } from "@angular/common/http";
   providedIn: "root",
 })
 export class UserService {
-  
   private baseApiUrl = "http://localhost:8000/user";
   private creditApiUrl = "http://localhost:8000/creditcards";
   private accountApiUrl = "http://localhost:8000/account";
@@ -103,10 +102,18 @@ export class UserService {
   }
 
   addMoney(amount: number): Observable<any> {
-    return this.http.put(this.urlDepositFunds, { amount }, {withCredentials: true});
+    return this.http.put(
+      this.urlDepositFunds,
+      { amount },
+      { withCredentials: true },
+    );
   }
 
   withdrawMoney(amount: number): Observable<any> {
-    return this.http.put(this.urlWithdrawFunds, { amount }, {withCredentials: true});
+    return this.http.put(
+      this.urlWithdrawFunds,
+      { amount },
+      { withCredentials: true },
+    );
   }
 }
