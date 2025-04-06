@@ -90,6 +90,6 @@ export class AuthService {
   }
 
   sendResetEmail(email: string) {
-    return this.http.post(this.urlResetPassword, { email });
+    return this.http.get(this.urlResetPassword, { params: { email } });
   }
 }
