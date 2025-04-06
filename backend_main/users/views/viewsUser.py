@@ -109,6 +109,22 @@ def send_forgot_password_email(email: str, reset_link: str) -> None:
         html_message=message
     )
 
+@api_view(["PUT"])
+@permission_classes([AllowAny])
+def confirm_change_password(request):
+    email = request.data.get("email")
+    password = request.data.get("newPassword")
+    user = User.objects.filter(email=email).first()
+    if user:
+        serializer = UserProfileSerializer(user, data={"password": password}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            user.set_password(password)
+            user.save()
+            return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+    else:
+        return Response({"error": "Error changing password."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(["GET"])
 def get_user_profile(request):
