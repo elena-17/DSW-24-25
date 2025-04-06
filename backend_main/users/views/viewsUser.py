@@ -74,10 +74,7 @@ def confirm_user_registration(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def send_reset_password_email(request):
-    # el email viene en la ruta
-    email = request.data.get("email") # Get email from query params
-    # email = request.query_params.get("email") # Get email from query params
-    print(email)
+    email = request.query_params.get("email")  
     user = User.objects.filter(email=email).first()
     if user:
         reset_password_link = generate_reset_password_link(email)
