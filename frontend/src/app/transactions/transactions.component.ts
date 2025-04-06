@@ -3,9 +3,7 @@ import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { Router } from "@angular/router";
 import { AuthService } from "../services/auth.service";
 import { MaterialModule } from "../material.module";
-import { MatTabsModule } from "@angular/material/tabs";
 import { TransactionsService } from "../services/transactions.service";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { CommonModule } from "@angular/common";
 import { TableComponent } from "../shared/table/table.component";
 import { MatDialog } from "@angular/material/dialog";
@@ -14,9 +12,7 @@ import { DatePipe } from "@angular/common";
 import { NotificationService } from "../services/notification.service";
 import { ConfirmDialogComponent } from "../shared/confirm-dialog/confirm-dialog.component";
 import { DetailsTransactionComponent } from "./details-transaction/details-transaction.component";
-import { MatSidenav, MatSidenavModule } from "@angular/material/sidenav";
 import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatSelectModule } from "@angular/material/select";
 import {
   FormsModule,
   FormGroup,
@@ -25,9 +21,14 @@ import {
 } from "@angular/forms";
 import { provideNativeDateAdapter } from "@angular/material/core";
 import { MatNativeDateModule } from "@angular/material/core";
-import { MatSliderModule } from "@angular/material/slider";
 import { take } from "rxjs";
 import { SliderComponent } from "../shared/slider/slider.component";
+import { getTransactionColumns } from "./config/transactions-columns.config";
+import {
+  applyFilterFn,
+  createFilters,
+  resetFilters,
+} from "./config/filters.config";
 
 @Component({
   selector: "app-transactions",
@@ -35,16 +36,11 @@ import { SliderComponent } from "../shared/slider/slider.component";
   imports: [
     ToolbarComponent,
     MaterialModule,
-    MatTabsModule,
-    MatProgressSpinnerModule,
     CommonModule,
     TableComponent,
-    MatSidenavModule,
     MatDatepickerModule,
-    MatSelectModule,
     FormsModule,
     MatNativeDateModule,
-    MatSliderModule,
     SliderComponent,
     ReactiveFormsModule,
   ],
@@ -64,59 +60,7 @@ export class TransactionsComponent implements OnInit {
   loading: boolean = false;
   filterOpen: boolean = false;
   filtersForm!: FormGroup;
-
-  columns = [
-    {
-      columnDef: "title",
-      header: "Title",
-      cell: (element: any) => element.title,
-      component: "text-icon",
-      getComponentProps: (element: any) => ({
-        text: element.title,
-        icon:
-          element.sender === sessionStorage.getItem("userEmail")
-            ? "call_made"
-            : "call_received",
-        color:
-          element.sender === sessionStorage.getItem("userEmail")
-            ? "green"
-            : "red",
-      }),
-    },
-    {
-      columnDef: "user",
-      header: "User",
-      cell: (element: any) =>
-        element.sender === sessionStorage.getItem("userEmail")
-          ? element.receiver
-          : element.sender,
-    },
-    {
-      columnDef: "amount",
-      header: "Amount",
-      cell: (element: any) => `${element.amount}`,
-    },
-    {
-      columnDef: "date",
-      header: "Date",
-      cell: (element: any) =>
-        this.datePipe.transform(new Date(element.created_at), "dd/MM/yyyy") ||
-        "",
-    },
-    {
-      columnDef: "status",
-      header: "Status",
-      cell: (element: any) => element.status,
-      component: "badge",
-      getComponentProps: (element: any) => ({
-        text: element.status,
-        icon: this.getStatusIcon(element.status),
-        class: element.status.toLowerCase(),
-      }),
-    },
-  ];
-
-  @ViewChild("sidenav") sidenav!: MatSidenav;
+  columns: any[] = [];
 
   constructor(
     private dialog: MatDialog,
@@ -125,7 +69,6 @@ export class TransactionsComponent implements OnInit {
     private transactionsService: TransactionsService,
     private datePipe: DatePipe,
     private notificationService: NotificationService,
-    private formBuilder: FormBuilder,
   ) {}
 
   ngOnInit() {
@@ -133,6 +76,7 @@ export class TransactionsComponent implements OnInit {
       this.router.navigate(["error-page"]);
       return;
     }
+    this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
     this.loadTransactions();
   }
@@ -182,41 +126,22 @@ export class TransactionsComponent implements OnInit {
           ),
         ];
       });
+    setTimeout(() => {
+      this.filtersForm.updateValueAndValidity();
+      this.filterData();
+    }, 0);
+  }
+
+  ngAfterViewInit() {
+    // Este hook se ejecuta después de que la vista se haya inicializado
+    setTimeout(() => {
+      this.filtersForm.updateValueAndValidity();
+      this.filterData();
+    }, 0);
   }
 
   initFilters() {
-    this.filtersForm = this.formBuilder.group({
-      title: [""],
-      user: [""],
-      dateRange: this.formBuilder.group({
-        start: [null],
-        end: [null],
-      }),
-      status: this.formBuilder.group({
-        pending: [true],
-        approved: [true],
-        rejected: [true],
-      }),
-      amount: this.formBuilder.group({
-        min: [0],
-        max: [100000],
-      }),
-    });
-
-    // this.filtersForm.valueChanges.subscribe(() => this.applyFilters());
-  }
-
-  getStatusIcon(status: string): string {
-    switch (status.toLowerCase()) {
-      case "approved":
-        return "task_alt";
-      case "pending":
-        return "hourglass_empty";
-      case "rejected":
-        return "block";
-      default:
-        return "help_outline";
-    }
+    this.filtersForm = createFilters(new FormBuilder());
   }
 
   sendTransaction() {
@@ -398,24 +323,7 @@ export class TransactionsComponent implements OnInit {
   }
 
   clearFilters() {
-    this.filtersForm.reset({
-      title: "",
-      user: "",
-      dateRange: {
-        start: null,
-        end: null,
-      },
-
-      status: {
-        pending: true,
-        approved: true,
-        rejected: true,
-      },
-      amount: {
-        min: 0,
-        max: 100000,
-      },
-    });
+    resetFilters(this.filtersForm);
     this.applyFilters();
   }
 
@@ -426,45 +334,12 @@ export class TransactionsComponent implements OnInit {
 
   filterData() {
     const filters = this.filtersForm.value;
-    const selectedStatuses = Object.entries(filters.status)
-      .filter(([_, value]) => value)
-      .map(([key]) => key.toLowerCase());
+    const apply = (list: any[]) =>
+      list.filter((item) => applyFilterFn(filters, item));
 
-    const filterFn = (item: any) => {
-      const matchesStatus =
-        selectedStatuses.length === 0 ||
-        selectedStatuses.includes(item.status.toLowerCase());
-
-      const matchesUser =
-        !filters.user ||
-        item.sender.toLowerCase().includes(filters.user.toLowerCase()) ||
-        item.receiver.toLowerCase().includes(filters.user.toLowerCase());
-
-      const matchesAmount =
-        item.amount >= filters.amount.min && item.amount <= filters.amount.max;
-
-      const matchesDateRange =
-        (!filters.dateRange.start ||
-          new Date(item.created_at) >= new Date(filters.dateRange.start)) &&
-        (!filters.dateRange.end ||
-          new Date(item.created_at) <= new Date(filters.dateRange.end));
-
-      const matchesTitle =
-        !filters.title ||
-        item.title.toLowerCase().includes(filters.title.toLowerCase());
-
-      return (
-        matchesStatus &&
-        matchesUser &&
-        matchesAmount &&
-        matchesDateRange &&
-        matchesTitle
-      );
-    };
-
-    this.filteredSender = this.sender.filter(filterFn);
-    this.filteredReceiver = this.receiver.filter(filterFn);
-    this.filteredPendingMyApproval = this.pendingMyApproval.filter(filterFn);
-    this.filteredPendingOthers = this.pendingOthers.filter(filterFn);
+    this.filteredSender = apply(this.sender);
+    this.filteredReceiver = apply(this.receiver);
+    this.filteredPendingMyApproval = apply(this.pendingMyApproval);
+    this.filteredPendingOthers = apply(this.pendingOthers);
   }
 }
