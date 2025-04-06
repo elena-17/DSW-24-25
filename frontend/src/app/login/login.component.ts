@@ -60,7 +60,7 @@ export class LoginComponent {
 
     const formData = this.fmodal.value;
 
-    this.authService.sendResetEmail(formData).subscribe({
+    this.authService.sendResetEmail(formData.email).subscribe({
       next: (response) => {
         this.snackBar.open((response as any).message, 'Close', {
           duration: 3000,
