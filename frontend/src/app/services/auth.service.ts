@@ -6,12 +6,13 @@ import { Observable } from "rxjs";
   providedIn: "root",
 })
 export class AuthService {
+ 
   private baseApiUrl = "http://localhost:8000/user";
   private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
   private urlRegister = `${this.baseApiUrl}/register/`;
   private urlLogin = `${this.baseApiUrl}/login/`;
   private urlConfirmRegister = `${this.baseApiUrl}/confirm/`;
-
+  private urlResetPassword = `${this.baseApiUrl}/reset-password/`;
   constructor(private http: HttpClient) {}
 
   public saveToken(token: string): void {
@@ -86,5 +87,9 @@ export class AuthService {
 
   confirmRegistration(email: string) {
     return this.http.put(this.urlConfirmRegister, { email });
+  }
+
+  sendResetEmail(email: string) {
+    return this.http.post(this.urlResetPassword, { email });
   }
 }

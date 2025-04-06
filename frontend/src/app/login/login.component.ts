@@ -56,9 +56,28 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    alert("We will notify the admin.");
-    this.fmodal.reset();
-    this.closeModal();
+    if (this.fmodal.invalid) return;
+
+    const formData = this.fmodal.value;
+
+    this.authService.sendResetEmail(formData).subscribe({
+      next: (response) => {
+        this.snackBar.open((response as any).message, 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+        this.fmodal.reset();
+        this.closeModal();
+      },
+      error: (error) => {
+        this.snackBar.open(error.error?.message || 'Failed to send you the reset link.', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top',
+        });
+      }
+    });
   }
 
   onLogin() {
