@@ -9,20 +9,22 @@ import { TransactionsComponent } from "./transactions/transactions.component";
 import { Error404Component } from "./error404/error404.component";
 
 import { ProfilePageComponent } from "./profile-page/profile-page.component";
-import { AdminHomepageComponent } from "./homepage/admin-homepage/admin-homepage.component";
+import { AuthGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
   { path: "register", component: RegisterComponent },
   {
-    path: "homepage",
-    component: HomepageComponent,
-    children: [{ path: "admin", component: AdminHomepageComponent }],
+    path: "**",
+    canActivate: [AuthGuard], // Aplica el guard a todas las rutas
+    children: [
+      { path: "homepage", component: HomepageComponent },
+      { path: "friends", component: FriendsComponent },
+      { path: "profile", component: ProfilePageComponent },
+      { path: "settings", component: SettingsComponent },
+      { path: "help", component: HelppageComponent },
+      { path: "transactions", component: TransactionsComponent },
+      { path: "**", component: Error404Component },
+    ],
   },
-  { path: "friends", component: FriendsComponent },
-  { path: "profile", component: ProfilePageComponent },
-  { path: "settings", component: SettingsComponent },
-  { path: "help", component: HelppageComponent },
-  { path: "transactions", component: TransactionsComponent },
-  { path: "**", component: Error404Component },
 ];

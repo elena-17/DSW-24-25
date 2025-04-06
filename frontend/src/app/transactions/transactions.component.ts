@@ -15,10 +15,5 @@ export class TransactionsComponent implements OnInit {
     private authService: AuthService,
   ) {}
 
-  ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(["error-page"]);
-      return;
-    }
-  }
+  ngOnInit() {}
 }

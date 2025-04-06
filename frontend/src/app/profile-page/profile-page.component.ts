@@ -83,10 +83,6 @@ export class ProfilePageComponent {
   }
 
   ngOnInit(): void {
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(["error-page"]);
-      return;
-    }
     this.loadUserInfo();
     this.settingsForm.valueChanges.subscribe(() => {
       this.checkFormChanges();
