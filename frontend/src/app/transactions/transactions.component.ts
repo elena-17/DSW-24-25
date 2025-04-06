@@ -17,17 +17,17 @@ import { DetailsTransactionComponent } from "./details-transaction/details-trans
 import { MatSidenav, MatSidenavModule } from "@angular/material/sidenav";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatSelectModule } from "@angular/material/select";
-import { FormsModule } from "@angular/forms";
+import {
+  FormsModule,
+  FormGroup,
+  FormBuilder,
+  ReactiveFormsModule,
+} from "@angular/forms";
 import { provideNativeDateAdapter } from "@angular/material/core";
-import { Overlay } from "@angular/cdk/overlay";
-
-import { MAT_DATEPICKER_SCROLL_STRATEGY } from "@angular/material/datepicker";
-import { Provider } from "@angular/core";
 import { MatNativeDateModule } from "@angular/material/core";
-
-export function scrollStrategy(overlay: Overlay): () => any {
-  return () => overlay.scrollStrategies.reposition();
-}
+import { MatSliderModule } from "@angular/material/slider";
+import { take } from "rxjs";
+import { SliderComponent } from "../shared/slider/slider.component";
 
 @Component({
   selector: "app-transactions",
@@ -44,6 +44,9 @@ export function scrollStrategy(overlay: Overlay): () => any {
     MatSelectModule,
     FormsModule,
     MatNativeDateModule,
+    MatSliderModule,
+    SliderComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: "./transactions.component.html",
   styleUrl: "./transactions.component.scss",
@@ -53,8 +56,14 @@ export class TransactionsComponent implements OnInit {
   receiver: any[] = [];
   pendingOthers: any[] = [];
   pendingMyApproval: any[] = [];
+  filteredSender: any[] = [];
+  filteredReceiver: any[] = [];
+  filteredPendingOthers: any[] = [];
+  filteredPendingMyApproval: any[] = [];
+
   loading: boolean = false;
   filterOpen: boolean = false;
+  filtersForm!: FormGroup;
 
   columns = [
     {
@@ -107,12 +116,6 @@ export class TransactionsComponent implements OnInit {
     },
   ];
 
-  filters = {
-    startDate: null,
-    endDate: null,
-    status: "",
-    amount: null,
-  };
   @ViewChild("sidenav") sidenav!: MatSidenav;
 
   constructor(
@@ -122,6 +125,7 @@ export class TransactionsComponent implements OnInit {
     private transactionsService: TransactionsService,
     private datePipe: DatePipe,
     private notificationService: NotificationService,
+    private formBuilder: FormBuilder,
   ) {}
 
   ngOnInit() {
@@ -129,48 +133,77 @@ export class TransactionsComponent implements OnInit {
       this.router.navigate(["error-page"]);
       return;
     }
+    this.initFilters();
     this.loadTransactions();
   }
 
   loadTransactions() {
-    this.transactionsService.getLoading().subscribe((isLoading) => {
-      this.loading = isLoading;
+    this.transactionsService
+      .getLoading()
+      .pipe(take(1))
+      .subscribe((isLoading) => {
+        this.loading = isLoading;
+      });
+
+    this.transactionsService
+      .fetch(true)
+      .pipe(take(1))
+      .subscribe(({ receiver, sender }) => {
+        this.receiver = [...receiver];
+        this.sender = [...sender];
+        this.loading = false;
+        if (!this.sender || !this.receiver) {
+          this.pendingMyApproval = [];
+          this.pendingOthers = [];
+          return;
+        }
+        this.pendingOthers = [
+          ...this.sender.filter(
+            (transaction) =>
+              transaction.status.toLowerCase() === "pending" &&
+              transaction.type === "send",
+          ),
+          ...this.receiver.filter(
+            (transaction) =>
+              transaction.status.toLowerCase() === "pending" &&
+              transaction.type === "request",
+          ),
+        ];
+        this.pendingMyApproval = [
+          ...this.sender.filter(
+            (transaction) =>
+              transaction.status.toLowerCase() === "pending" &&
+              transaction.type === "request",
+          ),
+          ...this.receiver.filter(
+            (transaction) =>
+              transaction.status.toLowerCase() === "pending" &&
+              transaction.type === "send",
+          ),
+        ];
+      });
+  }
+
+  initFilters() {
+    this.filtersForm = this.formBuilder.group({
+      title: [""],
+      user: [""],
+      dateRange: this.formBuilder.group({
+        start: [null],
+        end: [null],
+      }),
+      status: this.formBuilder.group({
+        pending: [true],
+        approved: [true],
+        rejected: [true],
+      }),
+      amount: this.formBuilder.group({
+        min: [0],
+        max: [100000],
+      }),
     });
 
-    this.transactionsService.fetch(true).subscribe(({ receiver, sender }) => {
-      this.receiver = [...receiver];
-      this.sender = [...sender];
-      this.loading = false;
-      if (!this.sender || !this.receiver) {
-        this.pendingMyApproval = [];
-        this.pendingOthers = [];
-        return;
-      }
-      this.pendingOthers = [
-        ...this.sender.filter(
-          (transaction) =>
-            transaction.status.toLowerCase() === "pending" &&
-            transaction.type === "send",
-        ),
-        ...this.receiver.filter(
-          (transaction) =>
-            transaction.status.toLowerCase() === "pending" &&
-            transaction.type === "request",
-        ),
-      ];
-      this.pendingMyApproval = [
-        ...this.sender.filter(
-          (transaction) =>
-            transaction.status.toLowerCase() === "pending" &&
-            transaction.type === "request",
-        ),
-        ...this.receiver.filter(
-          (transaction) =>
-            transaction.status.toLowerCase() === "pending" &&
-            transaction.type === "send",
-        ),
-      ];
-    });
+    // this.filtersForm.valueChanges.subscribe(() => this.applyFilters());
   }
 
   getStatusIcon(status: string): string {
@@ -360,17 +393,78 @@ export class TransactionsComponent implements OnInit {
   }
 
   applyFilters() {
-    console.log("Applying filters:", this.filters);
-    // Aquí puedes emitir eventos o actualizar la tabla con los filtros
+    this.filterData();
     this.closeFilters();
   }
 
   clearFilters() {
-    this.filters = {
-      startDate: null,
-      endDate: null,
-      status: "",
-      amount: null,
+    this.filtersForm.reset({
+      title: "",
+      user: "",
+      dateRange: {
+        start: null,
+        end: null,
+      },
+
+      status: {
+        pending: true,
+        approved: true,
+        rejected: true,
+      },
+      amount: {
+        min: 0,
+        max: 100000,
+      },
+    });
+    this.applyFilters();
+  }
+
+  onAmountRangeChange(range: { start: number; end: number }) {
+    this.filtersForm.get("amount.min")?.setValue(range.start);
+    this.filtersForm.get("amount.max")?.setValue(range.end);
+  }
+
+  filterData() {
+    const filters = this.filtersForm.value;
+    const selectedStatuses = Object.entries(filters.status)
+      .filter(([_, value]) => value)
+      .map(([key]) => key.toLowerCase());
+
+    const filterFn = (item: any) => {
+      const matchesStatus =
+        selectedStatuses.length === 0 ||
+        selectedStatuses.includes(item.status.toLowerCase());
+
+      const matchesUser =
+        !filters.user ||
+        item.sender.toLowerCase().includes(filters.user.toLowerCase()) ||
+        item.receiver.toLowerCase().includes(filters.user.toLowerCase());
+
+      const matchesAmount =
+        item.amount >= filters.amount.min && item.amount <= filters.amount.max;
+
+      const matchesDateRange =
+        (!filters.dateRange.start ||
+          new Date(item.created_at) >= new Date(filters.dateRange.start)) &&
+        (!filters.dateRange.end ||
+          new Date(item.created_at) <= new Date(filters.dateRange.end));
+
+      const matchesTitle =
+        !filters.title ||
+        item.title.toLowerCase().includes(filters.title.toLowerCase());
+
+      return (
+        matchesStatus &&
+        matchesUser &&
+        matchesAmount &&
+        matchesDateRange &&
+        matchesTitle
+      );
     };
+
+    this.filteredSender = this.sender.filter(filterFn);
+    this.filteredReceiver = this.receiver.filter(filterFn);
+    this.filteredPendingMyApproval = this.pendingMyApproval.filter(filterFn);
+    this.filteredPendingOthers = this.pendingOthers.filter(filterFn);
   }
 }
