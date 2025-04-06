@@ -12,7 +12,8 @@ export class AuthService {
   private urlRegister = `${this.baseApiUrl}/register/`;
   private urlLogin = `${this.baseApiUrl}/login/`;
   private urlConfirmRegister = `${this.baseApiUrl}/confirm/`;
-  private urlResetPassword = `${this.baseApiUrl}/reset-password/`;
+  private urlSenResetPassword = `${this.baseApiUrl}/reset-password/`;
+  private urlResetPassword = `${this.baseApiUrl}/reset-password-confirm/`;
   constructor(private http: HttpClient) {}
 
   public saveToken(token: string): void {
@@ -90,6 +91,10 @@ export class AuthService {
   }
 
   sendResetEmail(email: string) {
-    return this.http.get(this.urlResetPassword, { params: { email } });
+    return this.http.get(this.urlSenResetPassword, { params: { email } });
   }
+
+  resetPassword(formData: any) {
+    return this.http.put(this.urlResetPassword, formData, {});
+    };
 }

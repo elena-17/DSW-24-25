@@ -12,9 +12,11 @@ import { AdminGuard } from "./guards/admin.guard";
 import { AdminUsersComponent } from "./admin-users/admin-users.component";
 import { ProfilePageComponent } from "./profile-page/profile-page.component";
 import { ConfirmRegisterComponent } from "./register/confirm-register/confirm-register.component";
+import { ForgotPasswordComponent } from "./login/forgot-password/forgot-password.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
+  { path: "forgot-password", component: ForgotPasswordComponent },
   {
     path: "admin",
     component: AdminHomepageComponent,
