@@ -22,7 +22,8 @@ class AccountTestCase(APITestCase):
         self.account_url = reverse("account:get-account")
         self.recharge_url = reverse("account:adding-money")
         self.withdraw_url = reverse("account:subtracting-money")
-        self.account, created = Account.objects.get_or_create(user=self.user, defaults={'balance': Decimal("0.00")})
+        self.account, created = Account.objects.get_or_create(user=self.user, defaults={"balance": Decimal("0.00")})
+
     def get_token(self):
         data = {"email": self.user.email, "password": "testpassword"}
         response = self.client.post(reverse("user:login_user"), data=data, format="json")
