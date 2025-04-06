@@ -74,13 +74,15 @@ def confirm_user_registration(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def send_reset_password_email(request):
-    email = request.data.get("email")
+    # el email viene en la ruta
+    email = request.data.get("email") # Get email from query params
+    # email = request.query_params.get("email") # Get email from query params
     print(email)
     user = User.objects.filter(email=email).first()
     if user:
         reset_password_link = generate_reset_password_link(email)
-        threading.Thread(target=send_reset_password_email, args=(email, reset_password_link)).start()
-       
+        threading.Thread(target=send_forgot_password_email, args=(email, reset_password_link)).start()
+
         return Response({"message": "Reset password email sent!"}, status=status.HTTP_200_OK)
     return Response({"error": "Email not found in our app."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -90,7 +92,7 @@ def generate_reset_password_link(email: str) -> str:
     reset_link = f'http://localhost:4200/forgot-password/?email={encoded_email}&token={token}'
     return reset_link
 
-def send_reset_password_email(email: str, reset_link: str) -> None:
+def send_forgot_password_email(email: str, reset_link: str) -> None:
     subject = 'Reset Your Password on ZAP'
     message = f'''
         <html>
