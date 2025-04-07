@@ -43,7 +43,7 @@
             The amount must be greater than 0
           </mat-error>
           <mat-error *ngIf="amountForm.get('amount')?.hasError('max')">
-            The amount must be less than 1000000
+            The amount must be less than 500
           </mat-error>
         </mat-form-field>
 
@@ -91,7 +91,18 @@
     <!-- Paso 4: Confirmación -->
     <mat-step>
       <ng-template matStepLabel>Confirmation</ng-template>
-      <div class="confirmation-message">
+      <div
+        *ngIf="form.invalid || contactForm.invalid || amountForm.invalid"
+        class="confirmation-message"
+      >
+        <p>
+          Please ensure all fields are filled out correctly before proceeding.
+        </p>
+      </div>
+      <div
+        *ngIf="!(form.invalid || contactForm.invalid || amountForm.invalid)"
+        class="confirmation-message"
+      >
         <p>You're about to {{ dialogTitle | lowercase }}</p>
         <p class="amount-highlight">{{ amountForm.value.amount }} €</p>
         <p>
@@ -106,7 +117,7 @@
           mat-flat-button
           color="primary"
           (click)="onSubmit()"
-          [disabled]="form.invalid || contactForm.invalid"
+          [disabled]="form.invalid || contactForm.invalid || amountForm.invalid"
         >
           Confirm
         </button>

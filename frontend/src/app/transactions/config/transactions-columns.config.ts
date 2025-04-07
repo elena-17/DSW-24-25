@@ -14,8 +14,8 @@ export const getTransactionColumns = (datePipe: DatePipe) => [
           : "call_received",
       color:
         element.sender === sessionStorage.getItem("userEmail")
-          ? "green"
-          : "red",
+          ? "red"
+          : "green",
     }),
   },
   {
