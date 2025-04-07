@@ -6,11 +6,13 @@ from .views.viewsAdmin import UserViewSet
 from .views.viewsUser import (
     CustomTokenObtainPairView,
     change_user_password,
+    confirm_change_password,
+    confirm_user_registration,
     delete_user_account,
     get_user_profile,
     register_user,
+    send_reset_password_email,
     update_user_profile,
-    confirm_user_registration,
 )
 
 app_name = "user"
@@ -34,4 +36,6 @@ urlpatterns = [
     path(
         "users/update/<str:email>/", UserViewSet.as_view({"put": "update_user_by_email"}), name="user-update-by-email"
     ),
+    path("reset-password/", send_reset_password_email, name="send_reset_password_email"),
+    path("reset-password-confirm/", confirm_change_password, name="confirm_change_password"),
 ]
