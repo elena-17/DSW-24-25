@@ -49,6 +49,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   goToTransactions(): void {
+    if (this.role === "admin") {
+      this.router.navigate(["/admin/transactions"]);
+      return;
+    }
     this.router.navigate(["/transactions"]);
   }
 

@@ -15,6 +15,7 @@ import { AuthGuard } from "./guards/auth.guard";
 import { ConfirmRegisterComponent } from "./register/confirm-register/confirm-register.component";
 import { ForgotPasswordComponent } from "./login/forgot-password/forgot-password.component";
 import { AdminAccountsComponent } from "./admin-accounts/admin-accounts.component";
+import { AdminTransactionsComponent } from "./transactions/admin-transactions/admin-transactions.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
@@ -38,6 +39,11 @@ export const routes: Routes = [
       {
         path: "accounts",
         component: AdminAccountsComponent,
+        data: { role: "admin" },
+      },
+      {
+        path: "transactions",
+        component: AdminTransactionsComponent,
         data: { role: "admin" },
       },
     ],
