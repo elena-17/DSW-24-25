@@ -13,23 +13,30 @@ import { AdminUsersComponent } from "./admin-users/admin-users.component";
 import { ProfilePageComponent } from "./profile-page/profile-page.component";
 import { AuthGuard } from "./guards/auth.guard";
 import { ConfirmRegisterComponent } from "./register/confirm-register/confirm-register.component";
+import { ForgotPasswordComponent } from "./login/forgot-password/forgot-password.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
+  { path: "forgot-password", component: ForgotPasswordComponent },
   { path: "register", component: RegisterComponent },
   { path: "confirm-register", component: ConfirmRegisterComponent },
   {
     path: "admin",
-    component: AdminHomepageComponent,
-    canActivate: [AdminGuard],
-    data: { role: "admin" },
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: "home",
+        component: AdminHomepageComponent,
+        data: { role: "admin" },
+      },
+      {
+        path: "users",
+        component: AdminUsersComponent,
+        data: { role: "admin" },
+      },
+    ],
   },
-  {
-    path: "admin-users",
-    component: AdminUsersComponent,
-    canActivate: [AdminGuard],
-    data: { role: "admin" },
-  },
+
   {
     path: "**",
     canActivate: [AuthGuard],

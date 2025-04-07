@@ -55,10 +55,33 @@ export class LoginComponent {
     this.isModalOpen = false;
   }
 
-  onSubmit(): void {
-    alert("We will notify the admin.");
-    this.fmodal.reset();
-    this.closeModal();
+  onSubmitResetPassword(): void {
+    if (this.fmodal.invalid) return;
+
+    const formData = this.fmodal.value;
+
+    this.authService.sendResetEmail(formData.email).subscribe({
+      next: (response) => {
+        this.snackBar.open((response as any).message, "Close", {
+          duration: 3000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
+        this.fmodal.reset();
+        this.closeModal();
+      },
+      error: (error) => {
+        this.snackBar.open(
+          error.error?.message || "Failed to send you the reset link.",
+          "Close",
+          {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          },
+        );
+      },
+    });
   }
 
   onLogin() {
@@ -81,7 +104,7 @@ export class LoginComponent {
           sessionStorage.setItem("userEmail", payload.email);
           sessionStorage.setItem("userRole", payload.role);
           if (payload.role === "admin") {
-            this.router.navigate(["admin"]);
+            this.router.navigate(["admin/home"]);
           } else {
             // this.snackBar.open("Login successful!", "Close", {
             //   duration: 2000,

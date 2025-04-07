@@ -58,7 +58,6 @@
         <!-- Login Button -->
         <button
           mat-raised-button
-          color="primary"
           type="submit"
           class="full-width"
           [disabled]="loginForm.invalid"
@@ -75,8 +74,8 @@
 
   <div class="modal" *ngIf="isModalOpen">
     <div class="modal-content">
-      <h2>Recuperar Contraseña</h2>
-      <h5>Ingrese su correo electrónico para restablecer su contraseña.</h5>
+      <h2>Recover Password</h2>
+      <h5>Enter your email address to reset your password.</h5>
       <form [formGroup]="fmodal">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
@@ -97,7 +96,7 @@
         <button mat-raised-button (click)="closeModal()">Cancelar</button>
         <button
           mat-raised-button
-          (click)="onSubmit()"
+          (click)="onSubmitResetPassword()"
           [disabled]="fmodal.invalid"
         >
           Aceptar
