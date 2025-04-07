@@ -14,6 +14,7 @@ import { ProfilePageComponent } from "./profile-page/profile-page.component";
 import { AuthGuard } from "./guards/auth.guard";
 import { ConfirmRegisterComponent } from "./register/confirm-register/confirm-register.component";
 import { ForgotPasswordComponent } from "./login/forgot-password/forgot-password.component";
+import { AdminAccountsComponent } from "./admin-accounts/admin-accounts.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
@@ -22,7 +23,7 @@ export const routes: Routes = [
   { path: "confirm-register", component: ConfirmRegisterComponent },
   {
     path: "admin",
-    canActivate: [AuthGuard],
+    canActivate: [AdminGuard],
     children: [
       {
         path: "home",
@@ -32,6 +33,11 @@ export const routes: Routes = [
       {
         path: "users",
         component: AdminUsersComponent,
+        data: { role: "admin" },
+      },
+      {
+        path: "accounts",
+        component: AdminAccountsComponent,
         data: { role: "admin" },
       },
     ],
