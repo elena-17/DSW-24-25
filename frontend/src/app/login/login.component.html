@@ -58,7 +58,6 @@
         <!-- Login Button -->
         <button
           mat-raised-button
-          color="primary"
           type="submit"
           class="full-width"
           [disabled]="loginForm.invalid"
@@ -97,7 +96,7 @@
         <button mat-raised-button (click)="closeModal()">Cancelar</button>
         <button
           mat-raised-button
-          (click)="onSubmit()"
+          (click)="onSubmitResetPassword()"
           [disabled]="fmodal.invalid"
         >
           Aceptar

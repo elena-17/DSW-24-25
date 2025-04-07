@@ -138,15 +138,11 @@ export class ChangeAccountBalanceComponent {
       },
       error: (err) => {
         this.closeDialog();
-        this.snackBar.open(
-          err.error.message,
-          "Close",
-          {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          },
-        );
+        this.snackBar.open(err.error.message, "Close", {
+          duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        });
       },
     });
   }
@@ -191,15 +187,11 @@ export class ChangeAccountBalanceComponent {
           },
           error: (error) => {
             this.closeDialog();
-            this.snackBar.open(
-              error.error.error,
-              "Close",
-              {
-                duration: 2000,
-                horizontalPosition: "center",
-                verticalPosition: "top",
-              },
-            );
+            this.snackBar.open(error.error.error, "Close", {
+              duration: 2000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+            });
           },
         });
       }
