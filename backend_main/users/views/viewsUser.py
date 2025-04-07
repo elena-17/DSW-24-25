@@ -120,6 +120,8 @@ def confirm_change_password(request):
             user.set_password(password)
             user.save()
             return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"error": "Error changing password."}, status=status.HTTP_400_BAD_REQUEST)
 
