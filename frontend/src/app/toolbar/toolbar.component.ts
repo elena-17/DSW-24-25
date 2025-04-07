@@ -54,7 +54,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   goToHome(): void {
     if (this.role === "admin") {
-      this.router.navigate(["/admin"]);
+      this.router.navigate(["/admin/home"]);
       return;
     }
     this.router.navigate(["/homepage"]);
@@ -79,9 +79,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     return this.role === "admin";
   }
   goToUsers(): void {
-    this.router.navigate(["/admin-users"]);
+    this.router.navigate(["/admin/users"]);
   }
   goToAccounts(): void {
-    this.router.navigate(["/admin-accounts"]);
+    this.router.navigate(["/admin/accounts"]);
   }
 }

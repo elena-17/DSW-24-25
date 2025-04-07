@@ -104,7 +104,7 @@ export class LoginComponent {
           sessionStorage.setItem("userEmail", payload.email);
           sessionStorage.setItem("userRole", payload.role);
           if (payload.role === "admin") {
-            this.router.navigate(["admin"]);
+            this.router.navigate(["admin/home"]);
           } else {
             // this.snackBar.open("Login successful!", "Close", {
             //   duration: 2000,

@@ -9,16 +9,9 @@ import { AuthService } from "../services/auth.service";
   templateUrl: "./friends.component.html",
   styleUrl: "./friends.component.scss",
 })
-export class FriendsComponent implements OnInit {
+export class FriendsComponent {
   constructor(
     private router: Router,
     private authService: AuthService,
   ) {}
-
-  ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(["error-page"]);
-      return;
-    }
-  }
 }
