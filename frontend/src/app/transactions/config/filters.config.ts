@@ -16,7 +16,7 @@ export function createFilters(formBuilder: FormBuilder): FormGroup {
     }),
     amount: formBuilder.group({
       min: [0],
-      max: [100000],
+      max: [500],
     }),
   });
 }
@@ -71,5 +71,30 @@ export function applyFilterFn(filters: any, item: any): boolean {
     matchesAmount &&
     matchesDateRange &&
     matchesTitle
+  );
+}
+
+export function hasActiveFilters(filtersForm: FormGroup): boolean {
+  const filters = filtersForm.value;
+
+  const isTextSearchApplied =
+    filters.title.trim() !== "" || filters.user.trim() !== "";
+
+  const isDateRangeApplied =
+    filters.dateRange.start !== null || filters.dateRange.end !== null;
+
+  const isStatusFiltered =
+    !filters.status.pending ||
+    !filters.status.approved ||
+    !filters.status.rejected;
+
+  const isAmountFiltered =
+    filters.amount.min !== 0 || filters.amount.max !== 500;
+
+  return (
+    isTextSearchApplied ||
+    isDateRangeApplied ||
+    isStatusFiltered ||
+    isAmountFiltered
   );
 }

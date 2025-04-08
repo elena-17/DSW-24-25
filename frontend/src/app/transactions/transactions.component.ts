@@ -1,7 +1,5 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
-import { Router } from "@angular/router";
-import { AuthService } from "../services/auth.service";
 import { MaterialModule } from "../material.module";
 import { TransactionsService } from "../services/transactions.service";
 import { CommonModule } from "@angular/common";
@@ -28,7 +26,10 @@ import {
   applyFilterFn,
   createFilters,
   resetFilters,
+  hasActiveFilters,
 } from "./config/filters.config";
+
+import { MatBadgeModule } from "@angular/material/badge";
 
 @Component({
   selector: "app-transactions",
@@ -43,6 +44,7 @@ import {
     MatNativeDateModule,
     SliderComponent,
     ReactiveFormsModule,
+    MatBadgeModule,
   ],
   templateUrl: "./transactions.component.html",
   styleUrl: "./transactions.component.scss",
@@ -61,21 +63,16 @@ export class TransactionsComponent implements OnInit {
   filterOpen: boolean = false;
   filtersForm!: FormGroup;
   columns: any[] = [];
+  hasActiveFilters: boolean = false;
 
   constructor(
     private dialog: MatDialog,
-    private router: Router,
-    private authService: AuthService,
     private transactionsService: TransactionsService,
     private datePipe: DatePipe,
     private notificationService: NotificationService,
   ) {}
 
   ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(["error-page"]);
-      return;
-    }
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
     this.loadTransactions();
@@ -125,11 +122,11 @@ export class TransactionsComponent implements OnInit {
               transaction.type === "send",
           ),
         ];
+        setTimeout(() => {
+          this.filtersForm.updateValueAndValidity();
+          this.filterData();
+        }, 0);
       });
-    setTimeout(() => {
-      this.filtersForm.updateValueAndValidity();
-      this.filterData();
-    }, 0);
   }
 
   ngAfterViewInit() {
@@ -164,6 +161,7 @@ export class TransactionsComponent implements OnInit {
               this.notificationService.showSuccessMessage(
                 "Transaction sent successfully",
               );
+              this.filterData();
             },
             error: (error) => {
               console.error("Error message:", error.error);
@@ -207,6 +205,7 @@ export class TransactionsComponent implements OnInit {
               this.notificationService.showSuccessMessage(
                 "Transaction requested successfully",
               );
+              this.filterData();
             },
             error: (error) => {
               console.error("Error message:", error.error);
@@ -247,6 +246,7 @@ export class TransactionsComponent implements OnInit {
         next: (response) => {
           this.notificationService.showSuccessMessage("Transaction approved");
           this.filterTransactionChangeStatus(transaction, "approved");
+          this.filterData();
         },
         error: (error) => {
           console.error("Error approving transaction:", error);
@@ -341,5 +341,8 @@ export class TransactionsComponent implements OnInit {
     this.filteredReceiver = apply(this.receiver);
     this.filteredPendingMyApproval = apply(this.pendingMyApproval);
     this.filteredPendingOthers = apply(this.pendingOthers);
+
+    this.hasActiveFilters = hasActiveFilters(this.filtersForm);
+    console.log("hasActiveFilters", this.hasActiveFilters);
   }
 }
