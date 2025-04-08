@@ -1,42 +1,38 @@
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
 
 from transactions.models import Transaction
-from transactions.serializer import TransactionSerializer
+from transactions.serializers.filter import TransactionFilterSerializer
+from transactions.serializers.transactions import TransactionSerializer
 
 
 @api_view(["GET"])
 def transaction_list(request):
+    filter_serializer = TransactionFilterSerializer(data=request.GET)
+
+    if not filter_serializer.is_valid():
+        return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    data = filter_serializer.validated_data
     queryset = Transaction.objects.all()
 
-    status = request.get("status")
-    type_ = request.get("type")
-    min_amount = request.get("min_amount")
-    max_amount = request.get("max_amount")
-    title = request.get("title")
-    sender = request.get("sender")
-    receiver = request.get("receiver")
-    date_start = request.get("date_start")
-    date_end = request.get("date_end")
+    filter_fields = {
+        "status": "status",
+        "type": "type",
+        "min_amount": "amount__gte",
+        "max_amount": "amount__lte",
+        "title": "title__icontains",
+        "sender": "sender_id",
+        "receiver": "receiver_id",
+        "date_start": "created_at__gte",
+        "date_end": "created_at__lte",
+    }
 
-    if status:
-        queryset = queryset.filter(status=status)
-    if type_:
-        queryset = queryset.filter(type=type_)
-    if min_amount:
-        queryset = queryset.filter(amount__gte=min_amount)
-    if max_amount:
-        queryset = queryset.filter(amount__lte=max_amount)
-    if title:
-        queryset = queryset.filter(title__icontains=title)
-    if sender:
-        queryset = queryset.filter(sender_id=sender)
-    if receiver:
-        queryset = queryset.filter(receiver_id=receiver)
-    if date_start:
-        queryset = queryset.filter(created_at__gte=date_start)
-    if date_end:
-        queryset = queryset.filter(created_at__lte=date_end)
+    for field, lookup in filter_fields.items():
+        if field in data:
+            queryset = queryset.filter(**{lookup: data[field]})
 
     paginator = LimitOffsetPagination()
     paginator.default_limit = 30
@@ -44,3 +40,14 @@ def transaction_list(request):
 
     serializer = TransactionSerializer(paginated_qs, many=True)
     return paginator.get_paginated_response(serializer.data)
+
+
+@api_view(["PATCH"])  # TODO
+def transaction_update(request, id):
+    transaction = get_object_or_404(Transaction, pk=id)
+
+    serializer = TransactionSerializer(transaction, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
