@@ -14,6 +14,7 @@ class TransactionTest(TestCase):
             name="Test User",
             id_number="123456789",
             password="testpassword",
+            is_confirmed=True,
         )
         cls.user2 = User.objects.create(
             email="user2@test.com",
@@ -21,6 +22,7 @@ class TransactionTest(TestCase):
             name="Test User2",
             id_number="987654321",
             password="testpassword",
+            is_confirmed=True,
         )
 
     def test_transaction_creation(self) -> None:

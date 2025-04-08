@@ -16,6 +16,7 @@ class TransactionAPI(APITestCase):
             name="User One",
             id_number="111111111",
             password=self.password,
+            is_confirmed=True,
         )
         self.user2 = User.objects.create_user(
             email="user2@test.com",
@@ -23,6 +24,7 @@ class TransactionAPI(APITestCase):
             name="User Two",
             id_number="222222222",
             password=self.password,
+            is_confirmed=True,
         )
 
         # Add money to user accounts

@@ -15,6 +15,7 @@ class LoginUserTests(APITestCase):
             "id_number": "12345678X",
             "role": "user",
             "password": "securepassword123",
+            "is_confirmed": True,
         }
         self.user = User.objects.create_user(**self.user_data)
         self.url = reverse("user:login_user")

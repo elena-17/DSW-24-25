@@ -16,6 +16,7 @@ class FriendshipTest(TestCase):
             name="Test User",
             id_number="123456789",
             password="testpassword",
+            is_confirmed=True,
         )
         cls.user2 = User.objects.create(
             email="user2@test.com",
@@ -23,6 +24,7 @@ class FriendshipTest(TestCase):
             name="Test User2",
             id_number="987654321",
             password="testpassword",
+            is_confirmed=True,
         )
 
     def test_friendship_creation(self) -> None:
@@ -50,6 +52,7 @@ class FriendRequestTest(TestCase):
             name="Test User",
             id_number="123456789",
             password="testpassword",
+            is_confirmed=True,
         )
         cls.user2 = User.objects.create(
             email="user2@test.com",
@@ -57,6 +60,7 @@ class FriendRequestTest(TestCase):
             name="Test User2",
             id_number="987654321",
             password="testpassword",
+            is_confirmed=True,
         )
 
     def test_friend_request_creation(self) -> None:

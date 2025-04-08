@@ -16,6 +16,7 @@ class AccountTestCase(APITestCase):
             name="Test User",
             id_number="123456789",
             password="testpassword",
+            is_confirmed=True,
         )
         self.token = self.get_token()
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")

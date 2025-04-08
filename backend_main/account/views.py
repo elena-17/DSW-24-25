@@ -28,7 +28,7 @@ def adding_money(request):
         serializer = AccountSerializer(account)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Account.DoesNotExist:
-        return Response({"message": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(["PUT"])
@@ -42,6 +42,6 @@ def subtracting_money(request):
             serializer = AccountSerializer(account)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response({"message": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
     except Account.DoesNotExist:
-        return Response({"message": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)

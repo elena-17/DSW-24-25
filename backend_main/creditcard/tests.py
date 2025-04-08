@@ -15,6 +15,7 @@ class CreditCardAPITests(APITestCase):
             id_number="12345678X",
             password="testpassword",
             role="user",
+            is_confirmed=True,
         )
         self.token = self.get_token()
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")

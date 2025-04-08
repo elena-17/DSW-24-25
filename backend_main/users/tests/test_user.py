@@ -15,6 +15,7 @@ class UserTestCase(TestCase):
             id_number="12345678X",
             role="user",
             password="securepassword123",
+            is_confirmed=True,
         )
 
     def test_user_creation(self) -> None:
@@ -38,6 +39,7 @@ class UserAPI(APITestCase):
             "id_number": "87654321X",
             "password": "securepassword123",
             "role": "user",
+            "is_confirmed": True,
         }
         self.user = User.objects.create_user(**self.valid_data)
         self.assertTrue(User.objects.filter(email=self.valid_data["email"]).exists())

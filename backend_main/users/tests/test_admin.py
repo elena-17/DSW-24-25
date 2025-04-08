@@ -15,6 +15,7 @@ class UserAPI(APITestCase):
             id_number="12345678A",
             password="password123",
             role="user",
+            is_confirmed=True,
         )
         self.user2 = User.objects.create_user(
             email="user2@example.com",
@@ -23,6 +24,7 @@ class UserAPI(APITestCase):
             id_number="87654321B",
             password="password123",
             role="user",
+            is_confirmed=True,
         )
 
         # Create an admin user to generate the token for authentication
@@ -33,6 +35,7 @@ class UserAPI(APITestCase):
             id_number="11223344C",
             password="adminpassword123",
             role="admin",
+            is_confirmed=True,
         )
 
         # Define the URLs for the test cases
