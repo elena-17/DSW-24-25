@@ -1,0 +1,60 @@
+name: Django Tests Backend Main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14.17
+        env:
+          POSTGRES_USER: zap_test_user
+          POSTGRES_PASSWORD: zap_test_pass
+          POSTGRES_DB: zap_test_db
+        ports:
+          - 5434:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      POSTGRES_DB_MAIN: zap_test_db
+      POSTGRES_USER_MAIN: zap_test_user
+      POSTGRES_PASSWORD_MAIN: zap_test_pass
+      DJANGO_SETTINGS_MODULE: backend_main.settings
+      SECRET_KEY: test_secret_key
+      DEBUG: 0
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        working-directory: ./backend_main
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run migrations
+        working-directory: ./backend_main
+        run: |
+          python manage.py migrate
+
+      - name: Run tests with coverage
+        working-directory: ./backend_main
+        run: |
+          coverage run manage.py test
+          coverage report --fail-under=80
