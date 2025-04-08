@@ -3,13 +3,13 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import Transaction
-from .serializer import (
+from transactions.models import Transaction
+from transactions.serializers.send_request import (
     RequestTransactionSerializer,
     SendTransactionSerializer,
-    TransactionSerializer,
-    TransactionStatusUpdateSerializer,
 )
+from transactions.serializers.status import TransactionStatusUpdateSerializer
+from transactions.serializers.transactions import TransactionSerializer
 
 
 @api_view(["GET"])
