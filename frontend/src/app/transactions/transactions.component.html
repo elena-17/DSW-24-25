@@ -1,6 +1,98 @@
 <app-toolbar></app-toolbar>
 
+<button
+  mat-fab
+  color="primary"
+  class="filter-fab"
+  (click)="toggleFilters()"
+  matBadge="!"
+  matBadgeOverlap="true"
+  matBadgeColor="accent"
+  matBadgeSize="large"
+  *ngIf="filtersForm"
+  [matBadgeHidden]="!hasActiveFilters"
+>
+  <mat-icon>filter_alt</mat-icon>
+</button>
+
+<!-- Panel de filtros -->
+<div class="filter-overlay" *ngIf="filterOpen" (click)="closeFilters()">
+  <div class="filter-panel" (click)="$event.stopPropagation()">
+    <header class="filter-header">
+      <h3>Filters</h3>
+      <button mat-icon-button (click)="closeFilters()" class="close-button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+    <form [formGroup]="filtersForm" class="full-width-form">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Search Title</mat-label>
+        <input
+          matInput
+          formControlName="title"
+          name="search"
+          placeholder="Search by email"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-hint>Search by title</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Search User</mat-label>
+        <input
+          matInput
+          formControlName="user"
+          name="search"
+          placeholder="Search by email"
+        />
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-hint>Search by name or email</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field formGroupName="dateRange" class="full-width">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input
+            matStartDate
+            placeholder="Start date"
+            formControlName="start"
+          />
+          <input matEndDate placeholder="End date" formControlName="end" />
+        </mat-date-range-input>
+        <mat-hint>Start: DD/MM/YYYY – End: DD/MM/YYYY</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+
+      <section formGroupName="status">
+        <h4>Status</h4>
+        <mat-checkbox formControlName="pending">Pending</mat-checkbox>
+        <mat-checkbox formControlName="approved">Approved</mat-checkbox>
+        <mat-checkbox formControlName="rejected">Rejected</mat-checkbox>
+      </section>
+
+      <section formGroupName="amount">
+        <h4>Amount</h4>
+        <app-slider
+          [min]="0"
+          [max]="500"
+          [step]="1"
+          [startValue]="filtersForm.get('amount.min')?.value"
+          [endValue]="filtersForm.get('amount.max')?.value"
+          (rangeChange)="onAmountRangeChange($event)"
+        />
+      </section>
+
+      <button mat-flat-button (click)="applyFilters()">Apply filters</button>
+      <button mat-stroked-button (click)="clearFilters()">Clear filters</button>
+    </form>
+  </div>
+</div>
 <mat-tab-group animationDuration="500ms">
+  <!-- tab 1 - pending transactions -->
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon" style="color: #e38100fe"
@@ -8,10 +100,14 @@
       >
       Pending
     </ng-template>
+    <!-- if loading -->
     <div *ngIf="loading" class="loading-container">
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
+
+    <!-- already loaded -->
     <div *ngIf="!loading" class="page-container">
+      <!-- title -->
       <div class="underlined-title">
         <div class="title-buttons">
           <h2>Create Transaction</h2>
@@ -28,40 +124,57 @@
         </div>
         <hr />
       </div>
+
       <span style="display: block; height: 20px"></span>
+
       <div class="underlined-title">
         <h2>Transactions you need to approve</h2>
         <hr />
       </div>
+      <!-- table 1 -->
       <app-table
         [columns]="columns"
-        [data]="pendingMyApproval"
+        [data]="filteredPendingMyApproval"
         [enableSelection]="false"
         [enableActions]="true"
-        (action1)="approveTransaction($event)"
-        (action2)="rejectTransaction($event)"
-        [action1Icon]="'task_alt'"
-        [action2Icon]="'block'"
-        [action1Color]="'green'"
-        [action2Color]="'red'"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
+        (action2)="approveTransaction($event)"
+        [action2Icon]="'task_alt'"
+        [action2Tooltip]="'Approve transaction'"
+        (action3)="rejectTransaction($event)"
+        [action3Icon]="'block'"
+        [action3Tooltip]="'Reject transaction'"
+        [action2Color]="'green'"
+        [action3Color]="'red'"
       />
       <div class="underlined-title">
+        <!-- table 2 -->
         <h2>Transactions pending for others</h2>
         <hr />
       </div>
       <app-table
         [columns]="columns"
-        [data]="pendingOthers"
+        [data]="filteredPendingOthers"
         [enableSelection]="false"
-        [enableActions]="false"
-        (action1)="approveTransaction($event)"
-        (action2)="rejectTransaction($event)"
-        [action1Icon]="'task_alt'"
-        [action2Icon]="'block'"
+        [enableActions]="true"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
+        (action2)="approveTransaction($event)"
+        [action2Icon]="'task_alt'"
+        [action2Tooltip]="'Approve transaction'"
+        (action3)="rejectTransaction($event)"
+        [action3Icon]="'block'"
+        [action3Tooltip]="'Reject transaction'"
+        [action2Color]="'green'"
+        [action3Color]="'red'"
       />
     </div>
   </mat-tab>
 
+  <!-- tab 2 - sender transactions -->
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon" style="color: #f44336"
@@ -72,6 +185,7 @@
     <div *ngIf="loading" class="loading-container">
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
+    <!-- already loaded -->
     <div *ngIf="!loading" class="page-container">
       <div class="underlined-title">
         <div class="title-buttons">
@@ -89,15 +203,22 @@
         </div>
         <hr />
       </div>
+      <!-- end title -->
+
       <app-table
         [columns]="columns"
-        [data]="sender"
+        [data]="filteredSender"
         [enableSelection]="false"
-        [enableActions]="false"
+        [enableActions]="true"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
       >
       </app-table>
     </div>
   </mat-tab>
+
+  <!-- tab 3 - receiver transactions -->
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon" style="color: #4caf50"
@@ -108,6 +229,7 @@
     <div *ngIf="loading" class="loading-container">
       <mat-spinner [diameter]="60"></mat-spinner>
     </div>
+    <!-- already loaded -->
     <div *ngIf="!loading" class="page-container">
       <div class="underlined-title">
         <div class="title-buttons">
@@ -125,11 +247,15 @@
         </div>
         <hr />
       </div>
+
       <app-table
         [columns]="columns"
-        [data]="receiver"
+        [data]="filteredReceiver"
         [enableSelection]="false"
-        [enableActions]="false"
+        [enableActions]="true"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
       >
       </app-table>
     </div>

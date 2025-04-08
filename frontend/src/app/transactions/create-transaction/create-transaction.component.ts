@@ -62,7 +62,7 @@ export class CreateTransactionComponent {
         [
           Validators.required,
           Validators.min(0.01),
-          Validators.max(1000001),
+          Validators.max(500),
           Validators.pattern(/^\d+(\.\d{1,2})?$/),
         ],
       ],

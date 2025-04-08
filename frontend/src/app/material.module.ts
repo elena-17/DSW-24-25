@@ -12,6 +12,12 @@ import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatChipsModule } from "@angular/material/chips";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { MatSelectModule } from "@angular/material/select";
+import { MatSidenavModule } from "@angular/material/sidenav";
 
 @NgModule({
   imports: [
@@ -27,6 +33,12 @@ import { MatChipsModule } from "@angular/material/chips";
     MatSortModule,
     MatCheckboxModule,
     MatChipsModule,
+    MatTooltip,
+    MatTooltipModule,
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSidenavModule,
   ],
   exports: [
     MatCardModule,
@@ -41,6 +53,12 @@ import { MatChipsModule } from "@angular/material/chips";
     MatSortModule,
     MatCheckboxModule,
     MatChipsModule,
+    MatTooltip,
+    MatTooltipModule,
+    MatTabsModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSidenavModule,
   ],
 })
 export class MaterialModule {}

@@ -32,11 +32,17 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
   @Input() enableActions: boolean = false;
   @Input() action1Icon?: string;
   @Input() action2Icon?: string;
+  @Input() action3Icon?: string;
   @Input() action1Color?: string;
   @Input() action2Color?: string;
+  @Input() action3Color?: string;
+  @Input() action1Tooltip?: string;
+  @Input() action2Tooltip?: string;
+  @Input() action3Tooltip?: string;
 
   @Output() action1 = new EventEmitter<T>();
   @Output() action2 = new EventEmitter<T>();
+  @Output() action3 = new EventEmitter<T>();
 
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<T>([]);
@@ -81,5 +87,9 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
 
   action2Row(row: T): void {
     this.action2.emit(row);
+  }
+
+  action3Row(row: T): void {
+    this.action3.emit(row);
   }
 }
