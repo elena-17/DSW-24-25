@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { BehaviorSubject, Observable, combineLatest, forkJoin } from "rxjs";
 import { tap } from "rxjs/operators";
 
@@ -26,6 +26,7 @@ export class TransactionsService {
   private urlReceiver = `${this.baseApiUrl}/receiver/`;
   private urlSendMoney = `${this.baseApiUrl}/send-money/`;
   private urlRequestMoney = `${this.baseApiUrl}/request-money/`;
+  private urlAdminTransactions = `${this.baseApiUrl}/admin/`;
 
   constructor(private http: HttpClient) {}
 
@@ -102,5 +103,32 @@ export class TransactionsService {
           console.log("Transaction updated successfully:", response);
         }),
       );
+  }
+
+  getAdminTransactions(params: {
+    status?: string;
+    type?: string;
+    min_amount?: number;
+    max_amount?: number;
+    title?: string;
+    sender?: number;
+    receiver?: number;
+    date_start?: string;
+    date_end?: string;
+    limit?: number;
+    offset?: number;
+  }): Observable<any> {
+    let httpParams = new HttpParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== "") {
+        httpParams = httpParams.set(key, value);
+      }
+    });
+
+    return this.http.get<any>(this.urlAdminTransactions, {
+      params: httpParams,
+      withCredentials: true,
+    });
   }
 }

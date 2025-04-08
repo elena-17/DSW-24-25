@@ -16,8 +16,10 @@ import {
   FormBuilder,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { provideNativeDateAdapter } from "@angular/material/core";
-import { MatNativeDateModule } from "@angular/material/core";
+import {
+  MatNativeDateModule,
+  provideNativeDateAdapter,
+} from "@angular/material/core";
 import { take } from "rxjs";
 import { SliderComponent } from "../shared/slider/slider.component";
 import { getTransactionColumns } from "./config/transactions-columns.config";
@@ -341,6 +343,5 @@ export class TransactionsComponent implements OnInit {
     this.filteredPendingOthers = apply(this.pendingOthers);
 
     this.hasActiveFilters = hasActiveFilters(this.filtersForm);
-    console.log("hasActiveFilters", this.hasActiveFilters);
   }
 }
