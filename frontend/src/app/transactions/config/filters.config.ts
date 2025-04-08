@@ -1,6 +1,5 @@
 import { FormBuilder, FormGroup } from "@angular/forms";
 
-// transaction-filters.utils.ts
 export function createFilters(formBuilder: FormBuilder): FormGroup {
   return formBuilder.group({
     title: [""],
@@ -36,7 +35,7 @@ export function resetFilters(form: FormGroup): void {
     },
     amount: {
       min: 0,
-      max: 100000,
+      max: 500,
     },
   });
 }
