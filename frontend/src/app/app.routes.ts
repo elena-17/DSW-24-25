@@ -50,7 +50,7 @@ export const routes: Routes = [
   },
 
   {
-    path: "**",
+    path: "",
     canActivate: [AuthGuard],
     children: [
       { path: "homepage", component: HomepageComponent },
@@ -59,7 +59,7 @@ export const routes: Routes = [
       { path: "settings", component: SettingsComponent },
       { path: "help", component: HelppageComponent },
       { path: "transactions", component: TransactionsComponent },
-      { path: "**", component: Error404Component },
     ],
   },
+  { path: "**", component: Error404Component },
 ];
