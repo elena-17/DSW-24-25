@@ -36,7 +36,7 @@ export function resetFilters(form: FormGroup): void {
     },
     amount: {
       min: 0,
-      max: 100000,
+      max: 500,
     },
   });
 }
