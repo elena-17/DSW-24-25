@@ -1,7 +1,6 @@
-# urls.py
 from django.urls import path
 
-from .views import (
+from transactions.views.viewsUser import (
     get_all_transactions,
     get_all_transactions_receiver,
     get_all_transactions_sender,
@@ -10,6 +9,8 @@ from .views import (
     send_money,
     update_transaction_status,
 )
+
+from transactions.views.viewsAdmin import transaction_list
 
 # url pattern = /transaction/....
 urlpatterns = [
@@ -20,4 +21,6 @@ urlpatterns = [
     path("request-money/", request_money, name="request_money"),
     path("<int:id>/", get_transaction, name="get_transaction"),
     path("<int:id>/update-status/", update_transaction_status, name="update_transaction_status"),
+    path("admin/", transaction_list, name="transaction_list"),
+    path("admin/<int:id>/", update_transaction, name="update_transaction_admin"),
 ]
