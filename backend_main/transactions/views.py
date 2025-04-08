@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from transactions.models import Transaction
-from transactions.serializer import (
+from .models import Transaction
+from .serializer import (
     RequestTransactionSerializer,
     SendTransactionSerializer,
     TransactionSerializer,
