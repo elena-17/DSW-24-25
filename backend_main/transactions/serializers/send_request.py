@@ -1,23 +1,7 @@
 from rest_framework import serializers
 from users.models import User
 
-from .models import Transaction
-
-
-class TransactionSerializer(serializers.ModelSerializer):
-    sender = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="email")
-    receiver = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field="email")
-
-    class Meta:
-        model = Transaction
-        fields = "__all__"
-        extra_kwargs = {
-            "sender": {"required": True},
-            "receiver": {"required": True},
-            "amount": {"required": True},
-            "title": {"required": True},
-        }
-        read_only_fields = ["id", "created_at", "updated_at"]
+from transactions.models import Transaction
 
 
 class SendTransactionSerializer(serializers.Serializer):
@@ -108,32 +92,3 @@ class RequestTransactionSerializer(serializers.Serializer):
             transactions.append(transaction)
 
         return transactions
-
-
-class TransactionStatusUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Transaction
-        fields = ["status"]
-
-    def validate_status(self, value):
-        if value not in ["approved", "rejected"]:
-            raise serializers.ValidationError("Invalid status only 'approved' or 'rejected'.")
-
-        transaction = self.instance
-        if transaction.status != "pending":
-            raise serializers.ValidationError("Only pending transactions can be updated.")
-
-        if value == "approved":
-            if transaction.sender.account.balance < transaction.amount:
-                raise serializers.ValidationError("Insufficient balance for this transaction.")
-        return value
-
-    def update(self, instance, validated_data):
-        new_status = validated_data.get("status")
-
-        if new_status == "approved":
-            instance.approve()  # Usa el método en el modelo
-        elif new_status == "rejected":
-            instance.reject()
-
-        return instance
