@@ -57,7 +57,7 @@ export class ConfirmRegisterComponent implements OnInit {
       },
       error: (error) => {
         this.snackBar.open(
-          error.error.message || "Error while confirming user.",
+          error.error.error || "Error while confirming user.",
           "Close",
           {
             duration: 3000,
