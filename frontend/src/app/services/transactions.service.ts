@@ -87,11 +87,7 @@ export class TransactionsService {
       description,
     };
 
-    return this.http.post<any>(this.urlRequestMoney, payload).pipe(
-      tap((response) => {
-        console.log("Money requested successfully:", response);
-      }),
-    );
+    return this.http.post<any>(this.urlRequestMoney, payload);
   }
 
   updateTransaction(transactionId: number, status: string): Observable<any> {
@@ -129,5 +125,17 @@ export class TransactionsService {
       params: httpParams,
       withCredentials: true,
     });
+  }
+
+  updateAdminTransaction(
+    transactionId: number,
+    status: string,
+  ): Observable<any> {
+    const payload = { status };
+    return this.http.patch<any>(
+      `${this.urlAdminTransactions}${transactionId}/`,
+      payload,
+      { withCredentials: true },
+    );
   }
 }

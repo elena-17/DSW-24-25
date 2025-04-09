@@ -108,7 +108,6 @@ export class AdminTransactionsComponent implements OnInit {
   }
 
   openDetails(transaction: any) {
-    console.log(transaction);
     transaction.formattedDate =
       this.datePipe.transform(
         new Date(transaction.created_at),
@@ -121,9 +120,41 @@ export class AdminTransactionsComponent implements OnInit {
     });
   }
 
-  approveTransaction(transaction: any) {}
+  approveTransaction(transaction: any) {
+    this.transactionsService
+      .updateAdminTransaction(transaction.id, "approved")
+      .subscribe({
+        next: (response) => {
+          console.log("Transaction approved:", response);
+          this.notificationService.showSuccessMessage("Transaction approved");
+          this.filterData();
+        },
+        error: (error) => {
+          console.error("Error approving transaction:", error);
+          this.notificationService.showErrorMessage(
+            "Error approving transaction",
+          );
+        },
+      });
+  }
 
-  rejectTransaction(transaction: any) {}
+  rejectTransaction(transaction: any) {
+    this.transactionsService
+      .updateAdminTransaction(transaction.id, "rejected")
+      .subscribe({
+        next: (response) => {
+          console.log("Transaction rejected:", response);
+          this.notificationService.showSuccessMessage("Transaction rejected");
+          this.filterData();
+        },
+        error: (error) => {
+          console.error("Error rejecting transaction:", error);
+          this.notificationService.showErrorMessage(
+            "Error rejecting transaction",
+          );
+        },
+      });
+  }
 
   /// Filters Functions ///
   toggleFilters() {
@@ -148,9 +179,9 @@ export class AdminTransactionsComponent implements OnInit {
     this.filtersForm.get("amount.max")?.setValue(range.end);
   }
 
-  filterData() {
+  transformFilters() {
     const filters = this.filtersForm.value;
-    const transformedFilters = {
+    return {
       min_amount: filters.amount?.min,
       max_amount: filters.amount?.max,
       title: filters.title || undefined,
@@ -162,6 +193,10 @@ export class AdminTransactionsComponent implements OnInit {
         ? this.datePipe.transform(filters.dateRange.end, "dd-MM-yyyy")
         : undefined,
     };
+  }
+
+  filterData() {
+    const transformedFilters = this.transformFilters();
 
     this.loadTransactions(transformedFilters);
     this.hasActiveFilters = hasActiveFilters(this.filtersForm);
