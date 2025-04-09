@@ -34,6 +34,7 @@ jobs:
       DJANGO_SETTINGS_MODULE: backend_main.settings
       SECRET_KEY: test_secret_key
       DEBUG: 0
+      FIELD_ENCRYPTION_KEY: B9_VdNtkYbRZBgoAjR3N7h7nGlj6CW0oY8Nv4bpF1nY=
 
     steps:
       - name: Checkout code
