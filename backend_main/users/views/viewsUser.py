@@ -101,7 +101,7 @@ def send_reset_password_email(request):
 
 def generate_reset_password_link(email: str) -> str:
     encoded_email = quote(email)
-    token = urlsafe_base64_encode(email.encode())
+    token = signer.sign(email)  # signed token with timestamp
     reset_link = f"http://localhost:4200/forgot-password/?email={encoded_email}&token={token}"
     return reset_link
 
@@ -125,7 +125,20 @@ def send_forgot_password_email(email: str, reset_link: str) -> None:
 @permission_classes([AllowAny])
 def confirm_change_password(request):
     email = request.data.get("email")
+    token = request.data.get("token")
     password = request.data.get("newPassword")
+
+    # Validate token
+    try:
+        unsigned_email = signer.unsign(token, max_age=300)  # 5 minutos
+    except SignatureExpired:
+        return Response({"error": "Token has expired."}, status=status.HTTP_400_BAD_REQUEST)
+    except BadSignature:
+        return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if unsigned_email != email:
+        return Response({"error": "Invalid token for the provided email."}, status=status.HTTP_400_BAD_REQUEST)
+
     user = User.objects.filter(email=email).first()
     if user:
         serializer = UserProfileSerializer(user, data={"password": password}, partial=True)
@@ -135,7 +148,7 @@ def confirm_change_password(request):
             user.save()
             return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Error changing password."}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"error": "Error changing password."}, status=status.HTTP_400_BAD_REQUEST)
 
