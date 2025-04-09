@@ -85,8 +85,8 @@ export class AuthService {
     });
   }
 
-  confirmRegistration(email: string) {
-    return this.http.put(this.urlConfirmRegister, { email });
+  confirmRegistration(email: string, token: string) {
+    return this.http.put(this.urlConfirmRegister, { email, token });
   }
 
   sendResetEmail(email: string) {

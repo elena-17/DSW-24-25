@@ -23,6 +23,7 @@ export class ConfirmRegisterComponent implements OnInit {
   message: string = "";
   success: boolean = false;
   email: string = "";
+  token: string = "";
 
   constructor(
     private route: ActivatedRoute,
@@ -34,12 +35,14 @@ export class ConfirmRegisterComponent implements OnInit {
     console.log("ConfirmRegisterComponent initialized");
     this.route.queryParams.subscribe((params) => {
       this.email = params["email"];
+      this.token = params["token"];
+      console.log("Token from query params:", this.token);
       console.log("Email from query params:", this.email);
     });
   }
 
   confirmRegister(): void {
-    this.authService.confirmRegistration(this.email).subscribe({
+    this.authService.confirmRegistration(this.email, this.token).subscribe({
       next: (response) => {
         this.snackBar.open((response as any).message, "Close", {
           duration: 3000,
