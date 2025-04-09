@@ -130,14 +130,11 @@ def confirm_change_password(request):
 
     # Validate token
     try:
-        unsigned_email = signer.unsign(token, max_age=300)  # 5 minutos
+        signer.unsign(token, max_age=300)  # Token válido por 5 minutos (300 segundos)
     except SignatureExpired:
         return Response({"error": "Token has expired."}, status=status.HTTP_400_BAD_REQUEST)
     except BadSignature:
         return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-
-    if unsigned_email != email:
-        return Response({"error": "Invalid token for the provided email."}, status=status.HTTP_400_BAD_REQUEST)
 
     user = User.objects.filter(email=email).first()
     if user:
