@@ -35,6 +35,8 @@ jobs:
       SECRET_KEY: test_secret_key
       DEBUG: 0
       FIELD_ENCRYPTION_KEY: B9_VdNtkYbRZBgoAjR3N7h7nGlj6CW0oY8Nv4bpF1nY=
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: 5434
 
     steps:
       - name: Checkout code

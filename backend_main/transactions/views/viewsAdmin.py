@@ -5,6 +5,9 @@ from rest_framework.decorators import api_view
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
+from backend_main.transactions.serializers.status import (
+    TransactionStatusUpdateSerializer,
+)
 from transactions.models import Transaction
 from transactions.serializers.filter import TransactionFilterSerializer
 from transactions.serializers.transactions import TransactionSerializer
@@ -49,7 +52,7 @@ def transaction_list(request):
 def transaction_update(request, id):
     transaction = get_object_or_404(Transaction, pk=id)
 
-    serializer = TransactionSerializer(transaction, data=request.data, partial=True)
+    serializer = TransactionStatusUpdateSerializer(transaction, data=request.data, partial=True)
     if serializer.is_valid():
         if serializer.validated_data.get("status") == "approved":
             transaction.approve()
