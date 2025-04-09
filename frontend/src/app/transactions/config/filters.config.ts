@@ -1,6 +1,5 @@
 import { FormBuilder, FormGroup } from "@angular/forms";
 
-// transaction-filters.utils.ts
 export function createFilters(formBuilder: FormBuilder): FormGroup {
   return formBuilder.group({
     title: [""],
@@ -76,7 +75,6 @@ export function applyFilterFn(filters: any, item: any): boolean {
 
 export function hasActiveFilters(filtersForm: FormGroup): boolean {
   const filters = filtersForm.value;
-
   const isTextSearchApplied =
     filters.title.trim() !== "" || filters.user.trim() !== "";
 

@@ -109,13 +109,13 @@ export class ManageUserComponent {
       return "";
     }
 
-    if (controlName === "pwd1" || controlName === "pwd2") {
+    if (controlName === "pwd1") {
       if (control?.hasError("required")) {
-        return `${controlName === "pwd1" ? "Password" : "Confirm Password"} is required.`;
+        return "Password is required.";
       }
 
       if (control?.hasError("minlength")) {
-        return `${controlName === "pwd1" ? "Password" : "Confirm Password"} must be at least 8 characters long.`;
+        return "Password must be at least 8 characters long.";
       }
     }
 

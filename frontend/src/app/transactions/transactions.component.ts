@@ -2,11 +2,10 @@ import { Component, OnInit, ViewChild } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MaterialModule } from "../material.module";
 import { TransactionsService } from "../services/transactions.service";
-import { CommonModule } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { TableComponent } from "../shared/table/table.component";
 import { MatDialog } from "@angular/material/dialog";
 import { CreateTransactionComponent } from "./create-transaction/create-transaction.component";
-import { DatePipe } from "@angular/common";
 import { NotificationService } from "../services/notification.service";
 import { ConfirmDialogComponent } from "../shared/confirm-dialog/confirm-dialog.component";
 import { DetailsTransactionComponent } from "./details-transaction/details-transaction.component";
@@ -17,8 +16,10 @@ import {
   FormBuilder,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { provideNativeDateAdapter } from "@angular/material/core";
-import { MatNativeDateModule } from "@angular/material/core";
+import {
+  MatNativeDateModule,
+  provideNativeDateAdapter,
+} from "@angular/material/core";
 import { take } from "rxjs";
 import { SliderComponent } from "../shared/slider/slider.component";
 import { getTransactionColumns } from "./config/transactions-columns.config";
@@ -130,7 +131,6 @@ export class TransactionsComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    // Este hook se ejecuta después de que la vista se haya inicializado
     setTimeout(() => {
       this.filtersForm.updateValueAndValidity();
       this.filterData();
@@ -343,6 +343,5 @@ export class TransactionsComponent implements OnInit {
     this.filteredPendingOthers = apply(this.pendingOthers);
 
     this.hasActiveFilters = hasActiveFilters(this.filtersForm);
-    console.log("hasActiveFilters", this.hasActiveFilters);
   }
 }
