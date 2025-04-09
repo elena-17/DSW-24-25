@@ -46,7 +46,7 @@
           placeholder="Search by email"
         />
         <mat-icon matSuffix>person</mat-icon>
-        <mat-hint>Search by name or email</mat-hint>
+        <mat-hint>Search by email</mat-hint>
       </mat-form-field>
 
       <mat-form-field formGroupName="dateRange" class="full-width">
@@ -68,7 +68,7 @@
       </mat-form-field>
 
       <section formGroupName="amount">
-        <h4>Amount</h4>
+        <h4>Amount €</h4>
         <app-slider
           [min]="0"
           [max]="500"
@@ -111,7 +111,7 @@
         [columns]="columns"
         [data]="filteredPending"
         [enableSelection]="false"
-        [enableActions]="false"
+        [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
         [action1Tooltip]="'View details'"
@@ -149,7 +149,7 @@
         [columns]="columns"
         [data]="filteredApproved"
         [enableSelection]="false"
-        [enableActions]="false"
+        [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
         [action1Tooltip]="'View details'"
@@ -177,7 +177,7 @@
         [columns]="columns"
         [data]="filteredRejected"
         [enableSelection]="false"
-        [enableActions]="false"
+        [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
         [action1Tooltip]="'View details'"

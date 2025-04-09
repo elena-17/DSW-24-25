@@ -7,7 +7,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { NotificationService } from "../../services/notification.service";
 import { SliderComponent } from "../../shared/slider/slider.component";
 import { MatBadgeModule } from "@angular/material/badge";
-import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormGroup, ReactiveFormsModule, FormBuilder } from "@angular/forms";
 import { TransactionsService } from "../../services/transactions.service";
 import { getTransactionColumns } from "../config/transactions-admin-columns.config";
 import {
@@ -19,8 +19,9 @@ import {
   resetFilters,
   hasActiveFilters,
   applyFilterFn,
-} from "../config/filters-admin.config";
-import { FormBuilder } from "@angular/forms";
+} from "../config/filters.config";
+import { DetailsTransactionComponent } from "../details-transaction/details-transaction.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: "app-admin-transactions",
@@ -57,28 +58,29 @@ export class AdminTransactionsComponent implements OnInit {
     private transactionsService: TransactionsService,
     private datePipe: DatePipe,
     private notificationService: NotificationService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
-    this.loadTransactions();
+    // this.loadTransactions(); //not necessary bc in ngAfterViewInit it calls filterData()
   }
 
-  // ngAfterViewInit() {
-  //   setTimeout(() => {
-  //     this.filtersForm.updateValueAndValidity();
-  //     this.filterData();
-  //   }, 0);
-  // }
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.filtersForm.updateValueAndValidity();
+      this.filterData();
+    }, 0);
+  }
 
   initFilters() {
     this.filtersForm = createFilters(new FormBuilder());
   }
 
-  loadTransactions() {
+  loadTransactions(filters: any = {}) {
     this.loading = true; // Start loading
-    this.transactionsService.getAdminTransactions({}).subscribe({
+    this.transactionsService.getAdminTransactions(filters).subscribe({
       next: (response) => {
         const data = response.results;
         console.log("Transactions loaded:", response);
@@ -105,7 +107,19 @@ export class AdminTransactionsComponent implements OnInit {
     });
   }
 
-  openDetails(transaction: any) {}
+  openDetails(transaction: any) {
+    console.log(transaction);
+    transaction.formattedDate =
+      this.datePipe.transform(
+        new Date(transaction.created_at),
+        "dd MMM yyyy, HH:mm",
+      ) || "";
+    const dialogRef = this.dialog.open(DetailsTransactionComponent, {
+      data: transaction,
+      width: "33%",
+      height: "65%",
+    });
+  }
 
   approveTransaction(transaction: any) {}
 
@@ -136,12 +150,20 @@ export class AdminTransactionsComponent implements OnInit {
 
   filterData() {
     const filters = this.filtersForm.value;
-    const apply = (list: any[]) =>
-      list.filter((item) => applyFilterFn(filters, item));
-    this.filteredApproved = apply(this.approvedTransactions);
-    this.filteredPending = apply(this.pendingTransactions);
-    this.filteredRejected = apply(this.rejectedTransactions);
+    const transformedFilters = {
+      min_amount: filters.amount?.min,
+      max_amount: filters.amount?.max,
+      title: filters.title || undefined,
+      user: filters.user || undefined,
+      date_start: filters.dateRange?.start
+        ? this.datePipe.transform(filters.dateRange.start, "dd-MM-yyyy")
+        : undefined,
+      date_end: filters.dateRange?.end
+        ? this.datePipe.transform(filters.dateRange.end, "dd-MM-yyyy")
+        : undefined,
+    };
 
-    this.hasActiveFilters = hasActiveFilters(filters);
+    this.loadTransactions(transformedFilters);
+    this.hasActiveFilters = hasActiveFilters(this.filtersForm);
   }
 }

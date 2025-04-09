@@ -111,8 +111,7 @@ export class TransactionsService {
     min_amount?: number;
     max_amount?: number;
     title?: string;
-    sender?: number;
-    receiver?: number;
+    user?: string;
     date_start?: string;
     date_end?: string;
     limit?: number;
