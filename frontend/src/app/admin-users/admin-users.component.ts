@@ -41,7 +41,7 @@ export interface User {
     MatButtonToggleModule,
   ],
   templateUrl: "./admin-users.component.html",
-  styleUrl: "./admin-users.component.scss",
+  styleUrls: ["./admin-users.component.scss"],
 })
 export class AdminUsersComponent implements AfterViewInit, OnInit {
   constructor(
