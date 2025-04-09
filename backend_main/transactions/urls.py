@@ -1,6 +1,6 @@
 from django.urls import path
 
-from transactions.views.viewsAdmin import transaction_list
+from transactions.views.viewsAdmin import transaction_list, transaction_update
 from transactions.views.viewsUser import (
     get_all_transactions,
     get_all_transactions_receiver,
@@ -14,6 +14,7 @@ from transactions.views.viewsUser import (
 # url pattern = /transaction/....
 urlpatterns = [
     path("admin/", transaction_list, name="transaction_list"),
+    path("admin/<int:id>/", transaction_update, name="transaction_update"),
     path("", get_all_transactions, name="get_transactions"),
     path("sender/", get_all_transactions_sender, name="get_transactions_sender"),
     path("receiver/", get_all_transactions_receiver, name="get_transactions_receiver"),

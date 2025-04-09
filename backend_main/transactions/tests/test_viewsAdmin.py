@@ -94,3 +94,10 @@ class TransactionListViewTests(APITestCase):
         response = self.client.get(self.url_list, {"user": self.user1.email})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
+
+    def test_update(self):
+        data = {"status": "approved"}
+        response = self.client.patch(reverse("transaction_update", args=[self.transaction2.id]), data=data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.transaction2.refresh_from_db()
+        self.assertEqual(self.transaction2.status, "approved")

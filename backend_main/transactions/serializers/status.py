@@ -25,7 +25,7 @@ class TransactionStatusUpdateSerializer(serializers.ModelSerializer):
         new_status = validated_data.get("status")
 
         if new_status == "approved":
-            instance.approve()  # Usa el método en el modelo
+            instance.approve()
         elif new_status == "rejected":
             instance.reject()
 
