@@ -22,6 +22,7 @@ import {
 } from "../config/filters.config";
 import { DetailsTransactionComponent } from "../details-transaction/details-transaction.component";
 import { MatDialog } from "@angular/material/dialog";
+import * as Papa from "papaparse";
 
 @Component({
   selector: "app-admin-transactions",
@@ -53,6 +54,7 @@ export class AdminTransactionsComponent implements OnInit {
   filtersForm!: FormGroup;
   columns: any[] = [];
   hasActiveFilters: boolean = false;
+  currentTab: number = 0;
 
   constructor(
     private transactionsService: TransactionsService,
@@ -200,5 +202,35 @@ export class AdminTransactionsComponent implements OnInit {
 
     this.loadTransactions(transformedFilters);
     this.hasActiveFilters = hasActiveFilters(this.filtersForm);
+  }
+
+  changeTab(index: number) {
+    this.currentTab = index;
+  }
+
+  exportToCSV() {
+    let data: any[] = [];
+    let title: string = "";
+
+    if (this.currentTab === 0) {
+      data = this.pendingTransactions;
+      title = "Pending";
+    } else if (this.currentTab === 1) {
+      data = this.approvedTransactions;
+      title = "Approved";
+    } else if (this.currentTab === 2) {
+      data = this.rejectedTransactions;
+      title = "Rejected";
+    }
+
+    const csv = Papa.unparse(data);
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title}_transactions.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 }

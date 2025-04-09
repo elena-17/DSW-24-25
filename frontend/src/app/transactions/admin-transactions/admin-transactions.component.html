@@ -84,7 +84,10 @@
     </form>
   </div>
 </div>
-<mat-tab-group animationDuration="500ms">
+<mat-tab-group
+  animationDuration="500ms"
+  (selectedIndexChange)="changeTab($event)"
+>
   <!-- tab 1 - pending transactions -->
   <mat-tab>
     <ng-template mat-tab-label>
@@ -103,7 +106,13 @@
       <!-- title -->
 
       <div class="underlined-title">
-        <h2>Pending transactions</h2>
+        <div class="title-buttons">
+          <h2>Pending Transaction</h2>
+          <button mat-stroked-button (click)="exportToCSV()">
+            <mat-icon>download</mat-icon>
+            Download CSV
+          </button>
+        </div>
         <hr />
       </div>
       <!-- table 1 -->
@@ -142,7 +151,13 @@
     <!-- already loaded -->
     <div *ngIf="!loading" class="page-container">
       <div class="underlined-title">
-        <h2>Approved transactions</h2>
+        <div class="title-buttons">
+          <h2>Approved Transaction</h2>
+          <button mat-stroked-button (click)="exportToCSV()">
+            <mat-icon>download</mat-icon>
+            Download CSV
+          </button>
+        </div>
         <hr />
       </div>
       <app-table
@@ -170,7 +185,13 @@
     <!-- already loaded -->
     <div *ngIf="!loading" class="page-container">
       <div class="underlined-title">
-        <h2>Rejected transactions</h2>
+        <div class="title-buttons">
+          <h2>Rejected Transaction</h2>
+          <button mat-stroked-button (click)="exportToCSV()">
+            <mat-icon>download</mat-icon>
+            Download CSV
+          </button>
+        </div>
         <hr />
       </div>
       <app-table
