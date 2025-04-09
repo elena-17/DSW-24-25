@@ -4,15 +4,14 @@ import { AuthService } from "../../services/auth.service";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatSpinner } from "@angular/material/progress-spinner";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatButton } from "@angular/material/button";
 
 @Component({
   selector: "app-confirm-register",
-  standalone: true,
   imports: [
     MatButton,
-    MatSpinner,
+    MatProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
@@ -32,8 +31,10 @@ export class ConfirmRegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log("ConfirmRegisterComponent initialized");
     this.route.queryParams.subscribe((params) => {
       this.email = params["email"];
+      console.log("Email from query params:", this.email);
     });
   }
 
