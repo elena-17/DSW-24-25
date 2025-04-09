@@ -23,6 +23,7 @@ export class ForgotPasswordComponent {
   success = false;
   loading = false;
   email: string = "";
+  token: string = "";
 
   constructor(
     private route: ActivatedRoute,
@@ -32,6 +33,7 @@ export class ForgotPasswordComponent {
   ) {
     this.route.queryParams.subscribe((params) => {
       this.email = params["email"];
+      this.token = params["token"];
     });
 
     this.forgotPasswordForm = this.fb.group(
@@ -70,8 +72,10 @@ export class ForgotPasswordComponent {
       this.loading = true;
       this.success = false; // Reset success state
       const formData = this.forgotPasswordForm.value;
-      // Add email to formData
+      // Add email and token to formData
       formData.email = this.email;
+      formData.token = this.token;
+
       this.authService.resetPassword(formData).subscribe({
         next: (response) => {
           this.snackBar.open((response as any).message, "Close", {
@@ -87,7 +91,7 @@ export class ForgotPasswordComponent {
         },
         error: (error) => {
           this.snackBar.open(
-            error.error.message || "Error while changing password.",
+            error.error.error || "Error while changing password.",
             "Close",
             {
               duration: 3000,
