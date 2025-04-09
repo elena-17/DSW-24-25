@@ -7,7 +7,6 @@ class TransactionFilterSerializer(serializers.Serializer):
     min_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     max_amount = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
     title = serializers.CharField(required=False)
-    sender = serializers.IntegerField(required=False)
-    receiver = serializers.IntegerField(required=False)
+    user = serializers.EmailField(required=False)
     date_start = serializers.DateField(required=False, input_formats=["%d-%m-%Y"])
     date_end = serializers.DateField(required=False, input_formats=["%d-%m-%Y"])

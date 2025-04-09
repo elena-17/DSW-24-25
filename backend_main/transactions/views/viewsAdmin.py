@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -24,8 +25,6 @@ def transaction_list(request):
         "min_amount": "amount__gte",
         "max_amount": "amount__lte",
         "title": "title__icontains",
-        "sender": "sender_id",
-        "receiver": "receiver_id",
         "date_start": "created_at__gte",
         "date_end": "created_at__lte",
     }
@@ -33,6 +32,10 @@ def transaction_list(request):
     for field, lookup in filter_fields.items():
         if field in data:
             queryset = queryset.filter(**{lookup: data[field]})
+
+    if "user" in data:
+        email = data["user"]
+        queryset = queryset.filter(Q(sender__email=email) | Q(receiver__email=email))
 
     paginator = LimitOffsetPagination()
     paginator.default_limit = 30
