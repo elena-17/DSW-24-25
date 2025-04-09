@@ -73,7 +73,7 @@ def confirm_user_registration(request):
     try:
         signer.unsign(token, max_age=300)  # Token válido por 5 minutos (300 segundos)
     except SignatureExpired:
-        return Response({"error": "Token has expired."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Token has expired. You will need to contact with an admin."}, status=status.HTTP_400_BAD_REQUEST)
     except BadSignature:
         return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -132,7 +132,7 @@ def confirm_change_password(request):
     try:
         signer.unsign(token, max_age=300)  # Token válido por 5 minutos (300 segundos)
     except SignatureExpired:
-        return Response({"error": "Token has expired."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Token has expired... You will need to request a new password change email to proceed."}, status=status.HTTP_400_BAD_REQUEST)
     except BadSignature:
         return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
