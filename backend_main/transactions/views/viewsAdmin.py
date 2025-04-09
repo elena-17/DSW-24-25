@@ -5,11 +5,9 @@ from rest_framework.decorators import api_view
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
-from backend_main.transactions.serializers.status import (
-    TransactionStatusUpdateSerializer,
-)
 from transactions.models import Transaction
 from transactions.serializers.filter import TransactionFilterSerializer
+from transactions.serializers.status import TransactionStatusUpdateSerializer
 from transactions.serializers.transactions import TransactionSerializer
 
 
