@@ -64,11 +64,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.router.navigate(["/homepage"]);
   }
 
-  goToSettings1(): void {
-    this.router.navigate(["/settings"]);
-  }
-
-  goToSettings2(): void {
+  goToSettings(): void {
     this.router.navigate(["/profile"]);
   }
 

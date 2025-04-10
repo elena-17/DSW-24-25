@@ -3,7 +3,6 @@ import { LoginComponent } from "./login/login.component";
 import { RegisterComponent } from "./register/register.component";
 import { HomepageComponent } from "./homepage/homepage/homepage.component";
 import { FriendsComponent } from "./friends/friends.component";
-import { SettingsComponent } from "./settings/settings.component";
 import { HelppageComponent } from "./helppage/helppage.component";
 import { TransactionsComponent } from "./transactions/transactions.component";
 import { Error404Component } from "./error404/error404.component";
@@ -56,7 +55,6 @@ export const routes: Routes = [
       { path: "homepage", component: HomepageComponent },
       { path: "friends", component: FriendsComponent },
       { path: "profile", component: ProfilePageComponent },
-      { path: "settings", component: SettingsComponent },
       { path: "help", component: HelppageComponent },
       { path: "transactions", component: TransactionsComponent },
     ],
