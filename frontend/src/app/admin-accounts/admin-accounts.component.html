@@ -1,1 +1,21 @@
-<p>admin-accounts works!</p>
+<app-toolbar></app-toolbar>
+
+<div class="page-container">
+  <div class="underlined-title">
+    <div class="title-buttons">
+      <h2>User Accounts & Balances</h2>
+    </div>
+    <hr />
+  </div>
+
+  <app-table
+    [columns]="columns"
+    [data]="data"
+    [enableSelection]="false"
+    [enableActions]="true"
+    (action1)="viewUserDetails($event)"
+    [action1Icon]="'visibility'"
+    [action1Tooltip]="'View user details'"
+  >
+  </app-table>
+</div>
