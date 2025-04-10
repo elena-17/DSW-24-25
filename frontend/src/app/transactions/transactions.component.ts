@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MaterialModule } from "../material.module";
 import { TransactionsService } from "../services/transactions.service";

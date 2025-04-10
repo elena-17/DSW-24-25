@@ -18,7 +18,6 @@ import {
   createFilters,
   resetFilters,
   hasActiveFilters,
-  applyFilterFn,
 } from "../config/filters.config";
 import { DetailsTransactionComponent } from "../details-transaction/details-transaction.component";
 import { MatDialog } from "@angular/material/dialog";

@@ -1,7 +1,5 @@
 import { Component } from "@angular/core";
 import { ToolbarComponent } from "../../toolbar/toolbar.component";
-import { Router } from "@angular/router";
-import { AuthService } from "../../services/auth.service";
 import { UserService } from "../../services/user.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { CommonModule } from "@angular/common";
@@ -26,18 +24,12 @@ import { ChangeAccountBalanceComponent } from "./change-account-balance/change-a
 export class HomepageComponent {
   balance: number = 0; //Default balance
   constructor(
-    private router: Router,
-    private authService: AuthService,
     private userService: UserService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
-      this.router.navigate(["error-page"]);
-      return;
-    }
     this.loadBalance();
   }
 
@@ -58,7 +50,7 @@ export class HomepageComponent {
 
   depositFunds(): void {
     const dialogRef = this.dialog.open(ChangeAccountBalanceComponent, {
-      data: { title: "Deposit money", action: "deposit" },
+      data: { title: "Deposit", action: "deposit" },
       width: "90%",
       height: "60%",
     });
@@ -72,7 +64,7 @@ export class HomepageComponent {
 
   withdrawFunds(): void {
     const dialogRef = this.dialog.open(ChangeAccountBalanceComponent, {
-      data: { title: "Withdraw money", action: "withdraw" },
+      data: { title: "Withdraw", action: "withdraw" },
       width: "90%",
       height: "60%",
     });
