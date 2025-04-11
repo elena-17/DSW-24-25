@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { CommonModule, DatePipe } from "@angular/common";
 import { MaterialModule } from "../material.module";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
@@ -31,18 +31,22 @@ import { MatDialog } from "@angular/material/dialog";
       MatNativeDateModule,
       ReactiveFormsModule,],
   templateUrl: "./admin-accounts.component.html",
-  styleUrl: "./admin-accounts.component.scss",
+  styleUrls: ["./admin-accounts.component.scss"],
 })
 export class AdminAccountsComponent implements OnInit {
 
   columns: any[] = [];
   data: any[] = [];
+  filteredData: any[] = []; 
+
 
   constructor(
     private accountService: AdminAccountsService,
     private snackBar: MatSnackBar,
     private datePipe: DatePipe,
     private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,  // Importa ChangeDetectorRef
+
     
   ) {}
 
@@ -55,6 +59,7 @@ export class AdminAccountsComponent implements OnInit {
     this.accountService.getAllAccounts().subscribe({
       next: (response) => {
         this.data = response;
+        this.filteredData = [...this.data]; // Initialize filteredData with the full list of users
         console.log("Accounts loaded successfully", this.data);
       },
       error: (error) => {
@@ -66,12 +71,26 @@ export class AdminAccountsComponent implements OnInit {
       },
     });
   }
-  //QUIERO PASARLE EL USUARIO A LA VENTANA NUEVA
+  
+  // Filter accounts based on email while typing
+  updateSearchFilter(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+    // Filter the accounts based on the email (user)
+    this.filteredData = this.data.filter((user) =>
+      user.user.toLowerCase().includes(searchTerm)
+    );
+    // Force change detection. This is only necessary in some cases when Angular doesn't detect changes automatically
+    this.cdr.detectChanges();
+  }
+
+  // Clear the search filter
+  clearFilter(input: HTMLInputElement): void {
+    input.value = ""; // Clear the input
+    this.filteredData = [...this.data]; // Reset the data to show all accounts
+  }
 
   viewUserDetails($event: any) {
-    //FILA SELECCIONADA
     const selectedRow = $event;
-    console.log(selectedRow);
     const dialogRef = this.dialog.open(DetailsAccountsComponent, {
       data: selectedRow,
       width: '60%',
@@ -84,5 +103,7 @@ export class AdminAccountsComponent implements OnInit {
       }
     });
   }
+
+
 }
 
