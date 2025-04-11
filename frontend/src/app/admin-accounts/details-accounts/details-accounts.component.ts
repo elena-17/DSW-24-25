@@ -23,15 +23,8 @@ export class DetailsAccountsComponent {
     private snackBar: MatSnackBar
     ) {
       this.balanceForm = this.fb.group({
-        name: [{ value: data?.name || '', disabled: true }],
+        name: [{ value: this.data.user || '', disabled: true }],
         balance: [data?.balance || 0, [Validators.required, Validators.min(0), this.decimalMaxTwoValidator]]
-      });
-    }
-
-    ngOnInit(): void {
-      this.balanceForm = this.fb.group({
-        name: [{ value: this.data.user, disabled: true }],
-        balance: [this.data.balance, [Validators.required, Validators.min(0), this.decimalMaxTwoValidator]],
       });
     }
 
