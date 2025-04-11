@@ -16,6 +16,8 @@ import {
 } from "@angular/material/core";
 
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { DetailsAccountsComponent } from "./details-accounts/details-accounts.component";
+import { MatDialog } from "@angular/material/dialog";
 @Component({
   selector: "app-admin-accounts",
   providers: [DatePipe, provideNativeDateAdapter()],
@@ -39,7 +41,9 @@ export class AdminAccountsComponent implements OnInit {
   constructor(
     private accountService: AdminAccountsService,
     private snackBar: MatSnackBar,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private dialog: MatDialog,
+    
   ) {}
 
   ngOnInit(): void {
@@ -62,9 +66,23 @@ export class AdminAccountsComponent implements OnInit {
       },
     });
   }
+  //QUIERO PASARLE EL USUARIO A LA VENTANA NUEVA
 
   viewUserDetails($event: any) {
-    throw new Error('Method not implemented.');
-    }
+    //FILA SELECCIONADA
+    const selectedRow = $event;
+    console.log(selectedRow);
+    const dialogRef = this.dialog.open(DetailsAccountsComponent, {
+      data: selectedRow,
+      width: '60%',
+      height: '75%',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.loadAccounts(); // Refresh the accounts list after closing the dialog
+      }
+    });
+  }
 }
 

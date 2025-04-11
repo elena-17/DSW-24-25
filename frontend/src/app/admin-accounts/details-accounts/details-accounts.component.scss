@@ -1,0 +1,114 @@
+/* Form container */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    width: 100%;  
+    box-sizing: border-box; 
+  }
+  
+  .warning-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+  }
+  
+  .warning-text {
+    flex: 1;
+  }
+  
+  /* Form fields */
+  mat-form-field.full-width {
+    width: 100%;  
+  }
+  
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  
+  button[mat-button],
+  button[mat-raised-button] {
+    min-width: 100px;
+    width: auto;  
+  }
+  
+  /* Media query for small screens */
+  @media (max-width: 600px) {
+    .edit-form {
+      padding: 0.5rem;  
+    }
+  
+    .warning-card {
+      font-size: 0.85rem;  
+      padding: 10px;  
+    }
+  
+    mat-form-field.full-width {
+      margin-bottom: 1rem;  
+    }
+  
+    .dialog-actions {
+      gap: 0.5rem;  
+    }
+  
+    button[mat-button],
+    button[mat-raised-button] {
+      min-width: 90px;  
+      font-size: 0.9rem;  
+    }
+  }
+  
+  /* Media query for medium screens */
+  @media (max-width: 768px) {
+    .edit-form {
+      padding: 1rem;  
+    }
+  
+    .warning-card {
+      font-size: 0.9rem;  
+      padding: 12px;  
+    }
+  
+    .dialog-actions {
+      gap: 0.75rem;  
+    }
+  
+    button[mat-button],
+    button[mat-raised-button] {
+      min-width: 100px;  
+      font-size: 1rem;  
+    }
+  }
+  
+  /* Media query for larger screens */
+  @media (min-width: 1200px) {
+    .edit-form {
+      padding: 2rem;  
+    }
+  
+    .warning-card {
+      font-size: 1rem;  
+      padding: 14px;  
+    }
+  
+    .dialog-actions {
+      gap: 1rem;  
+  
+    button[mat-button],
+    button[mat-raised-button] {
+      min-width: 120px;  
+      font-size: 1.1rem;  
+    }
+  }
+}
+  
