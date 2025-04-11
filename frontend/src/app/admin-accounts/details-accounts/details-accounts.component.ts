@@ -10,7 +10,7 @@ import { CommonModule } from "@angular/common";
   selector: 'app-details-accounts',
   imports: [MaterialModule, ReactiveFormsModule, CommonModule],
   templateUrl: './details-accounts.component.html',
-  styleUrl: './details-accounts.component.scss'
+  styleUrls: ['./details-accounts.component.scss']
 })
 export class DetailsAccountsComponent {
   balanceForm: FormGroup;
