@@ -51,6 +51,7 @@ export class AdminAccountsComponent implements OnInit {
     this.accountService.getAllAccounts().subscribe({
       next: (response) => {
         this.data = response;
+        console.log("Accounts loaded successfully", this.data);
       },
       error: (error) => {
         this.snackBar.open(error.error.error || "Error loading accounts", "Close", {

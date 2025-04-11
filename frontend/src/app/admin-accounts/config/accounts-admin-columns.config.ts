@@ -9,7 +9,7 @@ export const getAccountsAdminColumns = (datePipe: DatePipe) => [
   {
     columnDef: "balance",
     header: "Balance (€)",
-    cell: (element: any) => `${element.balance.toFixed(2)} €`,
+    cell: (element: any) => `${element.balance} €`,
   },
  
 ];

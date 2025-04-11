@@ -5,7 +5,7 @@ import { Observable } from "rxjs";
   providedIn: 'root'
 })
 export class AdminAccountsService {
-  private baseApiUrl = "http://localhost:8000/admin";
+  private baseApiUrl = "http://localhost:8000/account";
   private urlAccountsGetAll = `${this.baseApiUrl}/accounts`;
   constructor(private http: HttpClient) { }
 
