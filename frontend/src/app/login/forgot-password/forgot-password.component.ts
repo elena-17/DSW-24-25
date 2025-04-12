@@ -46,7 +46,7 @@ export class ForgotPasswordComponent {
             PasswordValidators.passwordStrengthValidator,
           ],
         ],
-        confirmPassword: ["", []],
+        confirmPassword: ["", [Validators.required]],
       },
       {
         validator: PasswordValidators.passwordMismatchValidator(
@@ -121,4 +121,5 @@ export class ForgotPasswordComponent {
     }
     return "";
   }
+  
 }
