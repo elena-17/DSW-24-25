@@ -12,8 +12,9 @@
 
   // Logo
   .logo {
-    width: 90px;
+    width: 100px;
     height: auto;
+    max-width: 100px; /* Evita que se reduzca más allá de su tamaño original */
 
     img {
       width: 100%;
@@ -28,6 +29,7 @@
     gap: 20px;
     margin-left: auto;
     margin-right: 20px;
+    transition: margin-right 0.3s ease;
 
     button {
       color: white;
@@ -95,7 +97,6 @@
     display: none;
     flex-direction: column;
     position: absolute;
-    //margin-left: 0;
     top: 60px;
     right: 20px;
     background: var(--mat-sys-primary) !important;
@@ -162,22 +163,26 @@
   }
 
   // Responsive design
-  @media (max-width: 768px) {
+  @media (max-width: 1050px) {
     .menu {
-      display: none;
+      display: none; /* Ocultamos el menú en móviles */
     }
 
     .menu-toggle {
-      display: block;
+      display: block; /* Mostramos el botón de hamburguesa */
     }
 
     .mobile-menu.open {
-      display: flex;
+      display: flex; /* El menú móvil solo se muestra cuando se activa */
     }
 
     .top-bar {
       justify-content: flex-end;
       gap: 10px;
+    }
+
+    .menu {
+      gap: 10px; /* Reducir el espacio entre los botones */
     }
   }
 }
