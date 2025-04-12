@@ -1,51 +1,102 @@
+::ng-deep .mat-dialog-container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh; /* Altura máxima del diálogo */
+  max-height: 100vh;
+  overflow: hidden;
+  padding: 0; /* Elimina padding extra */
+}
+
+/* Contenedor con scroll */
+.dialog-scroll-content {
+  overflow-y: auto;
+  padding: 16px;
+  flex-grow: 1;
+  box-sizing: border-box;
+}
+
+/* Formulario */
 .manage_user_form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   width: 100%;
-  height: 100%;
   max-width: 500px;
-  margin: 0px auto;
-  padding: 0px;
-  border-radius: 8px;
-  gap: 0px;
-}
-
-.form-buttons {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
+  margin: 0 auto;
   gap: 20px;
 }
 
+.manage_user_form h2 {
+  font-size: 1.5rem;
+  text-align: center;
+  word-wrap: break-word;
+  margin-bottom: 10px;
+}
+
+/* Grilla del formulario */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* Two columns */
-  gap: 0px 10px;
-  margin-bottom: 20px;
+  gap: 10px;
+  width: 100%;
 }
 
+/* Que los campos ocupen el 100% */
+.full-width {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+/* Botones */
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* Breakpoint tablets */
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;
-    /* One column on small screens */
+    gap: 12px;
   }
 
-  mat-form-field {
-    margin-bottom: 10px;
+  .form-buttons {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .manage_user_form h2 {
+    font-size: 1.3rem;
   }
 }
 
-/*RESPONSIVE DESIGN*/
+/* Breakpoint móviles */
 @media (max-width: 480px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-    /* One column on small screens */
+  .dialog-scroll-content {
+    padding: 12px;
   }
 
-  .mat-form-field {
-    margin-bottom: 5px;
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  mat-form-field {
+    margin-bottom: 6px;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .manage_user_form h2 {
+    font-size: 1.2rem;
   }
 }
