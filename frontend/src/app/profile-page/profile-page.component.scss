@@ -14,6 +14,33 @@
   }
 }
 
+.sidenav {
+  width: 250px;
+  background-color: white;
+  color: white;
+}
+
+.sidenav a.active {
+  background-color: var(--mat-sys-primary); 
+  color: white;  
+  font-weight: bold;  
+}
+
+.sidenav a:hover {
+  background-color: whit;  
+  color: white;
+}
+
+.sidenav a.active {
+  border-left: 4px solid #1abc9c;
+  padding-left: 16px;  
+}
+
+mat-nav-list {
+  padding: 0;
+  margin: 0;
+}
+
 .delete-button {
   background-color: var(--mat-sys-error) !important;
   color: white;
@@ -27,6 +54,7 @@
 .sections {
   padding-left: 50px;
   padding-right: 50px;
+  padding-bottom: 50px;
 }
 
 .sections h2 {
@@ -108,13 +136,14 @@
 }
 
 /* Credit Cards Section */
+.profile-section,
 .credit-cards-section {
   padding: 30px;
   background-color: #f3f4f8;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 900px;
-  margin: 0 auto;
+  height: auto; 
+  min-height: 100vh; 
 }
 
 h2 {
@@ -152,6 +181,7 @@ hr.section-divider {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: space-between;
+  width: 100%; 
 }
 
 .credit-card {
@@ -273,6 +303,9 @@ hr.section-divider {
 @media (max-width: 768px) {
   .credit-cards-section {
     padding: 20px;
+    width: 100%; 
+    min-height: 100vh; 
+    box-sizing: border-box; 
   }
 
   .credit-card {
@@ -289,4 +322,28 @@ hr.section-divider {
   .card-body {
     margin-top: 10px;
   }
+
+  .delete-btn {
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .edit-btn {
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .edit-btn mat-icon {
+    font-size: 20px;
+    padding-right: 6px;
+  }
+
+  .delete-btn mat-icon {
+    font-size: 20px;
+    padding-right: 6px;
+
+  }
+
 }
