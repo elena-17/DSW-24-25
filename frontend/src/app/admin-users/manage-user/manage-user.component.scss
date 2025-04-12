@@ -1,13 +1,12 @@
 ::ng-deep .mat-dialog-container {
   display: flex;
   flex-direction: column;
-  height: 80vh; /* Altura máxima del diálogo */
+  height: 80vh; 
   max-height: 100vh;
   overflow: hidden;
-  padding: 0; /* Elimina padding extra */
+  padding: 0; 
 }
 
-/* Contenedor con scroll */
 .dialog-scroll-content {
   overflow-y: auto;
   padding: 16px;
@@ -15,7 +14,6 @@
   box-sizing: border-box;
 }
 
-/* Formulario */
 .manage_user_form {
   display: flex;
   flex-direction: column;
@@ -32,7 +30,6 @@
   margin-bottom: 10px;
 }
 
-/* Grilla del formulario */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -40,7 +37,6 @@
   width: 100%;
 }
 
-/* Que los campos ocupen el 100% */
 .full-width {
   width: 100%;
   box-sizing: border-box;
@@ -50,7 +46,6 @@ mat-form-field {
   width: 100%;
 }
 
-/* Botones */
 .form-buttons {
   display: flex;
   justify-content: flex-end;
@@ -58,7 +53,6 @@ mat-form-field {
   flex-wrap: wrap;
 }
 
-/* Breakpoint tablets */
 @media (max-width: 768px) {
   .form-grid {
     grid-template-columns: 1fr;
@@ -75,7 +69,6 @@ mat-form-field {
   }
 }
 
-/* Breakpoint móviles */
 @media (max-width: 480px) {
   .dialog-scroll-content {
     padding: 12px;

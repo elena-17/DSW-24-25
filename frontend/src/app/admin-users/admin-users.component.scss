@@ -1,9 +1,10 @@
 .action-buttons {
   display: flex;
   justify-content: flex-start;
-  margin-bottom: 20px;
-  gap: 20px;
   align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 .table-container {
@@ -13,10 +14,11 @@
 
 .filters {
   display: flex;
-  margin-bottom: 20px;
-  gap: 50px;
   align-items: center;
+  gap: 50px;
+  margin-bottom: 20px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 ::ng-deep .badge-admin {
@@ -41,4 +43,18 @@
   background-color: #ffcccc;
   color: #d33f3f;
   border: 1px solid #d33f3f;
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
 }
