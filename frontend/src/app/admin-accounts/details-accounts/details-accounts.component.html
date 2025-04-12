@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Edit User Balance</h2>
+
+<form [formGroup]="balanceForm" class="edit-form">
+
+  <!-- ⚠️ Warning Message -->
+  <mat-card class="warning-card" appearance="outlined">
+    <mat-icon color="warn">warning</mat-icon>
+    <span class="warning-text">
+      This is a sensitive operation. Please double-check the amount before saving changes. 
+      Incorrect balance updates may affect user transactions.
+    </span>
+  </mat-card>
+
+  <!-- User Name -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>User Email</mat-label>
+    <input matInput formControlName="name" [disabled]="true" />
+  </mat-form-field>
+
+  <!-- Balance -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Balance</mat-label>
+    <input matInput type="number" formControlName="balance" />
+    <mat-error *ngIf="balanceForm.get('balance')?.hasError('required')">Balance is required</mat-error>
+    <mat-error *ngIf="balanceForm.get('balance')?.hasError('min')">Balance must be positive</mat-error>
+    <mat-error *ngIf="balanceForm.get('balance')?.hasError('decimalMaxTwo')">Balance can have a maximum of two decimal places</mat-error>
+</mat-form-field>
+
+  <!-- Actions -->
+  <div class="dialog-actions">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="balanceForm.invalid">Save</button>
+  </div>
+</form>
