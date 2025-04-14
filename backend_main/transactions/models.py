@@ -39,7 +39,7 @@ class Transaction(models.Model):
     description = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
     updated_at = models.DateTimeField(auto_now=True)
-    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="send")
 
     def approve(self):
 
