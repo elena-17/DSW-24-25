@@ -24,6 +24,7 @@ import { MatDialog } from "@angular/material/dialog";
 import * as Papa from "papaparse";
 import { TransactionData } from "../config/transaction-state.config";
 import { PageEvent } from "@angular/material/paginator";
+import { CreateTransactionComponent } from "../create-transaction/create-transaction.component";
 
 @Component({
   selector: "app-admin-transactions",
@@ -43,13 +44,6 @@ import { PageEvent } from "@angular/material/paginator";
   styleUrl: "./admin-transactions.component.scss",
 })
 export class AdminTransactionsComponent implements OnInit {
-  approvedTransactions: any[] = [];
-  pendingTransactions: any[] = [];
-  rejectedTransactions: any[] = [];
-  filteredApproved: any[] = [];
-  filteredPending: any[] = [];
-  filteredRejected: any[] = [];
-
   loading: boolean = false;
   filterOpen: boolean = false;
   filtersForm!: FormGroup;
@@ -89,35 +83,6 @@ export class AdminTransactionsComponent implements OnInit {
   initFilters() {
     this.filtersForm = createFilters(new FormBuilder());
   }
-
-  // loadTransactions(filters: any = {}) {
-  //   this.loading = true; // Start loading
-  //   this.transactionsService.getAdminTransactions(filters).subscribe({
-  //     next: (response) => {
-  //       const data = response.results;
-  //       console.log("Transactions loaded:", response);
-  //       this.approvedTransactions = data.filter(
-  //         (transaction: any) => transaction.status === "approved",
-  //       );
-  //       this.pendingTransactions = data.filter(
-  //         (transaction: any) => transaction.status === "pending",
-  //       );
-  //       this.rejectedTransactions = data.filter(
-  //         (transaction: any) => transaction.status === "rejected",
-  //       );
-  //       this.filteredApproved = [...this.approvedTransactions];
-  //       this.filteredPending = [...this.pendingTransactions];
-  //       this.filteredRejected = [...this.rejectedTransactions];
-  //     },
-  //     error: (error) => {
-  //       console.error("Error loading transactions:", error);
-  //       this.notificationService.showErrorMessage("Error loading transactions");
-  //     },
-  //     complete: () => {
-  //       this.loading = false;
-  //     },
-  //   });
-  // }
 
   loadTransactionsByStatus(status: string, filters: any = {}) {
     const state = this.transactionStates[status];
@@ -193,6 +158,47 @@ export class AdminTransactionsComponent implements OnInit {
       });
   }
 
+  createTransaction() {
+    const dialogRef = this.dialog.open(CreateTransactionComponent, {
+      data: { title: "Create Transaction", admin: true },
+      width: "90%",
+      height: "60%",
+    });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.transactionsService.createAdminTransaction(result).subscribe({
+          next: (response) => {
+            console.log("Transaction created:", response);
+            this.notificationService.showSuccessMessage("Transaction created");
+            this.filterData();
+          },
+          error: (error) => {
+            console.error("Error creating transaction:", error);
+            this.notificationService.showErrorMessage(
+              "Error creating transaction",
+            );
+          },
+        });
+      }
+    });
+
+    // this.transactionsService
+    //   .updateAdminTransaction(transaction.id, "rejected")
+    //   .subscribe({
+    //     next: (response) => {
+    //       console.log("Transaction rejected:", response);
+    //       this.notificationService.showSuccessMessage("Transaction rejected");
+    //       this.filterData();
+    //     },
+    //     error: (error) => {
+    //       console.error("Error rejecting transaction:", error);
+    //       this.notificationService.showErrorMessage(
+    //         "Error rejecting transaction",
+    //       );
+    //     },
+    //   });
+  }
+
   /// Filters Functions ///
   toggleFilters() {
     this.filterOpen = !this.filterOpen;
@@ -250,28 +256,15 @@ export class AdminTransactionsComponent implements OnInit {
 
   onPageChange(status: string, event: PageEvent) {
     console.log("event", event);
-    // Actualiza el estado de paginación para el tipo
     const state = this.transactionStates[status];
     state.pageIndex = event.pageIndex;
     state.pageSize = event.pageSize;
-    // Cargar la página correspondiente
     this.loadTransactionsByStatus(status);
   }
 
   exportToCSV() {
     let data: any[] = [];
     let title: string = "";
-
-    // if (this.currentTab === 0) {
-    //   data = this.pendingTransactions;
-    //   title = "Pending";
-    // } else if (this.currentTab === 1) {
-    //   data = this.approvedTransactions;
-    //   title = "Approved";
-    // } else if (this.currentTab === 2) {
-    //   data = this.rejectedTransactions;
-    //   title = "Rejected";
-    // }
 
     if (this.currentTab === 0) {
       data = this.transactionStates["pending"].data;

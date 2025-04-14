@@ -108,10 +108,16 @@
       <div class="underlined-title">
         <div class="title-buttons">
           <h2>Pending Transaction</h2>
-          <button mat-stroked-button (click)="exportToCSV()">
-            <mat-icon>download</mat-icon>
-            Download CSV
-          </button>
+          <div class="title-buttons-right">
+            <button mat-flat-button (click)="createTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Create transaction
+            </button>
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
         </div>
         <hr />
       </div>
@@ -158,10 +164,16 @@
       <div class="underlined-title">
         <div class="title-buttons">
           <h2>Approved Transaction</h2>
-          <button mat-stroked-button (click)="exportToCSV()">
-            <mat-icon>download</mat-icon>
-            Download CSV
-          </button>
+          <div class="title-buttons-right">
+            <button mat-flat-button (click)="createTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Create transaction
+            </button>
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
         </div>
         <hr />
       </div>
@@ -197,10 +209,16 @@
       <div class="underlined-title">
         <div class="title-buttons">
           <h2>Rejected Transaction</h2>
-          <button mat-stroked-button (click)="exportToCSV()">
-            <mat-icon>download</mat-icon>
-            Download CSV
-          </button>
+          <div class="title-buttons-right">
+            <button mat-flat-button (click)="createTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Create transaction
+            </button>
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
         </div>
         <hr />
       </div>

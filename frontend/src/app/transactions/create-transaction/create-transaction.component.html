@@ -6,17 +6,45 @@
       <form [formGroup]="contactForm">
         <ng-template matStepLabel>Users</ng-template>
         <!-- Aquí puedes reemplazar el input por un componente de búsqueda más complejo -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>User</mat-label>
-          <input
-            matInput
-            formControlName="contact"
-            placeholder="Email, Phone or Name"
-          />
-          <mat-error *ngIf="contactForm.get('contact')?.hasError('required')">
-            This field is required
-          </mat-error>
-        </mat-form-field>
+        <div *ngIf="!admin; else adminFields">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>User</mat-label>
+            <input
+              matInput
+              formControlName="contact"
+              placeholder="Email, Phone or Name"
+            />
+            <mat-error *ngIf="contactForm.get('contact')?.hasError('required')">
+              This field is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <ng-template #adminFields>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Sender</mat-label>
+            <input
+              matInput
+              formControlName="sender"
+              placeholder="Sender Email"
+            />
+            <mat-error *ngIf="contactForm.get('sender')?.hasError('required')">
+              This field is required
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Receiver</mat-label>
+            <input
+              matInput
+              formControlName="receiver"
+              placeholder="Receiver Email"
+            />
+            <mat-error
+              *ngIf="contactForm.get('receiver')?.hasError('required')"
+            >
+              This field is required
+            </mat-error>
+          </mat-form-field>
+        </ng-template>
         <div class="transaction_form_buttons">
           <button mat-stroked-button (click)="onCancel()">Cancel</button>
           <button mat-stroked-button matStepperNext>Next</button>
@@ -105,9 +133,19 @@
       >
         <p>You're about to {{ dialogTitle | lowercase }}</p>
         <p class="amount-highlight">{{ amountForm.value.amount }} €</p>
-        <p>
+        <p *ngIf="!admin">
           to
           <span class="contact-highlight">{{ contactForm.value.contact }}</span>
+        </p>
+        <p *ngIf="admin">
+          from
+          <span class="contact-highlight">{{ contactForm.value.sender }}</span>
+        </p>
+        <p *ngIf="admin">
+          to
+          <span class="contact-highlight">{{
+            contactForm.value.receiver
+          }}</span>
         </p>
       </div>
 

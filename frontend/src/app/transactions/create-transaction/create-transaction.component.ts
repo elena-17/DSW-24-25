@@ -44,17 +44,26 @@ export class CreateTransactionComponent {
   dialogTitle: string;
   emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
+  admin: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<CreateTransactionComponent>,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string },
+    @Inject(MAT_DIALOG_DATA) public data: { title: string; admin: boolean },
   ) {
     this.dialogTitle = data.title;
+    this.admin = data.admin;
 
-    this.contactForm = this.formBuilder.group({
-      contact: ["", [Validators.required, Validators.email]],
-    });
+    if (this.admin) {
+      this.contactForm = this.formBuilder.group({
+        sender: ["", [Validators.required, Validators.email]],
+        receiver: ["", [Validators.required, Validators.email]],
+      });
+    } else {
+      this.contactForm = this.formBuilder.group({
+        contact: ["", [Validators.required, Validators.email]],
+      });
+    }
 
     this.amountForm = this.formBuilder.group({
       amount: [
@@ -82,9 +91,14 @@ export class CreateTransactionComponent {
   onSubmit() {
     if (this.contactForm.valid && this.form.valid) {
       const formData = {
-        user: [this.contactForm.value.contact],
         amount: this.amountForm.value.amount,
         ...this.form.value,
+        ...(this.admin
+          ? {
+              sender: this.contactForm.value.sender,
+              receiver: this.contactForm.value.receiver,
+            }
+          : { user: [this.contactForm.value.contact] }),
       };
       this.dialogRef.close(formData);
     }
