@@ -24,9 +24,13 @@ class TransactionStatusUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         new_status = validated_data.get("status")
 
-        if new_status == "approved":
-            instance.approve()
-        elif new_status == "rejected":
-            instance.reject()
+        if new_status == "approved" and instance.type == "send":
+            instance.approveSend()
+        elif new_status == "approved" and instance.type == "request":
+            instance.approveRequest()
+        elif new_status == "rejected" and instance.type == "send":
+            instance.rejectSend()
+        elif new_status == "rejected" and instance.type == "request":
+            instance.rejectRequest()
 
         return instance

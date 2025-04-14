@@ -48,7 +48,8 @@ class SendTransactionSerializer(serializers.Serializer):
             )
             # transaction.approve()
             transactions.append(transaction)
-
+        validated_data["sender"].account.balance -= validated_data["amount"]
+        validated_data["sender"].account.save()
         return transactions
 
 
