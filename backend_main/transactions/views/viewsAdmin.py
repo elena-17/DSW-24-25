@@ -46,7 +46,7 @@ def transaction_list(request):
     return paginator.get_paginated_response(serializer.data)
 
 
-@api_view(["PATCH"])  # TODO
+@api_view(["PATCH"])
 def transaction_update(request, id):
     transaction = get_object_or_404(Transaction, pk=id)
 
@@ -54,4 +54,13 @@ def transaction_update(request, id):
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def transaction_create(request):
+    serializer = TransactionSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

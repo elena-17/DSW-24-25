@@ -101,3 +101,25 @@ class TransactionListViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.transaction2.refresh_from_db()
         self.assertEqual(self.transaction2.status, "approved")
+
+    def test_update_invalid(self):
+        data = {"status": "invalid_status"}
+        response = self.client.patch(reverse("transaction_update", args=[self.transaction2.id]), data=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.transaction2.refresh_from_db()
+        self.assertEqual(self.transaction2.status, "pending")
+
+    def test_create(self):
+        data = {
+            "sender": self.user1.email,
+            "receiver": self.user2.email,
+            "amount": 5.00,
+            "status": "approved",
+            "title": "Test Transaction",
+            "type": "send",
+        }
+        response = self.client.post(reverse("transaction_create"), data=data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        transaction = Transaction.objects.get(id=response.data["id"])
+        self.assertEqual(transaction.amount, 5.00)
+        self.assertEqual(transaction.title, "Test Transaction")
