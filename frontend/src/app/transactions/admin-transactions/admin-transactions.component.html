@@ -86,7 +86,7 @@
 </div>
 <mat-tab-group
   animationDuration="500ms"
-  (selectedIndexChange)="changeTab($event)"
+  (selectedIndexChange)="onChangeTab($event)"
 >
   <!-- tab 1 - pending transactions -->
   <mat-tab>
@@ -118,7 +118,12 @@
       <!-- table 1 -->
       <app-table
         [columns]="columns"
-        [data]="filteredPending"
+        [data]="transactionStates['pending'].data"
+        [totalCount]="transactionStates['pending'].totalCount"
+        [pageSize]="transactionStates['pending'].pageSize"
+        [pageIndex]="transactionStates['pending'].pageIndex"
+        (pageChange)="onPageChange('pending', $event)"
+        [serverSidePagination]="true"
         [enableSelection]="false"
         [enableActions]="true"
         (action1)="openDetails($event)"
@@ -162,7 +167,12 @@
       </div>
       <app-table
         [columns]="columns"
-        [data]="filteredApproved"
+        [data]="transactionStates['approved'].data"
+        [totalCount]="transactionStates['approved'].totalCount"
+        [pageSize]="transactionStates['approved'].pageSize"
+        [pageIndex]="transactionStates['approved'].pageIndex"
+        (pageChange)="onPageChange('approved', $event)"
+        [serverSidePagination]="true"
         [enableSelection]="false"
         [enableActions]="true"
         (action1)="openDetails($event)"
@@ -196,7 +206,12 @@
       </div>
       <app-table
         [columns]="columns"
-        [data]="filteredRejected"
+        [data]="transactionStates['rejected'].data"
+        [totalCount]="transactionStates['rejected'].totalCount"
+        [pageSize]="transactionStates['rejected'].pageSize"
+        [pageIndex]="transactionStates['rejected'].pageIndex"
+        (pageChange)="onPageChange('rejected', $event)"
+        [serverSidePagination]="true"
         [enableSelection]="false"
         [enableActions]="true"
         (action1)="openDetails($event)"

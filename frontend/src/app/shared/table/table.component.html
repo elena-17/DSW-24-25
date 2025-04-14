@@ -101,6 +101,11 @@
 </table>
 
 <mat-paginator
-  [pageSizeOptions]="[30, 50, 70]"
+  [length]="totalCount"
+  [pageSizeOptions]="[5, 15, 30]"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  (page)="onPageChange($event)"
   showFirstLastButtons
-></mat-paginator>
+>
+</mat-paginator>
