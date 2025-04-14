@@ -18,7 +18,7 @@ def transaction_list(request):
     if not filter_serializer.is_valid():
         return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     data = filter_serializer.validated_data
-    queryset = Transaction.objects.all()
+    queryset = Transaction.objects.select_related("sender", "receiver").all()
 
     filter_fields = {
         "status": "status",

@@ -8,6 +8,10 @@ class Transaction(models.Model):
         db_table = "transactions"
         get_latest_by = "created_at"
         ordering = ["-created_at"]  # newest first
+        indexes = [
+            models.Index(fields=["status"]),
+            models.Index(fields=["created_at"]),
+        ]
         constraints = [
             models.CheckConstraint(
                 check=~models.Q(sender=models.F("receiver")),
