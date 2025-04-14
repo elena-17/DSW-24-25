@@ -20,7 +20,11 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     const token = this.authService.getToken();
 
-    if (req.url.includes("login") || req.url.includes("register")) {
+    if (
+      req.url.includes("login") ||
+      req.url.includes("register") ||
+      req.url.includes("api.github.com")
+    ) {
       return next.handle(req);
     }
 

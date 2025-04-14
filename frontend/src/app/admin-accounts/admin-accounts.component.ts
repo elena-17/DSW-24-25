@@ -21,33 +21,30 @@ import { MatDialog } from "@angular/material/dialog";
 @Component({
   selector: "app-admin-accounts",
   providers: [DatePipe, provideNativeDateAdapter()],
-  imports: [  
-      MaterialModule,
-      CommonModule,
-      ToolbarComponent,
-      TableComponent,
-      MatDatepickerModule,
-      MatBadgeModule,
-      MatNativeDateModule,
-      ReactiveFormsModule,],
+  imports: [
+    MaterialModule,
+    CommonModule,
+    ToolbarComponent,
+    TableComponent,
+    MatDatepickerModule,
+    MatBadgeModule,
+    MatNativeDateModule,
+    ReactiveFormsModule,
+  ],
   templateUrl: "./admin-accounts.component.html",
   styleUrls: ["./admin-accounts.component.scss"],
 })
 export class AdminAccountsComponent implements OnInit {
-
   columns: any[] = [];
   data: any[] = [];
-  filteredData: any[] = []; 
-
+  filteredData: any[] = [];
 
   constructor(
     private accountService: AdminAccountsService,
     private snackBar: MatSnackBar,
     private datePipe: DatePipe,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef,  // Importa ChangeDetectorRef
-
-    
+    private cdr: ChangeDetectorRef, // Importa ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -63,21 +60,25 @@ export class AdminAccountsComponent implements OnInit {
         console.log("Accounts loaded successfully", this.data);
       },
       error: (error) => {
-        this.snackBar.open(error.error.error || "Error loading accounts", "Close", {
-          duration: 3000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.snackBar.open(
+          error.error.error || "Error loading accounts",
+          "Close",
+          {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          },
+        );
       },
     });
   }
-  
+
   // Filter accounts based on email while typing
   updateSearchFilter(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
     // Filter the accounts based on the email (user)
     this.filteredData = this.data.filter((user) =>
-      user.user.toLowerCase().includes(searchTerm)
+      user.user.toLowerCase().includes(searchTerm),
     );
     // Force change detection. This is only necessary in some cases when Angular doesn't detect changes automatically
     this.cdr.detectChanges();
@@ -93,8 +94,8 @@ export class AdminAccountsComponent implements OnInit {
     const selectedRow = $event;
     const dialogRef = this.dialog.open(DetailsAccountsComponent, {
       data: selectedRow,
-      width: '60%',
-      height: '75%',
+      width: "60%",
+      height: "75%",
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -103,7 +104,4 @@ export class AdminAccountsComponent implements OnInit {
       }
     });
   }
-
-
 }
-

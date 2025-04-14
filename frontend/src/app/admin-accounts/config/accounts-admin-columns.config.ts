@@ -11,5 +11,4 @@ export const getAccountsAdminColumns = (datePipe: DatePipe) => [
     header: "Balance (€)",
     cell: (element: any) => `${element.balance} €`,
   },
- 
 ];

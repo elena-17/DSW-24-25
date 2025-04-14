@@ -21,19 +21,19 @@
 }
 
 .sidenav a.active {
-  background-color: var(--mat-sys-primary); 
-  color: white;  
-  font-weight: bold;  
+  background-color: var(--mat-sys-primary);
+  color: white;
+  font-weight: bold;
 }
 
 .sidenav a:hover {
-  background-color: whit;  
+  background-color: whit;
   color: white;
 }
 
 .sidenav a.active {
   border-left: 4px solid #1abc9c;
-  padding-left: 16px;  
+  padding-left: 16px;
 }
 
 mat-nav-list {
@@ -142,8 +142,8 @@ mat-nav-list {
   background-color: #f3f4f8;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  height: auto; 
-  min-height: 100vh; 
+  height: auto;
+  min-height: 100vh;
 }
 
 h2 {
@@ -181,7 +181,7 @@ hr.section-divider {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: space-between;
-  width: 100%; 
+  width: 100%;
 }
 
 .credit-card {
@@ -303,9 +303,9 @@ hr.section-divider {
 @media (max-width: 768px) {
   .credit-cards-section {
     padding: 20px;
-    width: 100%; 
-    min-height: 100vh; 
-    box-sizing: border-box; 
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
   }
 
   .credit-card {
@@ -343,7 +343,5 @@ hr.section-divider {
   .delete-btn mat-icon {
     font-size: 20px;
     padding-right: 6px;
-
   }
-
 }

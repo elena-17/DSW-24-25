@@ -12,8 +12,6 @@ import {
 import { AuthInterceptor } from "./interceptors/auth.interceptors";
 import { AuthGuard } from "./guards/auth.guard";
 
-
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),

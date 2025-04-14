@@ -1,17 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
-import { Router } from "@angular/router";
-import { AuthService } from "../services/auth.service";
+import { AuthorComponent } from "./author/author.component";
 
 @Component({
   selector: "app-helppage",
-  imports: [ToolbarComponent],
+  imports: [ToolbarComponent, AuthorComponent],
   templateUrl: "./helppage.component.html",
   styleUrl: "./helppage.component.scss",
 })
 export class HelppageComponent {
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-  ) {}
+  constructor() {}
 }
