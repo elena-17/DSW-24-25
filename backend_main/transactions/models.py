@@ -41,8 +41,24 @@ class Transaction(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="send")
 
-    def approve(self):
+    def approveSend(self):
+        self.receiver.account.balance += self.amount
+        self.receiver.account.save()
 
+        self.status = "approved"
+        self.save()
+
+    def rejectSend(self):
+        if self.status == "approved":
+            # withdraw the money from the receiver account
+            self.receiver.account.balance -= self.amount
+            self.receiver.account.save()
+        self.sender.account.balance += self.amount
+        self.sender.account.save()
+        self.status = "rejected"
+        self.save()
+
+    def approveRequest(self):
         if self.sender.account.balance < self.amount:
             raise ValidationError("Insufficient balance for this transaction.")
         # Actualizar los saldos
@@ -55,8 +71,7 @@ class Transaction(models.Model):
         self.status = "approved"
         self.save()
 
-    def reject(self):
-
+    def rejectRequest(self):
         if self.status == "approved":
             # If the transaction was approved, we need to revert the balances
             self.sender.account.balance += self.amount
