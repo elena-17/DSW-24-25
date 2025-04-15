@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
@@ -61,6 +62,14 @@ def transaction_update(request, id):
 def transaction_create(request):
     serializer = TransactionSerializer(data=request.data)
     if serializer.is_valid():
+        type_transaction = serializer.validated_data["type"]
+        if type_transaction == "send":
+            sender = serializer.validated_data["sender"]
+            if sender.account.balance < serializer.validated_data["amount"]:
+                raise ValidationError({"amount": "Sender insufficient balance for this transaction."})
+            sender.account.balance -= serializer.validated_data["amount"]
+            sender.account.save()
+
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
