@@ -109,6 +109,13 @@ class TransactionListViewTests(APITestCase):
         self.transaction2.refresh_from_db()
         self.assertEqual(self.transaction2.status, "pending")
 
+    def test_update_approved_pending(self):
+        data = {"status": "pending"}
+        response = self.client.patch(reverse("transaction_update", args=[self.transaction1.id]), data=data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.transaction1.refresh_from_db()
+        self.assertEqual(self.transaction1.status, "pending")
+
     def test_create(self):
         data = {
             "sender": self.user1.email,
