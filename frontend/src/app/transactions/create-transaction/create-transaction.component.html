@@ -75,6 +75,16 @@
           </mat-error>
         </mat-form-field>
 
+        <div *ngIf="admin" class="full-width" style="margin-top: 1rem">
+          <mat-label>Transaction Type</mat-label>
+          <mat-radio-group formControlName="type" class="full-width">
+            <mat-radio-button value="send">Send</mat-radio-button>
+            <mat-radio-button value="request" style="margin-left: 1rem"
+              >Request</mat-radio-button
+            >
+          </mat-radio-group>
+        </div>
+
         <div class="transaction_form_buttons">
           <button mat-stroked-button matStepperPrevious>Back</button>
           <button mat-stroked-button matStepperNext>Next</button>

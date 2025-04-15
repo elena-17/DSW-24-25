@@ -16,6 +16,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatStepperModule } from "@angular/material/stepper";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
+import { MatRadioModule } from "@angular/material/radio";
 
 @Component({
   selector: "app-create-transaction",
@@ -33,6 +34,7 @@ import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
     MatSelectModule,
     MatChipsModule,
     MatStepperModule,
+    MatRadioModule,
   ],
   templateUrl: "./create-transaction.component.html",
   styleUrl: "./create-transaction.component.scss",
@@ -45,6 +47,7 @@ export class CreateTransactionComponent {
   emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
   admin: boolean = false;
+  typeSend: boolean = true;
 
   constructor(
     private dialogRef: MatDialogRef<CreateTransactionComponent>,
@@ -64,7 +67,6 @@ export class CreateTransactionComponent {
         contact: ["", [Validators.required, Validators.email]],
       });
     }
-
     this.amountForm = this.formBuilder.group({
       amount: [
         "",
@@ -76,6 +78,13 @@ export class CreateTransactionComponent {
         ],
       ],
     });
+
+    if (this.admin) {
+      this.amountForm.addControl(
+        "type",
+        new FormControl("send", [Validators.required]),
+      );
+    }
 
     this.form = this.formBuilder.group({
       title: ["", [Validators.required, Validators.maxLength(100)]],
@@ -92,6 +101,7 @@ export class CreateTransactionComponent {
     if (this.contactForm.valid && this.form.valid) {
       const formData = {
         amount: this.amountForm.value.amount,
+        type: this.admin ? this.amountForm.value.type : "send",
         ...this.form.value,
         ...(this.admin
           ? {

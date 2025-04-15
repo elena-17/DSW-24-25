@@ -65,8 +65,6 @@ export class AdminTransactionsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    //const storedTab = sessionStorage.getItem("currentTab");
-    //this.currentTab = storedTab ? parseInt(storedTab, 10) : 0;
     console.log(this.currentTab);
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
@@ -123,36 +121,30 @@ export class AdminTransactionsComponent implements OnInit {
   }
 
   approveTransaction(transaction: any) {
-    this.transactionsService
-      .updateAdminTransaction(transaction.id, "approved")
-      .subscribe({
-        next: (response) => {
-          console.log("Transaction approved:", response);
-          this.notificationService.showSuccessMessage("Transaction approved");
-          this.filterData();
-        },
-        error: (error) => {
-          console.error("Error approving transaction:", error);
-          this.notificationService.showErrorMessage(
-            "Error approving transaction",
-          );
-        },
-      });
+    this.updateTransaction(transaction, "approved");
   }
 
   rejectTransaction(transaction: any) {
+    this.updateTransaction(transaction, "rejected");
+  }
+
+  pendTransaction(transaction: any) {
+    this.updateTransaction(transaction, "pending");
+  }
+
+  updateTransaction(transaction: any, status: string) {
     this.transactionsService
-      .updateAdminTransaction(transaction.id, "rejected")
+      .updateAdminTransaction(transaction.id, status)
       .subscribe({
         next: (response) => {
-          console.log("Transaction rejected:", response);
-          this.notificationService.showSuccessMessage("Transaction rejected");
+          console.log(`Transaction ${status}`, response);
+          this.notificationService.showSuccessMessage(`Transaction ${status}`);
           this.filterData();
         },
         error: (error) => {
-          console.error("Error rejecting transaction:", error);
+          console.error(`Error updating transaction to ${status}:`, error);
           this.notificationService.showErrorMessage(
-            "Error rejecting transaction",
+            `Error updating transaction to ${status}:`,
           );
         },
       });
@@ -166,37 +158,36 @@ export class AdminTransactionsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.transactionsService.createAdminTransaction(result).subscribe({
-          next: (response) => {
-            console.log("Transaction created:", response);
-            this.notificationService.showSuccessMessage("Transaction created");
-            this.filterData();
-          },
-          error: (error) => {
-            console.error("Error creating transaction:", error);
-            this.notificationService.showErrorMessage(
-              "Error creating transaction",
-            );
-          },
-        });
+        this.transactionsService
+          .createAdminTransaction(
+            result.sender,
+            result.receiver,
+            result.amount,
+            result.title,
+            result.type,
+            result.description,
+          )
+          .subscribe({
+            next: (response) => {
+              console.log("Transaction created:", response);
+              this.notificationService.showSuccessMessage(
+                "Transaction created",
+              );
+              this.transactionStates["pending"].data = [
+                response,
+                ...this.transactionStates["pending"].data,
+              ];
+              this.transactionStates["pending"].totalCount++;
+            },
+            error: (error) => {
+              console.error("Error creating transaction:", error);
+              this.notificationService.showErrorMessage(
+                "Error creating transaction",
+              );
+            },
+          });
       }
     });
-
-    // this.transactionsService
-    //   .updateAdminTransaction(transaction.id, "rejected")
-    //   .subscribe({
-    //     next: (response) => {
-    //       console.log("Transaction rejected:", response);
-    //       this.notificationService.showSuccessMessage("Transaction rejected");
-    //       this.filterData();
-    //     },
-    //     error: (error) => {
-    //       console.error("Error rejecting transaction:", error);
-    //       this.notificationService.showErrorMessage(
-    //         "Error rejecting transaction",
-    //       );
-    //     },
-    //   });
   }
 
   /// Filters Functions ///
@@ -238,11 +229,16 @@ export class AdminTransactionsComponent implements OnInit {
     };
   }
 
-  filterData() {
+  filterData(status?: string) {
     const transformedFilters = this.transformFilters();
-
+    if (status) {
+      this.loadTransactionsByStatus(status, transformedFilters);
+      return;
+    }
+    this.loadTransactionsByStatus("pending", transformedFilters);
+    this.loadTransactionsByStatus("approved", transformedFilters);
+    this.loadTransactionsByStatus("rejected", transformedFilters);
     // this.loadTransactions(transformedFilters);
-    this.onChangeTab(this.currentTab);
     this.hasActiveFilters = hasActiveFilters(this.filtersForm);
   }
 
@@ -251,7 +247,8 @@ export class AdminTransactionsComponent implements OnInit {
     sessionStorage.setItem("currentTab", index.toString());
     const status = ["pending", "approved", "rejected"][index];
     // Always reload data to handle real-time changes
-    this.loadTransactionsByStatus(status);
+    //this.loadTransactionsByStatus(status);
+    this.filterData(status);
   }
 
   onPageChange(status: string, event: PageEvent) {
@@ -259,7 +256,8 @@ export class AdminTransactionsComponent implements OnInit {
     const state = this.transactionStates[status];
     state.pageIndex = event.pageIndex;
     state.pageSize = event.pageSize;
-    this.loadTransactionsByStatus(status);
+    //this.loadTransactionsByStatus(status);
+    this.filterData();
   }
 
   exportToCSV() {

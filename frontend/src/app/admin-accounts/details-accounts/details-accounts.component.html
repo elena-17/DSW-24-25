@@ -33,9 +33,9 @@
 
   <!-- Actions -->
   <div class="dialog-actions">
-    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-stroked-button (click)="onCancel()">Cancel</button>
     <button
-      mat-raised-button
+      mat-flat-button
       color="primary"
       (click)="onSave()"
       [disabled]="balanceForm.invalid"

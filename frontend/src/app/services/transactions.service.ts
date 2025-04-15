@@ -140,7 +140,22 @@ export class TransactionsService {
     );
   }
 
-  createAdminTransaction(transaction: any): Observable<any> {
+  createAdminTransaction(
+    sender: string,
+    receiver: string,
+    amount: number,
+    title: string,
+    type?: string,
+    description?: string,
+  ): Observable<any> {
+    const transaction = {
+      sender,
+      receiver,
+      amount,
+      title,
+      description,
+      type,
+    };
     return this.http.post<any>(this.urlAdminCreateTransaction, transaction, {
       withCredentials: true,
     });
