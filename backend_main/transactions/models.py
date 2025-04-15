@@ -83,5 +83,25 @@ class Transaction(models.Model):
         self.status = "rejected"
         self.save()
 
+    def pendingSend(self):
+        if self.status == "approved":
+            # withdraw the money from the receiver account
+            self.receiver.account.balance -= self.amount
+            self.receiver.account.save()
+        self.status = "pending"
+        self.save()
+
+    def pendingRequest(self):
+        if self.status == "approved":
+            # If the transaction was approved, we need to revert the balances
+            self.sender.account.balance += self.amount
+            self.sender.account.save()
+
+            self.receiver.account.balance -= self.amount
+            self.receiver.account.save()
+
+        self.status = "pending"
+        self.save()
+
     def __str__(self) -> str:
         return f"{self.sender.id_number} -> {self.receiver.id_number} - {self.amount} - {self.status}"
