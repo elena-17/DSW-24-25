@@ -121,7 +121,7 @@ class TransactionListViewTests(APITestCase):
             "sender": self.user1.email,
             "receiver": self.user2.email,
             "amount": 5.00,
-            "status": "approved",
+            "status": "pending",
             "title": "Test Transaction",
             "type": "send",
         }
@@ -130,3 +130,7 @@ class TransactionListViewTests(APITestCase):
         transaction = Transaction.objects.get(id=response.data["id"])
         self.assertEqual(transaction.amount, 5.00)
         self.assertEqual(transaction.title, "Test Transaction")
+        self.user1.refresh_from_db()
+        self.assertEqual(str(self.user1.account.balance), "9995.00")
+        self.user2.refresh_from_db()
+        self.assertEqual(str(self.user2.account.balance), "10000.00")
