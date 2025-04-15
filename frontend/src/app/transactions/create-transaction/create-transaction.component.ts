@@ -94,6 +94,8 @@ export class CreateTransactionComponent {
 
   onCancel() {
     this.form.reset();
+    this.contactForm.reset();
+    this.amountForm.reset();
     this.dialogRef.close();
   }
 
