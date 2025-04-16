@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, NgZone, OnInit } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MaterialModule } from "../material.module";
 import { TransactionsService } from "../services/transactions.service";
@@ -65,18 +65,36 @@ export class TransactionsComponent implements OnInit {
   filtersForm!: FormGroup;
   columns: any[] = [];
   hasActiveFilters: boolean = false;
+  eventSource!: EventSource;
 
   constructor(
     private dialog: MatDialog,
     private transactionsService: TransactionsService,
     private datePipe: DatePipe,
     private notificationService: NotificationService,
+    private ngZone: NgZone,
   ) {}
 
   ngOnInit() {
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
     this.loadTransactions();
+    this.eventSource = new EventSource(
+      `http://localhost:3000/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
+    );
+    this.eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      this.ngZone.run(() => {
+        this.filteredPendingMyApproval = [
+          data,
+          ...this.filteredPendingMyApproval,
+        ];
+      });
+    };
+
+    this.eventSource.onerror = (error) => {
+      console.error("Error en Mercure:", error);
+    };
   }
 
   loadTransactions() {

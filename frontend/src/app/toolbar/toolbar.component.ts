@@ -4,6 +4,8 @@ import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { MaterialModule } from "../material.module";
 import { MatBadgeModule } from "@angular/material/badge";
+import { TransactionsService } from "../services/transactions.service";
+import { NotificationService } from "../services/notification.service";
 
 @Component({
   selector: "app-toolbar",
@@ -18,17 +20,20 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   userName: string = "User"; // value for default username
   role: string = "user";
   eventSource!: EventSource;
-  notifications: any[] = [];
+  notifications: number = 0;
 
   constructor(
     private router: Router,
     private ngZone: NgZone,
+    private transactionsService: TransactionsService,
+    private notificationService: NotificationService,
   ) {
     this.role = sessionStorage.getItem("userRole") || "user";
   }
 
   ngOnInit(): void {
     this.userName = sessionStorage.getItem("userName") || "User";
+    this.getNotifications();
     window.addEventListener("userNameUpdated", this.updateUserName);
     this.eventSource = new EventSource(
       `http://localhost:3000/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
@@ -36,7 +41,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
       this.ngZone.run(() => {
-        this.notifications = [data, ...this.notifications];
+        this.notifications += 1;
+        //this.notifications = [data, ...this.notifications];
+        this.notificationService.showSuccessMessage(
+          "New transaction request received. Check transactions menu.",
+        );
         console.log("Notification received:", data);
       });
     };
@@ -52,6 +61,13 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       this.eventSource.close();
     }
   }
+
+  getNotifications() {
+    this.transactionsService.getPendingTransactions().subscribe((data) => {
+      this.notifications = data["number_pending"];
+    });
+  }
+
   updateUserName = () => {
     this.userName = sessionStorage.getItem("userName") || "User";
   };
