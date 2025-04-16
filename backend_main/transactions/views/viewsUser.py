@@ -50,7 +50,12 @@ def number_pending(request):
     """
     get number of pending transactions
     """
-    transactions = Transaction.objects.filter((Q(receiver=request.user) | Q(sender=request.user)) & Q(status="pending"))
+    transactions = Transaction.objects.filter(
+        (
+            (Q(receiver=request.user) & Q(status="pending") & Q(type="send"))
+            | (Q(sender=request.user) & Q(status="pending") & Q(type="request"))
+        )
+    )
     serializer = TransactionSerializer(transactions, many=True)
     return Response({"number_pending": len(serializer.data)}, status=status.HTTP_200_OK)
 
