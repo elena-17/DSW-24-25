@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -52,6 +53,17 @@ def send_money(request):
     if serializer.is_valid():
         transactions = serializer.save()
         tr_serialized = TransactionSerializer(transactions, many=True)
+        for transaction in transactions:
+            topic = f"user/{transaction.receiver.email}"
+            data = {
+                "id": transaction.id,
+                "sender": transaction.sender.username,
+                "receiver": transaction.receiver.username,
+                "amount": transaction.amount,
+                "status": transaction.status,
+                "title": transaction.title,
+            }
+            publish_to_mercure(topic, data)
         return Response(
             {"message": "Transaction successful", "transactions": tr_serialized.data},
             status=status.HTTP_201_CREATED,
