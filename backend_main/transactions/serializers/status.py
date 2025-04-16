@@ -10,7 +10,7 @@ class TransactionStatusUpdateSerializer(serializers.ModelSerializer):
 
     def validate_status(self, value):
         if value not in ["approved", "rejected", "pending"]:
-            raise serializers.ValidationError("Invalid status only 'approved' or 'rejected'.")
+            raise serializers.ValidationError("Invalid status only 'approved', 'rejected' or 'pending' are allowed.")
 
         transaction = self.instance
         if value == "approved":
