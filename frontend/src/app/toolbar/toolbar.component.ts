@@ -28,7 +28,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.userName = sessionStorage.getItem("userName") || "User";
     window.addEventListener("userNameUpdated", this.updateUserName);
     this.eventSource = new EventSource(
-      `http://localhost:3000/.well-known/mercure?topic=/users/${sessionStorage.getItem("userEmail")}`,
+      `http://localhost:3000/.well-known/mercure?topic=/user/${sessionStorage.getItem("userEmail")}`,
     );
     this.eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
