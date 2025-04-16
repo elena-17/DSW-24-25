@@ -6,6 +6,7 @@ from transactions.views.viewsUser import (
     get_all_transactions_receiver,
     get_all_transactions_sender,
     get_transaction,
+    number_pending,
     request_money,
     send_money,
     update_transaction_status,
@@ -20,6 +21,7 @@ urlpatterns = [
     path("receiver/", get_all_transactions_receiver, name="get_transactions_receiver"),
     path("send-money/", send_money, name="send_money"),
     path("request-money/", request_money, name="request_money"),
+    path("pending/", number_pending, name="number_pending"),
     path("<int:id>/", get_transaction, name="get_transaction"),
     path("<int:id>/update-status/", update_transaction_status, name="update_transaction_status"),
 ]
