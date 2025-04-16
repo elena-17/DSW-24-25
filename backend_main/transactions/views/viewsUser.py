@@ -55,15 +55,7 @@ def send_money(request):
         tr_serialized = TransactionSerializer(transactions, many=True)
         for transaction in transactions:
             topic = f"user/{transaction.receiver.email}"
-            data = {
-                "id": transaction.id,
-                "sender": transaction.sender.username,
-                "receiver": transaction.receiver.username,
-                "amount": transaction.amount,
-                "status": transaction.status,
-                "title": transaction.title,
-            }
-            publish_to_mercure(topic, data)
+            publish_to_mercure(topic, transaction)
         return Response(
             {"message": "Transaction successful", "transactions": tr_serialized.data},
             status=status.HTTP_201_CREATED,
