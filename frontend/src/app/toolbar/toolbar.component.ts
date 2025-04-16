@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, NgZone } from "@angular/core";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
@@ -20,7 +20,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   eventSource!: EventSource;
   notifications: any[] = [];
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private ngZone: NgZone,
+  ) {
     this.role = sessionStorage.getItem("userRole") || "user";
   }
 
@@ -28,12 +31,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.userName = sessionStorage.getItem("userName") || "User";
     window.addEventListener("userNameUpdated", this.updateUserName);
     this.eventSource = new EventSource(
-      `http://localhost:3000/.well-known/mercure?topic=/user/${sessionStorage.getItem("userEmail")}`,
+      `http://localhost:3000/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
     );
     this.eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      this.notifications.push(data);
-      console.log("Notification received:", data);
+      this.ngZone.run(() => {
+        this.notifications = [data, ...this.notifications];
+        console.log("Notification received:", data);
+      });
     };
 
     this.eventSource.onerror = (error) => {
