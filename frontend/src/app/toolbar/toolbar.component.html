@@ -63,6 +63,11 @@
   </div>
 
   <!-- User Profile -->
+  <button mat-icon-button (click)="goToHelp()">
+    <mat-icon [matBadge]="notifications.length" aria-hidden="false">
+      notifications</mat-icon
+    >
+  </button>
   <button
     mat-button
     class="user-profile"

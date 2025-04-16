@@ -3,11 +3,12 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { MaterialModule } from "../material.module";
+import { MatBadgeModule } from "@angular/material/badge";
 
 @Component({
   selector: "app-toolbar",
   standalone: true,
-  imports: [CommonModule, MatToolbarModule, MaterialModule],
+  imports: [CommonModule, MatToolbarModule, MaterialModule, MatBadgeModule],
   templateUrl: "./toolbar.component.html",
   styleUrls: ["./toolbar.component.scss"],
 })
@@ -16,6 +17,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   isUserMenuOpen: boolean = false; // Status user menu
   userName: string = "User"; // value for default username
   role: string = "user";
+  eventSource!: EventSource;
+  notifications: any[] = [];
 
   constructor(private router: Router) {
     this.role = sessionStorage.getItem("userRole") || "user";
@@ -24,9 +27,25 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userName = sessionStorage.getItem("userName") || "User";
     window.addEventListener("userNameUpdated", this.updateUserName);
+    this.eventSource = new EventSource(
+      `http://localhost:3000/.well-known/mercure?topic=/users/${sessionStorage.getItem("userEmail")}`,
+    );
+    this.eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      this.notifications.push(data);
+      console.log("Notification received:", data);
+    };
+
+    this.eventSource.onerror = (error) => {
+      console.error("Error en Mercure:", error);
+    };
   }
+
   ngOnDestroy(): void {
     window.removeEventListener("userNameUpdated", this.updateUserName);
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
   }
   updateUserName = () => {
     this.userName = sessionStorage.getItem("userName") || "User";
