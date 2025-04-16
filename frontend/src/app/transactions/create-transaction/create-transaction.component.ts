@@ -47,7 +47,6 @@ export class CreateTransactionComponent {
   emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
   admin: boolean = false;
-  typeSend: boolean = true;
 
   constructor(
     private dialogRef: MatDialogRef<CreateTransactionComponent>,
