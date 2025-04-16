@@ -63,10 +63,14 @@
   </div>
 
   <!-- User Profile -->
-  <button mat-icon-button (click)="goToHelp()">
+  <button
+    mat-icon-button
+    matTooltip="Number of pending transactions"
+    (click)="goToHelp()"
+  >
     <mat-icon [matBadge]="notifications" aria-hidden="false">
-      notifications</mat-icon
-    >
+      notifications
+    </mat-icon>
   </button>
   <button
     mat-button
