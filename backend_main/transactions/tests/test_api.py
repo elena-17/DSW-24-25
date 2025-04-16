@@ -98,21 +98,21 @@ class TransactionAPI(APITestCase):
         self.user1.account.refresh_from_db()
         self.assertEqual(str(self.user1.account.balance), "950.00")
 
-    # def test_send_money_same_user(self):
-    #     send_money_url = reverse("send_money")
+    def test_send_money_same_user(self):
+        send_money_url = reverse("send_money")
 
-    #     payload = {
-    #         "receivers": [self.user1.email],
-    #         "amount": 50,
-    #         "title": "Payment",
-    #         "description": "Payment for services",
-    #     }
-    #     response = self.client.post(send_money_url, data=payload, format="json")
+        payload = {
+            "receivers": [self.user1.email],
+            "amount": 50,
+            "title": "Payment",
+            "description": "Payment for services",
+        }
+        response = self.client.post(send_money_url, data=payload, format="json")
 
-    #     # Verify the response
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    #     self.assertIn("sender", response.data)
-    #     self.assertEqual(response.data["sender"], ["Sender and receiver cannot be the same."])
+        # Verify the response
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("sender", response.data)
+        self.assertEqual(response.data["sender"], ["Sender and receiver cannot be the same."])
 
     def test_request_money(self):
         request_money_url = reverse("request_money")
@@ -143,7 +143,7 @@ class TransactionAPI(APITestCase):
         self.assertEqual(data["transactions"][0]["id"], transaction.id)
         self.assertEqual(str(self.user2.account.balance), "1000")
 
-    def test_update_Sendtransaction_approved(self):
+    def test_update_send_transaction_approved(self):
         # Create a transaction for testing
         self.transaction = Transaction.objects.create(
             sender=self.user1,
@@ -164,7 +164,7 @@ class TransactionAPI(APITestCase):
         self.assertEqual(self.transaction.status, "approved")
         self.assertEqual(str(self.transaction.receiver.account.balance), "1100.00")
 
-    def test_update_Sendtransaction_rejected(self):
+    def test_update_send_transaction_rejected(self):
         self.transaction = Transaction.objects.create(
             sender=self.user1,
             receiver=self.user2,
@@ -185,7 +185,7 @@ class TransactionAPI(APITestCase):
         self.assertEqual(str(self.transaction.sender.account.balance), "1100.00")
         self.assertEqual(str(self.transaction.receiver.account.balance), "1000.00")
 
-    def test_update_Requesttransaction_approved(self):
+    def test_update_request_transaction_approved(self):
         self.transaction = Transaction.objects.create(
             sender=self.user1,
             receiver=self.user2,
@@ -205,7 +205,7 @@ class TransactionAPI(APITestCase):
         self.assertEqual(self.transaction.status, "approved")
         self.assertEqual(str(self.transaction.receiver.account.balance), "1100.00")
 
-    def test_update_Requesttransaction_rejected(self):
+    def test_update_request_transaction_rejected(self):
         self.transaction = Transaction.objects.create(
             sender=self.user1,
             receiver=self.user2,
