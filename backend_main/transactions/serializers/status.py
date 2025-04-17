@@ -9,24 +9,32 @@ class TransactionStatusUpdateSerializer(serializers.ModelSerializer):
         fields = ["status"]
 
     def validate_status(self, value):
-        if value not in ["approved", "rejected"]:
-            raise serializers.ValidationError("Invalid status only 'approved' or 'rejected'.")
+        if value not in ["approved", "rejected", "pending"]:
+            raise serializers.ValidationError("Invalid status only 'approved', 'rejected' or 'pending' are allowed.")
 
         transaction = self.instance
-        if transaction.status != "pending":
-            raise serializers.ValidationError("Only pending transactions can be updated.")
-
         if value == "approved":
             if transaction.sender.account.balance < transaction.amount:
+                raise serializers.ValidationError("Insufficient balance for this transaction.")
+        if value == "rejected":
+            if transaction.status == "approved" and transaction.receiver.account.balance < transaction.amount:
                 raise serializers.ValidationError("Insufficient balance for this transaction.")
         return value
 
     def update(self, instance, validated_data):
         new_status = validated_data.get("status")
 
-        if new_status == "approved":
-            instance.approve()
-        elif new_status == "rejected":
-            instance.reject()
+        action_map = {
+            ("approved", "send"): instance.approveSend,
+            ("approved", "request"): instance.approveRequest,
+            ("rejected", "send"): instance.rejectSend,
+            ("rejected", "request"): instance.rejectRequest,
+            ("pending", "send"): instance.pendingSend,
+            ("pending", "request"): instance.pendingRequest,
+        }
+
+        action = action_map.get((new_status, instance.type))
+        if action:
+            action()
 
         return instance

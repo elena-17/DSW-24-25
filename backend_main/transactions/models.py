@@ -8,6 +8,10 @@ class Transaction(models.Model):
         db_table = "transactions"
         get_latest_by = "created_at"
         ordering = ["-created_at"]  # newest first
+        indexes = [
+            models.Index(fields=["status"]),
+            models.Index(fields=["created_at"]),
+        ]
         constraints = [
             models.CheckConstraint(
                 check=~models.Q(sender=models.F("receiver")),
@@ -35,10 +39,26 @@ class Transaction(models.Model):
     description = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
     updated_at = models.DateTimeField(auto_now=True)
-    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="send")
 
-    def approve(self):
+    def approveSend(self):
+        self.receiver.account.balance += self.amount
+        self.receiver.account.save()
 
+        self.status = "approved"
+        self.save()
+
+    def rejectSend(self):
+        if self.status == "approved":
+            # withdraw the money from the receiver account
+            self.receiver.account.balance -= self.amount
+            self.receiver.account.save()
+        self.sender.account.balance += self.amount
+        self.sender.account.save()
+        self.status = "rejected"
+        self.save()
+
+    def approveRequest(self):
         if self.sender.account.balance < self.amount:
             raise ValidationError("Insufficient balance for this transaction.")
         # Actualizar los saldos
@@ -51,8 +71,7 @@ class Transaction(models.Model):
         self.status = "approved"
         self.save()
 
-    def reject(self):
-
+    def rejectRequest(self):
         if self.status == "approved":
             # If the transaction was approved, we need to revert the balances
             self.sender.account.balance += self.amount
@@ -62,6 +81,26 @@ class Transaction(models.Model):
             self.receiver.account.save()
 
         self.status = "rejected"
+        self.save()
+
+    def pendingSend(self):
+        if self.status == "approved":
+            # withdraw the money from the receiver account
+            self.receiver.account.balance -= self.amount
+            self.receiver.account.save()
+        self.status = "pending"
+        self.save()
+
+    def pendingRequest(self):
+        if self.status == "approved":
+            # If the transaction was approved, we need to revert the balances
+            self.sender.account.balance += self.amount
+            self.sender.account.save()
+
+            self.receiver.account.balance -= self.amount
+            self.receiver.account.save()
+
+        self.status = "pending"
         self.save()
 
     def __str__(self) -> str:

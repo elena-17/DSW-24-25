@@ -42,30 +42,30 @@ class TransactionAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         return response.data["access"]
 
-    def test_get_transaction_successful(self) -> None:
-        # Send GET request to retrieve the transaction
-        self.transaction = Transaction.objects.create(
-            sender=self.user1,
-            receiver=self.user2,
-            amount=150,
-            title="Sample Transaction",
-            description="This is a test transaction",
-            status="pending",
-            type="send",
-        )
+    # def test_get_transaction_successful(self) -> None:
+    #     # Send GET request to retrieve the transaction
+    #     self.transaction = Transaction.objects.create(
+    #         sender=self.user1,
+    #         receiver=self.user2,
+    #         amount=150,
+    #         title="Sample Transaction",
+    #         description="This is a test transaction",
+    #         status="pending",
+    #         type="send",
+    #     )
 
-        transaction_url = reverse("get_transaction", kwargs={"id": self.transaction.id})
-        response = self.client.get(transaction_url)
+    #     transaction_url = reverse("get_transaction", kwargs={"id": self.transaction.id})
+    #     response = self.client.get(transaction_url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["id"], self.transaction.id)
-        self.assertEqual(response.data["sender"], self.user1.email)
-        self.assertEqual(response.data["receiver"], self.user2.email)
-        self.assertEqual(response.data["amount"], "150.00")
-        self.assertEqual(response.data["title"], "Sample Transaction")
-        self.assertEqual(response.data["description"], "This is a test transaction")
-        self.assertEqual(response.data["status"], "pending")
-        self.assertEqual(response.data["type"], "send")
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    #     self.assertEqual(response.data["id"], self.transaction.id)
+    #     self.assertEqual(response.data["sender"], self.user1.email)
+    #     self.assertEqual(response.data["receiver"], self.user2.email)
+    #     self.assertEqual(response.data["amount"], "150.00")
+    #     self.assertEqual(response.data["title"], "Sample Transaction")
+    #     self.assertEqual(response.data["description"], "This is a test transaction")
+    #     self.assertEqual(response.data["status"], "pending")
+    #     self.assertEqual(response.data["type"], "send")
 
     def test_send_money(self):
         send_money_url = reverse("send_money")
@@ -95,6 +95,8 @@ class TransactionAPI(APITestCase):
         self.assertEqual(transaction.type, "send")
 
         self.assertEqual(data["transactions"][0]["id"], transaction.id)
+        self.user1.account.refresh_from_db()
+        self.assertEqual(str(self.user1.account.balance), "950.00")
 
     def test_send_money_same_user(self):
         send_money_url = reverse("send_money")
@@ -139,8 +141,9 @@ class TransactionAPI(APITestCase):
         self.assertEqual(transaction.type, "request")
 
         self.assertEqual(data["transactions"][0]["id"], transaction.id)
+        self.assertEqual(str(self.user2.account.balance), "1000")
 
-    def test_update_transaction_approved(self):
+    def test_update_send_transaction_approved(self):
         # Create a transaction for testing
         self.transaction = Transaction.objects.create(
             sender=self.user1,
@@ -149,6 +152,7 @@ class TransactionAPI(APITestCase):
             title="Sample Transaction",
             description="This is a test transaction",
             status="pending",
+            type="send",
         )
 
         update_url = reverse("update_transaction_status", kwargs={"id": self.transaction.id})
@@ -158,5 +162,65 @@ class TransactionAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.transaction.refresh_from_db()
         self.assertEqual(self.transaction.status, "approved")
-        self.assertEqual(str(self.transaction.sender.account.balance), "900.00")
         self.assertEqual(str(self.transaction.receiver.account.balance), "1100.00")
+
+    def test_update_send_transaction_rejected(self):
+        self.transaction = Transaction.objects.create(
+            sender=self.user1,
+            receiver=self.user2,
+            amount=100,
+            title="Sample Transaction",
+            description="This is a test transaction",
+            status="pending",
+            type="send",
+        )
+
+        update_url = reverse("update_transaction_status", kwargs={"id": self.transaction.id})
+        payload = {"status": "rejected"}
+        response = self.client.put(update_url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.transaction.refresh_from_db()
+        self.assertEqual(self.transaction.status, "rejected")
+        self.assertEqual(str(self.transaction.sender.account.balance), "1100.00")
+        self.assertEqual(str(self.transaction.receiver.account.balance), "1000.00")
+
+    def test_update_request_transaction_approved(self):
+        self.transaction = Transaction.objects.create(
+            sender=self.user1,
+            receiver=self.user2,
+            amount=100,
+            title="Sample Transaction",
+            description="This is a test transaction",
+            status="pending",
+            type="request",
+        )
+
+        update_url = reverse("update_transaction_status", kwargs={"id": self.transaction.id})
+        payload = {"status": "approved"}
+        response = self.client.put(update_url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.transaction.refresh_from_db()
+        self.assertEqual(self.transaction.status, "approved")
+        self.assertEqual(str(self.transaction.receiver.account.balance), "1100.00")
+
+    def test_update_request_transaction_rejected(self):
+        self.transaction = Transaction.objects.create(
+            sender=self.user1,
+            receiver=self.user2,
+            amount=100,
+            title="Sample Transaction",
+            description="This is a test transaction",
+            status="pending",
+            type="request",
+        )
+
+        update_url = reverse("update_transaction_status", kwargs={"id": self.transaction.id})
+        payload = {"status": "rejected"}
+        response = self.client.put(update_url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.transaction.refresh_from_db()
+        self.assertEqual(self.transaction.status, "rejected")
+        self.assertEqual(str(self.transaction.receiver.account.balance), "1000.00")

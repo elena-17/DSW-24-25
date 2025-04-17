@@ -16,5 +16,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             "receiver": {"required": True},
             "amount": {"required": True},
             "title": {"required": True},
+            "description": {"required": False},
+            "status": {"required": False},
         }
         read_only_fields = ["id", "created_at", "updated_at"]

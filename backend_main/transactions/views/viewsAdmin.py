@@ -2,6 +2,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
@@ -18,7 +19,7 @@ def transaction_list(request):
     if not filter_serializer.is_valid():
         return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     data = filter_serializer.validated_data
-    queryset = Transaction.objects.all()
+    queryset = Transaction.objects.select_related("sender", "receiver").all()
 
     filter_fields = {
         "status": "status",
@@ -46,7 +47,7 @@ def transaction_list(request):
     return paginator.get_paginated_response(serializer.data)
 
 
-@api_view(["PATCH"])  # TODO
+@api_view(["PATCH"])
 def transaction_update(request, id):
     transaction = get_object_or_404(Transaction, pk=id)
 
@@ -54,4 +55,21 @@ def transaction_update(request, id):
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def transaction_create(request):
+    serializer = TransactionSerializer(data=request.data)
+    if serializer.is_valid():
+        type_transaction = serializer.validated_data["type"]
+        if type_transaction == "send":
+            sender = serializer.validated_data["sender"]
+            if sender.account.balance < serializer.validated_data["amount"]:
+                raise ValidationError({"amount": "Sender insufficient balance for this transaction."})
+            sender.account.balance -= serializer.validated_data["amount"]
+            sender.account.save()
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
