@@ -16,7 +16,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatStepperModule } from "@angular/material/stepper";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { NotificationService } from "../../../services/notification.service";
 
 @Component({
   selector: "app-create-transaction",
@@ -39,24 +39,24 @@ import { MatSnackBar } from "@angular/material/snack-bar";
   styleUrl: "./change-account-balance.component.scss",
 })
 export class ChangeAccountBalanceComponent {
-  form: FormGroup;
   creditForm: FormGroup;
   amountForm: FormGroup;
   dialogTitle: string;
-  isCardValidated: boolean = false; // Variable para controlar si el primer botón fue presionado
+  isCardValidated: boolean = false;
   emailCtrl = new FormControl("", [Validators.email]);
-  creditCards: any[] = []; // Arreglo para guardar las tarjetas de crédito
+  creditCards: any[] = [];
   action: string;
   isStripeValidated: boolean = false; 
   isStripeReady: boolean = false;
   stripeCard: any;
   STRIPE_PUBLIC_KEY: string = "pk_test_51Q7a3vP0LaAzN5HUVqMSpL38bzpaZDhPylsy5t0rkLoCM9aQbC3F5VFJV4hJdBX9ouE4QrqnO5p0Oh9d02ShLTNC00muyYlhEa";
+  waitingValidation: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<ChangeAccountBalanceComponent>,
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private snackBar: MatSnackBar,
+    private notificationService: NotificationService,
     @Inject(MAT_DIALOG_DATA) public data: { title: string; action: string },
   ) {
     this.dialogTitle = data.title;
@@ -79,11 +79,6 @@ export class ChangeAccountBalanceComponent {
       ],
       paymentMethod: ["ourBank", Validators.required],
     });
-
-    this.form = this.formBuilder.group({
-      title: ["", [Validators.required]],
-      description: [""],
-    });
   }
 
   ngOnInit() {
@@ -97,16 +92,15 @@ export class ChangeAccountBalanceComponent {
         this.creditCards.sort((a, b) => a.number.localeCompare(b.number));
       },
       error: () => {
-        this.snackBar.open("Failed to load credit cards.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showErrorMessage(
+          "Failed to load credit cards. Please try again later.",
+        );
       },
     });
   }
 
   validateCard(): void {
+    this.waitingValidation = true;
     const formData = this.creditForm.value.card;
     const cvv = this.creditForm.value.cvv;
     const amount = this.amountForm.value.amount;
@@ -121,33 +115,23 @@ export class ChangeAccountBalanceComponent {
 
     this.userService.validateCard(requestData).subscribe({
       next: (response) => {
+        this.waitingValidation = false;
         if (response.valid) {
           this.isCardValidated = true;
-          this.snackBar.open("Card validated successfully!", "Close", {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          });
-        } else {
-          this.closeDialog();
-          this.snackBar.open(
-            response.message || "Card validation failed.",
-            "Close",
-            {
-              duration: 2000,
-              horizontalPosition: "center",
-              verticalPosition: "top",
-            },
+          this.notificationService.showSuccessMessage(
+            "Card validated successfully.",
           );
+        } else {
+          this.notificationService.showSuccessMessage(
+            "Card validation failed. Please check your card details.",
+          );
+          this.closeDialog();
         }
       },
       error: (err) => {
         this.closeDialog();
-        this.snackBar.open(err.error.message, "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.waitingValidation = false;
+        this.notificationService.showErrorMessage("Card validation failed.");
       },
     });
   }
@@ -158,7 +142,8 @@ export class ChangeAccountBalanceComponent {
   }
 
   onCancel() {
-    this.form.reset();
+    this.creditForm.reset();
+    this.amountForm.reset();
     this.closeDialog();
   }
 
@@ -169,39 +154,25 @@ export class ChangeAccountBalanceComponent {
       if (this.action === "deposit") {
         this.userService.addMoney(amount).subscribe({
           next: (response) => {
-            this.snackBar.open("Deposit successful!", "Close", {
-              duration: 2000,
-              horizontalPosition: "center",
-              verticalPosition: "top",
-            });
+            this.notificationService.showSuccessMessage("Deposit successful!");
             this.dialogRef.close(response);
           },
           error: (error) => {
             this.closeDialog();
-            this.snackBar.open(error.error.error, "Close", {
-              duration: 2000,
-              horizontalPosition: "center",
-              verticalPosition: "top",
-            });
+            this.notificationService.showErrorMessage(error.error.error);
           },
         });
       } else if (this.action === "withdraw") {
         this.userService.withdrawMoney(amount).subscribe({
           next: (response) => {
-            this.snackBar.open("Withdrawal successful!", "Close", {
-              duration: 2000,
-              horizontalPosition: "center",
-              verticalPosition: "top",
-            });
+            this.notificationService.showSuccessMessage(
+              "Withdrawal successful!",
+            );
             this.dialogRef.close(response);
           },
           error: (error) => {
             this.closeDialog();
-            this.snackBar.open(error.error.error, "Close", {
-              duration: 2000,
-              horizontalPosition: "center",
-              verticalPosition: "top",
-            });
+            this.notificationService.showErrorMessage(error.error.error);
           },
         });
       }

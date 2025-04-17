@@ -4,6 +4,7 @@
   align-items: center;
   height: 70vh;
 }
+
 .title-buttons {
   display: flex;
   align-items: center;
@@ -15,6 +16,14 @@
     margin-bottom: 0px;
   }
 }
+
+.title-buttons-right {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  align-items: center;
+}
+
 ::ng-deep .badge-approved {
   background-color: #9cff80b4;
   color: #208e02;
