@@ -9,7 +9,7 @@ import {
   OnInit,
   SimpleChanges,
 } from "@angular/core";
-import { MatPaginator } from "@angular/material/paginator";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatSort } from "@angular/material/sort";
 import { SelectionModel } from "@angular/cdk/collections";
@@ -40,9 +40,15 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
   @Input() action2Tooltip?: string;
   @Input() action3Tooltip?: string;
 
+  @Input() totalCount = 0;
+  @Input() pageSize = 5;
+  @Input() pageIndex = 0;
+  @Input() serverSidePagination = false;
+
   @Output() action1 = new EventEmitter<T>();
   @Output() action2 = new EventEmitter<T>();
   @Output() action3 = new EventEmitter<T>();
+  @Output() pageChange = new EventEmitter<PageEvent>();
 
   displayedColumns: string[] = [];
   dataSource = new MatTableDataSource<T>([]);
@@ -61,7 +67,9 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    if (!this.serverSidePagination) {
+      this.dataSource.paginator = this.paginator;
+    }
     this.dataSource.sort = this.sort;
   }
 
@@ -91,5 +99,8 @@ export class TableComponent<T> implements AfterViewInit, OnInit, OnChanges {
 
   action3Row(row: T): void {
     this.action3.emit(row);
+  }
+  onPageChange(event: PageEvent): void {
+    this.pageChange.emit(event);
   }
 }

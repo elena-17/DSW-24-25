@@ -86,7 +86,7 @@
 </div>
 <mat-tab-group
   animationDuration="500ms"
-  (selectedIndexChange)="changeTab($event)"
+  (selectedIndexChange)="onChangeTab($event)"
 >
   <!-- tab 1 - pending transactions -->
   <mat-tab>
@@ -108,17 +108,28 @@
       <div class="underlined-title">
         <div class="title-buttons">
           <h2>Pending Transaction</h2>
-          <button mat-stroked-button (click)="exportToCSV()">
-            <mat-icon>download</mat-icon>
-            Download CSV
-          </button>
+          <div class="title-buttons-right">
+            <button mat-flat-button (click)="createTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Create transaction
+            </button>
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
         </div>
         <hr />
       </div>
       <!-- table 1 -->
       <app-table
         [columns]="columns"
-        [data]="filteredPending"
+        [data]="transactionStates['pending'].data"
+        [totalCount]="transactionStates['pending'].totalCount"
+        [pageSize]="transactionStates['pending'].pageSize"
+        [pageIndex]="transactionStates['pending'].pageIndex"
+        (pageChange)="onPageChange('pending', $event)"
+        [serverSidePagination]="true"
         [enableSelection]="false"
         [enableActions]="true"
         (action1)="openDetails($event)"
@@ -153,21 +164,40 @@
       <div class="underlined-title">
         <div class="title-buttons">
           <h2>Approved Transaction</h2>
-          <button mat-stroked-button (click)="exportToCSV()">
-            <mat-icon>download</mat-icon>
-            Download CSV
-          </button>
+          <div class="title-buttons-right">
+            <button mat-flat-button (click)="createTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Create transaction
+            </button>
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
         </div>
         <hr />
       </div>
       <app-table
         [columns]="columns"
-        [data]="filteredApproved"
+        [data]="transactionStates['approved'].data"
+        [totalCount]="transactionStates['approved'].totalCount"
+        [pageSize]="transactionStates['approved'].pageSize"
+        [pageIndex]="transactionStates['approved'].pageIndex"
+        (pageChange)="onPageChange('approved', $event)"
+        [serverSidePagination]="true"
         [enableSelection]="false"
         [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
         [action1Tooltip]="'View details'"
+        (action2)="pendTransaction($event)"
+        [action2Icon]="'hourglass_empty'"
+        [action2Tooltip]="'Change to pending state'"
+        [action2Color]="'orange'"
+        (action3)="rejectTransaction($event)"
+        [action3Icon]="'block'"
+        [action3Tooltip]="'Reject transaction'"
+        [action3Color]="'red'"
       >
       </app-table>
     </div>
@@ -187,21 +217,40 @@
       <div class="underlined-title">
         <div class="title-buttons">
           <h2>Rejected Transaction</h2>
-          <button mat-stroked-button (click)="exportToCSV()">
-            <mat-icon>download</mat-icon>
-            Download CSV
-          </button>
+          <div class="title-buttons-right">
+            <button mat-flat-button (click)="createTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Create transaction
+            </button>
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
         </div>
         <hr />
       </div>
       <app-table
         [columns]="columns"
-        [data]="filteredRejected"
+        [data]="transactionStates['rejected'].data"
+        [totalCount]="transactionStates['rejected'].totalCount"
+        [pageSize]="transactionStates['rejected'].pageSize"
+        [pageIndex]="transactionStates['rejected'].pageIndex"
+        (pageChange)="onPageChange('rejected', $event)"
+        [serverSidePagination]="true"
         [enableSelection]="false"
         [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
         [action1Tooltip]="'View details'"
+        (action2)="pendTransaction($event)"
+        [action2Icon]="'hourglass_empty'"
+        [action2Tooltip]="'Change to pending state'"
+        [action2Color]="'orange'"
+        (action3)="approveTransaction($event)"
+        [action3Icon]="'task_alt'"
+        [action3Tooltip]="'Approve transaction'"
+        [action3Color]="'green'"
       >
       </app-table>
     </div>

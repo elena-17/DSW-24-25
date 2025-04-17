@@ -38,41 +38,50 @@
     <mat-step [stepControl]="creditForm">
       <form [formGroup]="creditForm">
         <ng-template matStepLabel>Select a credit card</ng-template>
-        <mat-label>Credit Card</mat-label>
-        <mat-select formControlName="card" placeholder="Select a credit card">
-          <mat-option *ngFor="let card of creditCards" [value]="card">
-            {{ card.card_alias || "Unnamed Card" }} - {{ card.owner_name }} -
-            **** **** **** {{ card.number.slice(-4) }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="creditForm.get('card')?.hasError('required')">
-          The selection of a credit card is required
-        </mat-error>
+        <ng-container *ngIf="!waitingValidation; else waitingTemplate">
+          <mat-label>Credit Card</mat-label>
+          <mat-select formControlName="card" placeholder="Select a credit card">
+            <mat-option *ngFor="let card of creditCards" [value]="card">
+              {{ card.card_alias || "Unnamed Card" }} - {{ card.owner_name }} -
+              **** **** **** {{ card.number.slice(-4) }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="creditForm.get('card')?.hasError('required')">
+            The selection of a credit card is required
+          </mat-error>
 
-        <!-- Campo para el CVV -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>CVV</mat-label>
-          <input
-            matInput
-            formControlName="cvv"
-            placeholder="Enter CVV"
-            type="text"
-            maxlength="3"
-            pattern="^[0-9]{3}$"
-          />
-          <mat-error *ngIf="creditForm.get('cvv')?.hasError('required')">
-            The CVV is required
-          </mat-error>
-          <mat-error *ngIf="creditForm.get('cvv')?.hasError('pattern')">
-            The CVV must be 3 digits
-          </mat-error>
-        </mat-form-field>
+          <!-- Campo para el CVV -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>CVV</mat-label>
+            <input
+              matInput
+              formControlName="cvv"
+              placeholder="Enter CVV"
+              type="text"
+              maxlength="3"
+              pattern="^[0-9]{3}$"
+            />
+            <mat-error *ngIf="creditForm.get('cvv')?.hasError('required')">
+              The CVV is required
+            </mat-error>
+            <mat-error *ngIf="creditForm.get('cvv')?.hasError('pattern')">
+              The CVV must be 3 digits
+            </mat-error>
+          </mat-form-field>
+        </ng-container>
+
+        <ng-template #waitingTemplate>
+          <div class="waiting-validation">
+            <mat-spinner [diameter]="50"></mat-spinner>
+            <p>Please wait, we are checking your credentials</p>
+          </div>
+        </ng-template>
 
         <div class="transaction_form_buttons">
           <button mat-stroked-button matStepperPrevious>Cancel</button>
           <!-- boton de validar tarjeta (no es el next)-->
           <button
-            mat-stroked-button
+            mat-flat-button
             class="validateCreditCard"
             (click)="validateCard()"
             [disabled]="creditForm.invalid"
@@ -91,12 +100,25 @@
     </mat-step>
 
     <!-- Paso 3: Confirmación -->
-    <mat-step [editable]="isCardValidated">
+    <mat-step>
       <ng-template matStepLabel>Confirmation</ng-template>
-      <div class="confirmation-message">
+      <div
+        class="confirmation-message"
+        *ngIf="!waitingValidation && isCardValidated"
+      >
         <p>You're about to {{ dialogTitle | lowercase }}</p>
         <p class="amount-highlight">{{ amountForm.value.amount }} €</p>
         <p>Click <strong>Confirm</strong> to proceed with the transaction.</p>
+      </div>
+      <div
+        class="confirmation-message"
+        *ngIf="waitingValidation || !isCardValidated"
+      >
+        <p>Credit card is not validated yet!</p>
+        <p>
+          Please, click on <strong>Back</strong> and validate it before
+          proceeding.
+        </p>
       </div>
 
       <div class="transaction_form_buttons">
@@ -105,7 +127,9 @@
           mat-flat-button
           color="primary"
           (click)="onSubmit()"
-          [disabled]="amountForm.invalid || creditForm.invalid"
+          [disabled]="
+            amountForm.invalid || creditForm.invalid || !isCardValidated
+          "
         >
           Confirm
         </button>
