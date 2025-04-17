@@ -105,8 +105,8 @@
             *ngIf="amountForm.get('paymentMethod')?.value === 'stripe'"
             mat-stroked-button
             (click)="validateStripeCard()"
-            [disabled]="!isStripeReady"
-          >
+            
+          ><!--[disabled]="!isStripeReady"-->
             Validate
           </button>
     
