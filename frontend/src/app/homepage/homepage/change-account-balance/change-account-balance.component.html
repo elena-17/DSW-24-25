@@ -21,6 +21,12 @@
           </mat-error>
         </mat-form-field>
 
+        <mat-radio-group formControlName="paymentMethod" class="payment-method-group">
+          <mat-label>Payment Method</mat-label>
+          <mat-radio-button value="ourBank">Our Bank</mat-radio-button>
+          <mat-radio-button value="stripe">Stripe</mat-radio-button>
+        </mat-radio-group>
+
         <div class="transaction_form_buttons">
           <button mat-stroked-button (click)="closeDialog()">Back</button>
           <button
@@ -37,41 +43,56 @@
     <!-- Paso 2: Seleccionar Tarjeta -->
     <mat-step [stepControl]="creditForm">
       <form [formGroup]="creditForm">
-        <ng-template matStepLabel>Select a credit card</ng-template>
-        <mat-label>Credit Card</mat-label>
-        <mat-select formControlName="card" placeholder="Select a credit card">
-          <mat-option *ngFor="let card of creditCards" [value]="card">
-            {{ card.card_alias || "Unnamed Card" }} - {{ card.owner_name }} -
-            **** **** **** {{ card.number.slice(-4) }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="creditForm.get('card')?.hasError('required')">
-          The selection of a credit card is required
-        </mat-error>
+        <ng-template matStepLabel>Payment Details</ng-template>
+        
+        <!-- Nuestro banco-->
+        <ng-container *ngIf="amountForm.get('paymentMethod')?.value === 'ourBank'">
+          <mat-label>Credit Card</mat-label>
+          <mat-select formControlName="card" placeholder="Select a credit card">
+            <mat-option *ngFor="let card of creditCards" [value]="card">
+              {{ card.card_alias || "Unnamed Card" }} - {{ card.owner_name }} -
+              **** **** **** {{ card.number.slice(-4) }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="creditForm.get('card')?.hasError('required')">
+            The selection of a credit card is required
+          </mat-error>
 
-        <!-- Campo para el CVV -->
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>CVV</mat-label>
-          <input
-            matInput
-            formControlName="cvv"
-            placeholder="Enter CVV"
-            type="text"
-            maxlength="3"
-            pattern="^[0-9]{3}$"
-          />
-          <mat-error *ngIf="creditForm.get('cvv')?.hasError('required')">
-            The CVV is required
-          </mat-error>
-          <mat-error *ngIf="creditForm.get('cvv')?.hasError('pattern')">
-            The CVV must be 3 digits
-          </mat-error>
-        </mat-form-field>
+          <!-- Campo para el CVV -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>CVV</mat-label>
+            <input
+              matInput
+              formControlName="cvv"
+              placeholder="Enter CVV"
+              type="text"
+              maxlength="3"
+              pattern="^[0-9]{3}$"
+            />
+            <mat-error *ngIf="creditForm.get('cvv')?.hasError('required')">
+              The CVV is required
+            </mat-error>
+            <mat-error *ngIf="creditForm.get('cvv')?.hasError('pattern')">
+              The CVV must be 3 digits
+            </mat-error>
+          </mat-form-field>
+        </ng-container>
+
+        <!-- Stripe -->
+        <ng-container *ngIf="amountForm.get('paymentMethod')?.value === 'stripe'">
+          <p>Enter your Stripe Card details here:</p>
+          <form id="payment-form">
+            <div id="stripe-card-element"><!-- Stripe Card Element --></div>
+            <!--<mat-error *ngIf="!isStripeValidated">Please enter valid card details.</mat-error>-->
+          </form>
+        </ng-container>
 
         <div class="transaction_form_buttons">
           <button mat-stroked-button matStepperPrevious>Cancel</button>
-          <!-- boton de validar tarjeta (no es el next)-->
+    
+          <!-- Botón de validación según método -->
           <button
+            *ngIf="amountForm.get('paymentMethod')?.value === 'ourBank'"
             mat-stroked-button
             class="validateCreditCard"
             (click)="validateCard()"
@@ -79,10 +100,20 @@
           >
             Validate
           </button>
+    
+          <button
+            *ngIf="amountForm.get('paymentMethod')?.value === 'stripe'"
+            mat-stroked-button
+            (click)="validateStripeCard()"
+            [disabled]="!isStripeReady"
+          >
+            Validate
+          </button>
+    
           <button
             mat-stroked-button
             matStepperNext
-            [disabled]="!isCardValidated"
+            [disabled]="amountForm.get('paymentMethod')?.value === 'ourBank' ? !isCardValidated : !isStripeValidated"
           >
             Next
           </button>

@@ -47,6 +47,10 @@ export class ChangeAccountBalanceComponent {
   emailCtrl = new FormControl("", [Validators.email]);
   creditCards: any[] = []; // Arreglo para guardar las tarjetas de crédito
   action: string;
+  isStripeValidated: boolean = false; 
+  isStripeReady: boolean = false;
+  stripeCard: any;
+  STRIPE_PUBLIC_KEY: string = "pk_test_51Q7a3vP0LaAzN5HUVqMSpL38bzpaZDhPylsy5t0rkLoCM9aQbC3F5VFJV4hJdBX9ouE4QrqnO5p0Oh9d02ShLTNC00muyYlhEa";
 
   constructor(
     private dialogRef: MatDialogRef<ChangeAccountBalanceComponent>,
@@ -73,6 +77,7 @@ export class ChangeAccountBalanceComponent {
           Validators.pattern(/^\d+(\.\d{1,2})?$/),
         ],
       ],
+      paymentMethod: ["ourBank", Validators.required],
     });
 
     this.form = this.formBuilder.group({
@@ -145,6 +150,11 @@ export class ChangeAccountBalanceComponent {
         });
       },
     });
+  }
+
+   // Add the validateStripeCard method
+   validateStripeCard(): void {
+    this.isStripeValidated = true;  // Suponemos que la validación fue exitosa para simplificar
   }
 
   onCancel() {

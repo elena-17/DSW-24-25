@@ -18,7 +18,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSelectModule } from "@angular/material/select";
 import { MatSidenavModule } from "@angular/material/sidenav";
-
+import { MatRadioModule } from "@angular/material/radio";
 @NgModule({
   imports: [
     MatCardModule,
@@ -39,6 +39,7 @@ import { MatSidenavModule } from "@angular/material/sidenav";
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSidenavModule,
+    MatRadioModule,
   ],
   exports: [
     MatCardModule,
@@ -59,6 +60,7 @@ import { MatSidenavModule } from "@angular/material/sidenav";
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSidenavModule,
+    MatRadioModule,
   ],
 })
 export class MaterialModule {}
