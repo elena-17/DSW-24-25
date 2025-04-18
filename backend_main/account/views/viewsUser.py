@@ -47,10 +47,10 @@ def subtracting_money(request):
     except Account.DoesNotExist:
         return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
 
-stripe.api_key=settings.STRIPE_SECRET_KEY
-
 @api_view(["PUT"])
 def paymentRequest(request):
+    stripe.api_key=settings.SECRET_KEY_STRIPE
+    print(stripe.api_key)
     try:
         amount = Decimal(request.data.get("amount"))
         if amount <= 0:
