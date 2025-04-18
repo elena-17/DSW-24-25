@@ -1,9 +1,10 @@
-import stripe
+
+from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from decimal import Decimal
-
+import stripe
 from account.models import Account
 from account.serializers import AccountSerializer
 
@@ -45,6 +46,8 @@ def subtracting_money(request):
             return Response({"error": "Insufficient funds"}, status=status.HTTP_400_BAD_REQUEST)
     except Account.DoesNotExist:
         return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
+
+stripe.api_key=settings.STRIPE_SECRET_KEY
 
 @api_view(["PUT"])
 def paymentRequest(request):
