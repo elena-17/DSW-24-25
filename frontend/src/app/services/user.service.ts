@@ -31,6 +31,8 @@ export class UserService {
   private urlDepositFunds = `${this.accountApiUrl}/recharge/`;
   private urlWithdrawFunds = `${this.accountApiUrl}/withdraw/`;
 
+  // URL for payment request
+  private apiUrlPaymentRequest = `${this.accountApiUrl}/payment-request/`;
   constructor(private http: HttpClient) {}
 
   isAuthenticated(): boolean {
@@ -112,6 +114,14 @@ export class UserService {
   withdrawMoney(amount: number): Observable<any> {
     return this.http.put(
       this.urlWithdrawFunds,
+      { amount },
+      { withCredentials: true },
+    );
+  }
+
+  paymentRequestStripe(amount: number): Observable<any> {
+    return this.http.put<string>(
+      this.apiUrlPaymentRequest,
       { amount },
       { withCredentials: true },
     );

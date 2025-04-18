@@ -17,6 +17,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatStepperModule } from "@angular/material/stepper";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 import { NotificationService } from "../../../services/notification.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-create-transaction",
@@ -46,16 +47,22 @@ export class ChangeAccountBalanceComponent {
   emailCtrl = new FormControl("", [Validators.email]);
   creditCards: any[] = [];
   action: string;
-  isStripeValidated: boolean = false; 
+  isStripeValidated: boolean = false;
   isStripeReady: boolean = false;
+
+  stripeValidationRequested: boolean = false;
+  stripeLoaded: boolean = false;
+
   stripeCard: any;
-  STRIPE_PUBLIC_KEY: string = "pk_test_51Q7a3vP0LaAzN5HUVqMSpL38bzpaZDhPylsy5t0rkLoCM9aQbC3F5VFJV4hJdBX9ouE4QrqnO5p0Oh9d02ShLTNC00muyYlhEa";
+  STRIPE_PUBLIC_KEY: string =
+    "pk_test_51Q7a3vP0LaAzN5HUVqMSpL38bzpaZDhPylsy5t0rkLoCM9aQbC3F5VFJV4hJdBX9ouE4QrqnO5p0Oh9d02ShLTNC00muyYlhEa";
   waitingValidation: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<ChangeAccountBalanceComponent>,
     private formBuilder: FormBuilder,
     private userService: UserService,
+    private snackBar: MatSnackBar,
     private notificationService: NotificationService,
     @Inject(MAT_DIALOG_DATA) public data: { title: string; action: string },
   ) {
@@ -136,9 +143,101 @@ export class ChangeAccountBalanceComponent {
     });
   }
 
-   // Add the validateStripeCard method
-   validateStripeCard(): void {
-    this.isStripeValidated = true;  // Suponemos que la validación fue exitosa para simplificar
+  requestStripeValidation() {
+    this.userService
+      .paymentRequestStripe(this.amountForm.value.amount)
+      .subscribe(
+        (response) => {
+          const clientSecret = response;
+          this.snackBar.open("Request loaded succesfully", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+          this.stripeValidationRequested = true;
+          this.isStripeReady = true;
+          this.loadStripePayment(clientSecret);
+        },
+        (error) => {
+          this.snackBar.open("Failed to load request", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+        },
+      );
+  }
+
+  loadStripePayment(clientSecret: string) {
+    if (!this.stripeLoaded) {
+      this.loadStripeScript(clientSecret);
+    } else {
+      this.initializeStripePayment(clientSecret);
+    }
+  }
+
+  loadStripeScript(clientSecret: string) {
+    // Verificamos si el script de Stripe ya está presente
+    if (document.querySelector('script[src="https://js.stripe.com/v3/"]')) {
+      this.stripeLoaded = true;
+      this.initializeStripePayment(clientSecret);
+      return;
+    }
+
+    // Si no está cargado, creamos y añadimos el script de Stripe
+    const script = document.createElement("script");
+    script.src = "https://js.stripe.com/v3/";
+    script.async = true;
+    script.onload = () => {
+      this.stripeLoaded = true;
+      this.initializeStripePayment(clientSecret);
+    };
+    document.head.appendChild(script);
+  }
+
+  private initializeStripePayment(clientSecret: string) {
+    const stripe = (window as any).Stripe(this.STRIPE_PUBLIC_KEY);
+    if (!stripe) {
+      this.snackBar.open("Stripe not loaded", "Close", {
+        duration: 2000,
+        horizontalPosition: "center",
+        verticalPosition: "top",
+      });
+      return;
+    }
+
+    //Create payment forms with Stripe
+    const elements = stripe.elements();
+    const cardElement = elements.create("card");
+    cardElement.mount("#stripe-card-element");
+
+    //manage confirmation of payment
+    const form = document.getElementById("payment-form") as HTMLFormElement;
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const { paymentIntent, error } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement,
+          },
+        },
+      );
+
+      if (error) {
+        console.error("Error al confirmar el pago:", error);
+        alert("Error al confirmar el pago.");
+      } else if (paymentIntent && paymentIntent.status === "succeeded") {
+        console.log("Pago realizado con éxito:", paymentIntent);
+        alert("Pago realizado con éxito.");
+      }
+    });
+  }
+
+  // Add the validateStripeCard method
+  validateStripeCard(): void {
+    this.isStripeValidated = true; // Suponemos que la validación fue exitosa para simplificar
   }
 
   onCancel() {
