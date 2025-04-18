@@ -240,7 +240,7 @@ export class ChangeAccountBalanceComponent {
         alert("Error al confirmar el pago.");
       } else if (paymentIntent && paymentIntent.status === "succeeded") {
         console.log("Pago realizado con éxito:", paymentIntent);
-        alert("Pago realizado con éxito.");
+        alert("Pago realizado con éxito.");  
       }
     });
   }
