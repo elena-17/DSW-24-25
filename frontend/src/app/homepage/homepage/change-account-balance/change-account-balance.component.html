@@ -130,9 +130,8 @@
             mat-stroked-button
             matStepperNext
             [disabled]="
-              amountForm.get('paymentMethod')?.value === 'ourBank'
-                ? !isCardValidated
-                : !isStripeValidated
+              (amountForm.get('paymentMethod')?.value === 'ourBank' && !isCardValidated) ||
+              (amountForm.get('paymentMethod')?.value === 'stripe' && !isStripeValidated)
             "
           >
             Next
@@ -146,7 +145,7 @@
       <ng-template matStepLabel>Confirmation</ng-template>
       <div
         class="confirmation-message"
-        *ngIf="!waitingValidation && isCardValidated"
+        *ngIf="!waitingValidation && isCardValidated || isStripeValidated"
       >
         <p>You're about to {{ dialogTitle | lowercase }}</p>
         <p class="amount-highlight">{{ amountForm.value.amount }} €</p>
