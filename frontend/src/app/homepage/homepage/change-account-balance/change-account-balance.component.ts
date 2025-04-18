@@ -252,7 +252,7 @@ export class ChangeAccountBalanceComponent {
   }
 
   onSubmit() {
-    if (this.creditForm.valid && this.amountForm.valid) {
+    if (this.amountForm.valid) {
       const amount = this.amountForm.value.amount;
 
       if (this.action === "deposit") {

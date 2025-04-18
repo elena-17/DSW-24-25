@@ -44,7 +44,7 @@
     </mat-step>
 
     <!-- Paso 2: Seleccionar Tarjeta -->
-    <mat-step [stepControl]="creditForm">
+    <mat-step>
       <form [formGroup]="creditForm">
         <ng-template matStepLabel>Payment Details</ng-template>
 
@@ -153,7 +153,7 @@
       </div>
       <div
         class="confirmation-message"
-        *ngIf="waitingValidation || !isCardValidated"
+        *ngIf="(waitingValidation || !isCardValidated) && amountForm.get('paymentMethod')?.value === 'ourBank'"
       >
         <p>Credit card is not validated yet!</p>
         <p>
@@ -166,11 +166,13 @@
         <button mat-stroked-button matStepperPrevious>Back</button>
         <button
           mat-flat-button
+          *ngIf="amountForm.get('paymentMethod')?.value === 'ourBank'"
           color="primary"
           type="submit"
           (click)="onSubmit()"
           [disabled]="
-            amountForm.invalid || creditForm.invalid || !isCardValidated
+            ((amountForm.invalid || creditForm.invalid || !isCardValidated) && amountForm.get('paymentMethod')?.value === 'ourBank')
+            || (amountForm.get('paymentMethod')?.value === 'stripe' && !isStripeValidated)
           "
         >
           Confirm
