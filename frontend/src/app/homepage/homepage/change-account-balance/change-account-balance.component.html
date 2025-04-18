@@ -171,9 +171,20 @@
           type="submit"
           (click)="onSubmit()"
           [disabled]="
-            ((amountForm.invalid || creditForm.invalid || !isCardValidated) && amountForm.get('paymentMethod')?.value === 'ourBank')
-            || (amountForm.get('paymentMethod')?.value === 'stripe' && !isStripeValidated)
+                  amountForm.invalid || creditForm.invalid || !isCardValidated
           "
+        >
+          Confirm
+        </button>
+
+         <!-- Botón para Stripe -->
+        <button
+          mat-flat-button
+          *ngIf="amountForm.get('paymentMethod')?.value === 'stripe'"
+          color="primary"
+          type="button"
+          (click)="onStripeConfirm()"
+          [disabled]="!isStripeValidated"
         >
           Confirm
         </button>

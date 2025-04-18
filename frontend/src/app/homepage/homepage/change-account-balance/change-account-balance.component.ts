@@ -54,7 +54,11 @@ export class ChangeAccountBalanceComponent {
   stripeLoaded: boolean = false;
   stripeCardComplete: boolean = false;
 
-  stripeCard: any;
+  clientSecretKey: string = "";
+  stripe: any;
+  elements: any;
+  cardElement: any;
+  //stripeCard: any;
   STRIPE_PUBLIC_KEY: string =
     "pk_test_51Q7a3vP0LaAzN5HUVqMSpL38bzpaZDhPylsy5t0rkLoCM9aQbC3F5VFJV4hJdBX9ouE4QrqnO5p0Oh9d02ShLTNC00muyYlhEa";
   waitingValidation: boolean = false;
@@ -151,6 +155,7 @@ export class ChangeAccountBalanceComponent {
       .subscribe(
         (response) => {
           const clientSecret = response;
+          this.clientSecretKey = response.client_secret;
           this.snackBar.open("Request loaded succesfully", "Close", {
             duration: 2000,
             horizontalPosition: "center",
@@ -198,10 +203,10 @@ export class ChangeAccountBalanceComponent {
   }
 
   private initializeStripePayment(clientSecret: string) {
-    const stripe = (window as any).Stripe(this.STRIPE_PUBLIC_KEY, {
+    this.stripe = (window as any).Stripe(this.STRIPE_PUBLIC_KEY, {
       locale: "en",
     });
-    if (!stripe) {
+    if (!this.stripe) {
       this.snackBar.open("Stripe not loaded", "Close", {
         duration: 2000,
         horizontalPosition: "center",
@@ -211,38 +216,38 @@ export class ChangeAccountBalanceComponent {
     }
 
     //Create payment forms with Stripe
-    const elements = stripe.elements();
-    const cardElement = elements.create("card");
-    cardElement.mount("#stripe-card-element");
+    this.elements = this.stripe.elements();
+    this.cardElement = this.elements.create("card");
+    this.cardElement.mount("#stripe-card-element");
 
     // Listen for changes in the card input to check if it's complete
-    cardElement.on("change", (event: any) => {
+    this.cardElement.on("change", (event: any) => {
       this.isStripeValidated = event.complete;
       // Force UI refresh if needed
       this.cdRef.detectChanges?.(); // Optional: only if using ChangeDetectorRef
     });
-    //manage confirmation of payment
-    const form = document.getElementById("payment-form") as HTMLFormElement;
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+  }
 
-      const { paymentIntent, error } = await stripe.confirmCardPayment(
-        clientSecret,
-        {
-          payment_method: {
-            card: cardElement,
-          },
+  async onStripeConfirm() {
+    if (!this.stripe || !this.cardElement) {
+      alert("Stripe not initialized properly.");
+      return;
+    }
+  
+    const { paymentIntent, error } = await this.stripe.confirmCardPayment(
+      this.clientSecretKey,
+      {
+        payment_method: {
+          card: this.cardElement,
         },
-      );
-
-      if (error) {
-        console.error("Error al confirmar el pago:", error);
-        alert("Error al confirmar el pago.");
-      } else if (paymentIntent && paymentIntent.status === "succeeded") {
-        console.log("Pago realizado con éxito:", paymentIntent);
-        alert("Pago realizado con éxito.");  
       }
-    });
+    );
+  
+    if (error) {
+      console.error("Error confirming Stripe payment:", error);
+    } else if (paymentIntent?.status === "succeeded") {
+      this.onSubmit(); // o cualquier lógica posterior
+    }
   }
 
   onCancel() {
