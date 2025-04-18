@@ -196,7 +196,9 @@ export class ChangeAccountBalanceComponent {
   }
 
   private initializeStripePayment(clientSecret: string) {
-    const stripe = (window as any).Stripe(this.STRIPE_PUBLIC_KEY);
+    const stripe = (window as any).Stripe(this.STRIPE_PUBLIC_KEY, {
+      locale: "en",
+    });
     if (!stripe) {
       this.snackBar.open("Stripe not loaded", "Close", {
         duration: 2000,
