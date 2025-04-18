@@ -28,6 +28,7 @@ export class TransactionsService {
   private urlRequestMoney = `${this.baseApiUrl}/request-money/`;
   private urlAdminTransactions = `${this.baseApiUrl}/admin/`;
   private urlPendingTransactions = `${this.baseApiUrl}/pending/`;
+  private urlAdminCreateTransaction = `${this.baseApiUrl}/admin/create/`;
 
   constructor(private http: HttpClient) {}
 
@@ -142,6 +143,27 @@ export class TransactionsService {
 
   getPendingTransactions(): Observable<any> {
     return this.http.get<any>(this.urlPendingTransactions, {
+      withCredentials: true,
+    });
+  }
+
+  createAdminTransaction(
+    sender: string,
+    receiver: string,
+    amount: number,
+    title: string,
+    type?: string,
+    description?: string,
+  ): Observable<any> {
+    const transaction = {
+      sender,
+      receiver,
+      amount,
+      title,
+      description,
+      type,
+    };
+    return this.http.post<any>(this.urlAdminCreateTransaction, transaction, {
       withCredentials: true,
     });
   }

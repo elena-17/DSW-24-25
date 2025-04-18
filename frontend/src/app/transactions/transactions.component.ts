@@ -168,7 +168,12 @@ export class TransactionsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.transactionsService
-          .sendMoney(result.user, result.amount, result.title)
+          .sendMoney(
+            result.user,
+            result.amount,
+            result.title,
+            result.description,
+          )
           .subscribe({
             next: (response) => {
               this.sender = [...response.transactions, ...this.sender];
@@ -212,7 +217,12 @@ export class TransactionsComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.transactionsService
-          .requestMoney(result.user, result.amount, result.title)
+          .requestMoney(
+            result.user,
+            result.amount,
+            result.title,
+            result.description,
+          )
           .subscribe({
             next: (response) => {
               this.receiver = [...response.transactions, ...this.receiver];
