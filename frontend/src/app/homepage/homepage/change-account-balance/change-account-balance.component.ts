@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, Inject, OnInit } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -52,6 +52,7 @@ export class ChangeAccountBalanceComponent {
 
   stripeValidationRequested: boolean = false;
   stripeLoaded: boolean = false;
+  stripeCardComplete: boolean = false;
 
   stripeCard: any;
   STRIPE_PUBLIC_KEY: string =
@@ -63,6 +64,7 @@ export class ChangeAccountBalanceComponent {
     private formBuilder: FormBuilder,
     private userService: UserService,
     private snackBar: MatSnackBar,
+    private cdRef: ChangeDetectorRef,
     private notificationService: NotificationService,
     @Inject(MAT_DIALOG_DATA) public data: { title: string; action: string },
   ) {
@@ -213,6 +215,12 @@ export class ChangeAccountBalanceComponent {
     const cardElement = elements.create("card");
     cardElement.mount("#stripe-card-element");
 
+    // Listen for changes in the card input to check if it's complete
+    cardElement.on("change", (event: any) => {
+      this.isStripeValidated = event.complete;
+      // Force UI refresh if needed
+      this.cdRef.detectChanges?.(); // Optional: only if using ChangeDetectorRef
+    });
     //manage confirmation of payment
     const form = document.getElementById("payment-form") as HTMLFormElement;
     form.addEventListener("submit", async (event) => {
@@ -235,11 +243,6 @@ export class ChangeAccountBalanceComponent {
         alert("Pago realizado con éxito.");
       }
     });
-  }
-
-  // Add the validateStripeCard method
-  validateStripeCard(): void {
-    this.isStripeValidated = true; // Suponemos que la validación fue exitosa para simplificar
   }
 
   onCancel() {
