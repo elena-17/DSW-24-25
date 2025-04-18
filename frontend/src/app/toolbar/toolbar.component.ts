@@ -6,6 +6,7 @@ import { MaterialModule } from "../material.module";
 import { MatBadgeModule } from "@angular/material/badge";
 import { TransactionsService } from "../services/transactions.service";
 import { NotificationService } from "../services/notification.service";
+import { CounterNotificationService } from "../services/counter-notification.service";
 
 @Component({
   selector: "app-toolbar",
@@ -27,6 +28,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     private ngZone: NgZone,
     private transactionsService: TransactionsService,
     private notificationService: NotificationService,
+    private countNotfService: CounterNotificationService,
   ) {
     this.role = sessionStorage.getItem("userRole") || "user";
   }
@@ -35,24 +37,11 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.userName = sessionStorage.getItem("userName") || "User";
     this.getNotifications();
     window.addEventListener("userNameUpdated", this.updateUserName);
-    this.eventSource = new EventSource(
-      `http://localhost:3000/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
-    );
-    this.eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      this.ngZone.run(() => {
-        this.notifications += 1;
-        //this.notifications = [data, ...this.notifications];
-        this.notificationService.showSuccessMessage(
-          "New transaction request received. Check transactions menu.",
-        );
-        console.log("Notification received:", data);
-      });
-    };
-
-    this.eventSource.onerror = (error) => {
-      console.error("Error en Mercure:", error);
-    };
+    this.countNotfService.startListening();
+    this.countNotfService.pendingCount$.subscribe((count) => {
+      console.log("Pending count updated:", count);
+      this.notifications = count;
+    });
   }
 
   ngOnDestroy(): void {
@@ -64,7 +53,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   getNotifications() {
     this.transactionsService.getPendingTransactions().subscribe((data) => {
-      this.notifications = data["number_pending"];
+      this.countNotfService.setPendingCount(data.number_pending);
     });
   }
 
