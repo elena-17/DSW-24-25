@@ -48,63 +48,65 @@
       <form [formGroup]="creditForm">
         <ng-template matStepLabel>Payment Details</ng-template>
 
-        <!-- Nuestro banco-->
-        <ng-container
-          *ngIf="
-            amountForm.get('paymentMethod')?.value === 'ourBank' &&
-              !waitingValidation;
-            else waitingTemplate
-          "
-        >
-          <mat-label>Credit Card</mat-label>
-          <mat-select formControlName="card" placeholder="Select a credit card">
-            <mat-option *ngFor="let card of creditCards" [value]="card">
-              {{ card.card_alias || "Unnamed Card" }} - {{ card.owner_name }} -
-              **** **** **** {{ card.number.slice(-4) }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="creditForm.get('card')?.hasError('required')">
-            The selection of a credit card is required
-          </mat-error>
+          <!-- Nuestro banco-->
+          <ng-container
+            *ngIf="amountForm.get('paymentMethod')?.value === 'ourBank'; else stripeBlock"
+          >
+            <ng-container *ngIf="!waitingValidation; else waitingTemplate">
+            <mat-label>Credit Card</mat-label>
+            <mat-select formControlName="card" placeholder="Select a credit card">
+              <mat-option *ngFor="let card of creditCards" [value]="card">
+                {{ card.card_alias || "Unnamed Card" }} - {{ card.owner_name }} -
+                **** **** **** {{ card.number.slice(-4) }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="creditForm.get('card')?.hasError('required')">
+              The selection of a credit card is required
+            </mat-error>
 
-          <!-- Campo para el CVV -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>CVV</mat-label>
-            <input
-              matInput
-              formControlName="cvv"
-              placeholder="Enter CVV"
-              type="text"
-              maxlength="3"
-              pattern="^[0-9]{3}$"
-            />
-            <mat-error *ngIf="creditForm.get('cvv')?.hasError('required')">
-              The CVV is required
-            </mat-error>
-            <mat-error *ngIf="creditForm.get('cvv')?.hasError('pattern')">
-              The CVV must be 3 digits
-            </mat-error>
-          </mat-form-field>
+            <!-- Campo para el CVV -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>CVV</mat-label>
+              <input
+                matInput
+                formControlName="cvv"
+                placeholder="Enter CVV"
+                type="text"
+                maxlength="3"
+                pattern="^[0-9]{3}$"
+              />
+              <mat-error *ngIf="creditForm.get('cvv')?.hasError('required')">
+                The CVV is required
+              </mat-error>
+              <mat-error *ngIf="creditForm.get('cvv')?.hasError('pattern')">
+                The CVV must be 3 digits
+              </mat-error>
+            </mat-form-field>
+          </ng-container>
         </ng-container>
 
         <!-- Stripe -->
-        <ng-container
-          *ngIf="amountForm.get('paymentMethod')?.value === 'stripe'"
-        >
-          <button
-            mat-stroked-button
-            class="requestValidation"
-            *ngIf="!stripeValidationRequested"
-            (click)="requestStripeValidation()"
+        <ng-template #stripeBlock>
+          <ng-container
+            *ngIf="amountForm.get('paymentMethod')?.value === 'stripe'"
           >
-            Request Validation
-          </button>
-          <form *ngIf="stripeValidationRequested" id="payment-form">
-            <p>Enter your Stripe Card details here:</p>
-            <div id="stripe-card-element"><!-- Stripe Card Element --></div>
-            <!--<mat-error *ngIf="!isStripeValidated">Please enter valid card details.</mat-error>-->
-          </form>
-        </ng-container>
+            <div class="stripe-container">
+              <button
+                mat-flat-button
+                class="requestValidation"
+                *ngIf="!stripeValidationRequested"
+                (click)="requestStripeValidation()"
+              >
+                Request Validation
+              </button>
+              <form *ngIf="stripeValidationRequested" id="payment-form" class="stripe-form">
+                <p class="stripe-title">Enter your Stripe Card details here:</p>
+                <div id="stripe-card-element"><!-- Stripe Card Element --></div>
+                <!--<mat-error *ngIf="!isStripeValidated">Please enter valid card details.</mat-error>-->
+              </form>
+            </div>
+          </ng-container>
+        </ng-template>
 
         <ng-template #waitingTemplate>
           <div class="waiting-validation">
