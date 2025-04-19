@@ -118,7 +118,7 @@ class TransactionListViewTests(APITestCase):
         self.transaction1.refresh_from_db()
         self.assertEqual(self.transaction1.status, "pending")
 
-    @patch("transactions.views.viewsUser.publish_to_mercure")
+    @patch("transactions.views.viewsAdmin.publish_to_mercure")
     def test_create(self, mock_mercure):
         data = {
             "sender": self.user1.email,
