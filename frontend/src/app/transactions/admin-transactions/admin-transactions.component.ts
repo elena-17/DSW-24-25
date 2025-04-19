@@ -182,7 +182,7 @@ export class AdminTransactionsComponent implements OnInit {
             error: (error) => {
               console.error("Error creating transaction:", error);
               this.notificationService.showErrorMessage(
-                "Error creating transaction",
+                "Error creating transaction.",
               );
             },
           });
