@@ -98,8 +98,8 @@ export class AdminTransactionsComponent implements OnInit {
         state.totalCount = res.count;
       },
       error: (err) => {
-        console.error(`Error loading ${status} transactions:`, err);
-        this.notificationService.showErrorMessage("Error loading transactions");
+        console.error(`Error loading ${status} transactions: `, err);
+        this.notificationService.showErrorMessage("Error loading transactions.");
         this.loading = false;
       },
       complete: () => {
@@ -142,9 +142,9 @@ export class AdminTransactionsComponent implements OnInit {
           this.filterData();
         },
         error: (error) => {
-          console.error(`Error updating transaction to ${status}:`, error);
+          console.error(`Error updating transaction to ${status}: `, error);
           this.notificationService.showErrorMessage(
-            `Error updating transaction to ${status}:`,
+            `Error updating transaction to ${status}.`,
           );
         },
       });
