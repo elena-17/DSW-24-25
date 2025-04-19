@@ -1,4 +1,4 @@
-import { Component, NgZone, OnInit } from "@angular/core";
+import { Component, NgZone, OnInit, OnDestroy } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MaterialModule } from "../material.module";
 import { TransactionsService } from "../services/transactions.service";
@@ -99,6 +99,11 @@ export class TransactionsComponent implements OnInit {
     };
   }
 
+  ngOnDestroy(): void {
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
+  }
   loadTransactions() {
     this.transactionsService
       .getLoading()

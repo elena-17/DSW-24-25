@@ -1,11 +1,10 @@
-import { Component, OnInit, OnDestroy, NgZone } from "@angular/core";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { MaterialModule } from "../material.module";
 import { MatBadgeModule } from "@angular/material/badge";
 import { TransactionsService } from "../services/transactions.service";
-import { NotificationService } from "../services/notification.service";
 import { CounterNotificationService } from "../services/counter-notification.service";
 
 @Component({
@@ -20,15 +19,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   isUserMenuOpen: boolean = false; // Status user menu
   userName: string = "User"; // value for default username
   role: string = "user";
-  eventSource!: EventSource;
   notifications: number = 0;
 
   constructor(
     private router: Router,
-    private ngZone: NgZone,
     private transactionsService: TransactionsService,
-    private notificationService: NotificationService,
-    private countNotfService: CounterNotificationService,
+    private counterNotfService: CounterNotificationService,
   ) {
     this.role = sessionStorage.getItem("userRole") || "user";
   }
@@ -37,8 +33,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.userName = sessionStorage.getItem("userName") || "User";
     this.getNotifications();
     window.addEventListener("userNameUpdated", this.updateUserName);
-    this.countNotfService.startListening();
-    this.countNotfService.pendingCount$.subscribe((count) => {
+    this.counterNotfService.startListening();
+    this.counterNotfService.pendingCount$.subscribe((count) => {
       console.log("Pending count updated:", count);
       this.notifications = count;
     });
@@ -46,14 +42,12 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener("userNameUpdated", this.updateUserName);
-    if (this.eventSource) {
-      this.eventSource.close();
-    }
+    this.counterNotfService.stopListening();
   }
 
   getNotifications() {
     this.transactionsService.getPendingTransactions().subscribe((data) => {
-      this.countNotfService.setPendingCount(data.number_pending);
+      this.counterNotfService.setPendingCount(data.number_pending);
     });
   }
 
