@@ -189,7 +189,7 @@ export class ChangeAccountBalanceComponent {
         (response) => {
           const clientSecret = response;
           this.clientSecretKey = response.client_secret;
-          this.snackBar.open("Request loaded succesfully", "Close", {
+          this.snackBar.open("Request loaded successfully", "Close", {
             duration: 2000,
             horizontalPosition: "center",
             verticalPosition: "top",
