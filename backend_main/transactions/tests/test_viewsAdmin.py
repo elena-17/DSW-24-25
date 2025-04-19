@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -116,7 +118,8 @@ class TransactionListViewTests(APITestCase):
         self.transaction1.refresh_from_db()
         self.assertEqual(self.transaction1.status, "pending")
 
-    def test_create(self):
+    @patch("transactions.views.viewsUser.publish_to_mercure")
+    def test_create(self, mock_mercure):
         data = {
             "sender": self.user1.email,
             "receiver": self.user2.email,

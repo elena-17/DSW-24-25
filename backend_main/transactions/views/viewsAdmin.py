@@ -73,9 +73,9 @@ def transaction_create(request):
 
         serializer.save()
         topic = (
-            f"user/{serializer.validated_data["receiver"]}"
+            f"user/{serializer.validated_data['receiver']}"
             if type_transaction == "send"
-            else f"user/{serializer.validated_data["sender"]}"
+            else f"user/{serializer.validated_data['sender']}"
         )
         publish_to_mercure(topic, serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

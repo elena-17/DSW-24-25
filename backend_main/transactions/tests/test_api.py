@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -66,8 +68,8 @@ class TransactionAPI(APITestCase):
     #     self.assertEqual(response.data["description"], "This is a test transaction")
     #     self.assertEqual(response.data["status"], "pending")
     #     self.assertEqual(response.data["type"], "send")
-
-    def test_send_money(self):
+    @patch("transactions.views.viewsUser.publish_to_mercure")
+    def test_send_money(self, mock_mercure):
         send_money_url = reverse("send_money")
 
         payload = {
@@ -98,7 +100,8 @@ class TransactionAPI(APITestCase):
         self.user1.account.refresh_from_db()
         self.assertEqual(str(self.user1.account.balance), "950.00")
 
-    def test_send_money_same_user(self):
+    @patch("transactions.views.viewsUser.publish_to_mercure")
+    def test_send_money_same_user(self, mock_mercure):
         send_money_url = reverse("send_money")
 
         payload = {
@@ -114,7 +117,8 @@ class TransactionAPI(APITestCase):
         self.assertIn("sender", response.data)
         self.assertEqual(response.data["sender"], ["Sender and receiver cannot be the same."])
 
-    def test_request_money(self):
+    @patch("transactions.views.viewsUser.publish_to_mercure")
+    def test_request_money(self, mock_mercure):
         request_money_url = reverse("request_money")
 
         payload = {

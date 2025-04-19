@@ -70,7 +70,7 @@ def send_money(request):
         transactions = serializer.save()
         tr_serialized = TransactionSerializer(transactions, many=True)
         for transaction in tr_serialized.data:
-            topic = f"user/{transaction["receiver"]}"
+            topic = f"user/{transaction['receiver']}"
             publish_to_mercure(topic, transaction)
         return Response(
             {"message": "Transaction successful", "transactions": tr_serialized.data},
@@ -90,7 +90,7 @@ def request_money(request):
         transactions = serializer.save()
         tr_serialized = TransactionSerializer(transactions, many=True)
         for transaction in tr_serialized.data:
-            topic = f"user/{transaction["sender"]}"
+            topic = f"user/{transaction['sender']}"
             publish_to_mercure(topic, transaction)
         return Response(
             {"message": "Transaction successful", "transactions": tr_serialized.data},
