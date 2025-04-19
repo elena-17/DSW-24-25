@@ -42,6 +42,11 @@ class Transaction(models.Model):
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="send")
 
     def approveSend(self):
+        if self.status == "rejected":
+            if self.sender.account.balance < self.amount:
+                raise ValidationError("Insufficient balance for this transaction.")
+            self.sender.account.balance -= self.amount
+            self.sender.account.save()
         self.receiver.account.balance += self.amount
         self.receiver.account.save()
 
@@ -88,6 +93,11 @@ class Transaction(models.Model):
             # withdraw the money from the receiver account
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
+        if self.status == "rejected":
+            if self.sender.account.balance < self.amount:
+                raise ValidationError("Insufficient balance for this transaction.")
+            self.sender.account.balance -= self.amount
+            self.sender.account.save()
         self.status = "pending"
         self.save()
 
