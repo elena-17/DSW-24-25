@@ -1,6 +1,6 @@
 <div class="transaction_form">
   <h2 id="title">{{ dialogTitle }}</h2>
-  <mat-horizontal-stepper [linear]="true" #stepper>
+  <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="onStepChange($event, stepper)">
     <!-- Paso 1: Detalles del Envío -->
     <mat-step [stepControl]="amountForm">
       <form [formGroup]="amountForm">

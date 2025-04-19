@@ -14,8 +14,8 @@ import { MaterialModule } from "../../../material.module";
 import { MatSelectModule } from "@angular/material/select";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatStepperModule } from "@angular/material/stepper";
-import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
+import { MatStepper, MatStepperModule } from "@angular/material/stepper";
+import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from "@angular/cdk/stepper";
 import { NotificationService } from "../../../services/notification.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
@@ -110,6 +110,39 @@ export class ChangeAccountBalanceComponent {
         );
       },
     });
+  }
+  
+  onStepChange(event: StepperSelectionEvent, stepper: MatStepper): void {
+    const fromStep = event.previouslySelectedIndex;
+    const toStep = event.selectedIndex;
+    const paymentMethod = this.amountForm.get('paymentMethod')?.value;
+
+    // Bloqueamos si se intenta ir del paso 2 al 3 sin validación
+    if ((fromStep === 0 || fromStep === 1) && toStep === 2 && paymentMethod === 'stripe' && !this.stripeValidationRequested) {
+      this.snackBar.open('Please validate your payment method before proceeding.', 'Close', {
+        duration: 2500,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+
+      // Cancelamos el cambio de paso
+      setTimeout(() => {
+        stepper.selectedIndex = fromStep;
+      }, 0);
+
+      return;
+    }
+    
+    // Si volvemos al paso 0 y el método de pago es Stripe, reseteamos Stripe
+    if (toStep === 0 && paymentMethod === 'stripe') {
+      this.stripeValidationRequested = false;
+      this.isStripeValidated = false;
+
+      if (this.cardElement) {
+        this.cardElement.unmount();
+        this.cardElement = null;
+      }
+    }
   }
 
   validateCard(): void {
@@ -218,14 +251,20 @@ export class ChangeAccountBalanceComponent {
     //Create payment forms with Stripe
     this.elements = this.stripe.elements();
     this.cardElement = this.elements.create("card");
-    this.cardElement.mount("#stripe-card-element");
+    setTimeout(() => {
+      const target = document.getElementById("stripe-card-element");
+      if (target) {
+        this.cardElement.mount("#stripe-card-element");
 
-    // Listen for changes in the card input to check if it's complete
-    this.cardElement.on("change", (event: any) => {
-      this.isStripeValidated = event.complete;
-      // Force UI refresh if needed
-      this.cdRef.detectChanges?.(); // Optional: only if using ChangeDetectorRef
-    });
+        // Listen for changes
+        this.cardElement.on("change", (event: any) => {
+          this.isStripeValidated = event.complete;
+          this.cdRef.detectChanges?.();
+        });
+      } else {
+        console.warn("Stripe card element container not found.");
+      }
+    }, 0);
   }
 
   async onStripeConfirm() {
