@@ -64,6 +64,15 @@
 
   <!-- User Profile -->
   <button
+    mat-icon-button
+    matTooltip="Number of pending transactions"
+    *ngIf="!isAdmin()"
+  >
+    <mat-icon [matBadge]="notifications" aria-hidden="false">
+      notifications
+    </mat-icon>
+  </button>
+  <button
     mat-button
     class="user-profile"
     (mouseenter)="toggleUserMenu()"

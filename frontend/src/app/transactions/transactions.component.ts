@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, NgZone, OnInit, OnDestroy } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { MaterialModule } from "../material.module";
 import { TransactionsService } from "../services/transactions.service";
@@ -31,6 +31,7 @@ import {
 } from "./config/filters.config";
 
 import { MatBadgeModule } from "@angular/material/badge";
+import { CounterNotificationService } from "../services/counter-notification.service";
 
 @Component({
   selector: "app-transactions",
@@ -65,20 +66,44 @@ export class TransactionsComponent implements OnInit {
   filtersForm!: FormGroup;
   columns: any[] = [];
   hasActiveFilters: boolean = false;
+  eventSource!: EventSource;
 
   constructor(
     private dialog: MatDialog,
     private transactionsService: TransactionsService,
     private datePipe: DatePipe,
     private notificationService: NotificationService,
+    private ngZone: NgZone,
+    private counterNotfService: CounterNotificationService,
   ) {}
 
   ngOnInit() {
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
     this.loadTransactions();
+    this.eventSource = new EventSource(
+      `http://localhost:3000/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
+    );
+    this.eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      this.ngZone.run(() => {
+        this.filteredPendingMyApproval = [
+          data,
+          ...this.filteredPendingMyApproval,
+        ];
+      });
+    };
+
+    this.eventSource.onerror = (error) => {
+      console.error("Error en Mercure:", error);
+    };
   }
 
+  ngOnDestroy(): void {
+    if (this.eventSource) {
+      this.eventSource.close();
+    }
+  }
   loadTransactions() {
     this.transactionsService
       .getLoading()
@@ -257,6 +282,7 @@ export class TransactionsComponent implements OnInit {
           this.notificationService.showSuccessMessage("Transaction approved");
           this.filterTransactionChangeStatus(transaction, "approved");
           this.filterData();
+          this.counterNotfService.decrement();
         },
         error: (error) => {
           console.error("Error approving transaction:", error);
@@ -275,6 +301,7 @@ export class TransactionsComponent implements OnInit {
           this.filterTransactionChangeStatus(transaction, "rejected");
           this.notificationService.showSuccessMessage("Transaction rejected");
           this.blockUser(transaction);
+          this.counterNotfService.decrement();
         },
         error: (error) => {
           console.error("Error rejecting transaction:", error);
@@ -306,8 +333,8 @@ export class TransactionsComponent implements OnInit {
         message:
           "You have rejected a transaction. Do you also want to block this user?",
       },
-      width: "25%",
-      height: "25%",
+      width: "30%",
+      height: "30%",
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {

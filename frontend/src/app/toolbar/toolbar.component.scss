@@ -77,8 +77,11 @@
     .user-icon {
       font-size: 21px;
       line-height: normal;
-      color: white;
     }
+  }
+
+  mat-icon {
+    color: white;
   }
 
   // Hamburger menu
@@ -98,7 +101,7 @@
     flex-direction: column;
     position: absolute;
     top: 60px;
-    right: 20px;
+    right: 60px;
     background: var(--mat-sys-primary) !important;
     border-radius: 8px;
     box-shadow: $box-shadow;

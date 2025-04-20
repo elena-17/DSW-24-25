@@ -98,8 +98,10 @@ export class AdminTransactionsComponent implements OnInit {
         state.totalCount = res.count;
       },
       error: (err) => {
-        console.error(`Error loading ${status} transactions:`, err);
-        this.notificationService.showErrorMessage("Error loading transactions");
+        console.error(`Error loading ${status} transactions: `, err);
+        this.notificationService.showErrorMessage(
+          "Error loading transactions.",
+        );
         this.loading = false;
       },
       complete: () => {
@@ -142,10 +144,14 @@ export class AdminTransactionsComponent implements OnInit {
           this.filterData();
         },
         error: (error) => {
-          console.error(`Error updating transaction to ${status}:`, error);
-          this.notificationService.showErrorMessage(
-            `Error updating transaction to ${status}:`,
-          );
+          console.error(`Error updating transaction to ${status}: `, error);
+          if (error.error && error.error.amount) {
+            this.notificationService.showErrorMessage(`${error.error.amount}`);
+          } else {
+            this.notificationService.showErrorMessage(
+              `Error updating transaction to ${status}.`,
+            );
+          }
         },
       });
   }
@@ -181,9 +187,15 @@ export class AdminTransactionsComponent implements OnInit {
             },
             error: (error) => {
               console.error("Error creating transaction:", error);
-              this.notificationService.showErrorMessage(
-                "Error creating transaction",
-              );
+              if (error.error && error.error.amount) {
+                this.notificationService.showErrorMessage(
+                  `${error.error.amount}`,
+                );
+              } else {
+                this.notificationService.showErrorMessage(
+                  "Error creating transaction.",
+                );
+              }
             },
           });
       }
