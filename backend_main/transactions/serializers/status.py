@@ -13,14 +13,6 @@ class TransactionStatusUpdateSerializer(serializers.ModelSerializer):
     def validate_status(self, value):
         if value not in ["approved", "rejected", "pending"]:
             raise serializers.ValidationError("Invalid status only 'approved', 'rejected' or 'pending' are allowed.")
-
-        transaction = self.instance
-        if value == "approved":
-            if transaction.sender.account.balance < transaction.amount:
-                raise serializers.ValidationError("Insufficient balance for this transaction.")
-        if value == "rejected":
-            if transaction.status == "approved" and transaction.receiver.account.balance < transaction.amount:
-                raise serializers.ValidationError("Insufficient balance for this transaction.")
         return value
 
     def update(self, instance, validated_data):
@@ -40,5 +32,5 @@ class TransactionStatusUpdateSerializer(serializers.ModelSerializer):
             try:
                 action()
             except DjangoValidationError as e:
-                raise DRFValidationError(str(e))
+                raise DRFValidationError({"amount": e.messages[0]})
         return instance

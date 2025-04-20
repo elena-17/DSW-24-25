@@ -15,7 +15,7 @@ class Account(models.Model):
 
     def save(self, *args, **kwargs):
         if self.balance < 0:
-            raise ValidationError("Account balance cannot be negative.")
+            raise ValidationError(f"Account balance for '{self.user.email}' cannot be negative.")
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:
