@@ -30,7 +30,10 @@ export class FriendsComponent {
   isFavorite: boolean = false;  // Estado de favorito
   columns: any[] = [];  // Columnas de la tabla
   data: any[] = [];  // Datos de los usuarios
-  filteredData: any[] = [];  // Datos filtrados por búsqueda
+  favoriteUsers: any[] = [];  // Usuarios favoritos
+  availableUsers: any[] = [];  // Usuarios disponibles para agregar a favoritos
+  filteredFavoriteUsers: any[] = [];  // Datos filtrados para favoritos
+  filteredAvailableUsers: any[] = [];  // Datos filtrados para usuarios disponibles
   constructor(
     private friendshipsService: FriendshipsService,
     private snackBar: MatSnackBar,
@@ -46,7 +49,7 @@ export class FriendsComponent {
     this.friendshipsService.getAllFriendships().subscribe({
       next: (response) => {
         this.data = response;
-        this.filteredData = [...this.data];  // Inicializamos los datos filtrados
+        this.filteredFavoriteUsers = [...this.data];  // Inicializamos los datos filtrados
         console.log("Friendships loaded successfully", this.data);
       },
       error: (error) => {
@@ -64,10 +67,9 @@ export class FriendsComponent {
   }
 
   // Filtrar las amistades por email o nombre mientras escribes
-  updateSearchFilter(event: any): void {
+  updateSearchFilterFavorites(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
-    this.filteredData = this.data.filter((user) =>
-      user.name.toLowerCase().includes(searchTerm) || 
+    this.filteredFavoriteUsers = this.data.filter((user) =>
       user.email.toLowerCase().includes(searchTerm)
     );
     // Forzar la detección de cambios (solo necesario si Angular no lo hace automáticamente)
@@ -75,12 +77,57 @@ export class FriendsComponent {
   }
 
   // Limpiar el filtro de búsqueda
-  clearFilter(input: HTMLInputElement): void {
+  clearFilterFavorites(input: HTMLInputElement): void {
     input.value = "";  // Limpiar el campo de búsqueda
-    this.filteredData = [...this.data];  // Restablecer los datos para mostrar todas las amistades
+    this.filteredFavoriteUsers = [...this.data];  // Restablecer los datos para mostrar todas las amistades
   }
 
-  toggleFavorite($event: any) {
-    this.isFavorite = !this.isFavorite;  // Cambiar el estado de favorito}
+  // Filtrar las amistades por email o nombre mientras escribes
+  updateSearchFilterAvailable(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+    this.filteredAvailableUsers = this.data.filter((user) =>
+      user.email.toLowerCase().includes(searchTerm)
+    );
+    // Forzar la detección de cambios (solo necesario si Angular no lo hace automáticamente)
+    this.cdr.detectChanges();
+  }
+
+  // Limpiar el filtro de búsqueda
+  clearFilterAvailable(input: HTMLInputElement): void {
+    input.value = "";  // Limpiar el campo de búsqueda
+    this.filteredAvailableUsers = [...this.data];  // Restablecer los datos para mostrar todas las amistades
+  }
+
+   // Agregar un usuario a favoritos
+   addFavorite(user: any): void {
+    /*this.friendshipsService.addFavorite(user.id).subscribe({
+      next: () => {
+        this.snackBar.open(`${user.name} has been added to favorites.`, "Close", {
+          duration: 2000,
+        });
+        this.loadFriendships();  // Recargar los datos
+      },
+      error: () => {
+        this.snackBar.open("Error adding user to favorites.", "Close", {
+          duration: 2000,
+        });
+      },
+    });*/
+  }
+   // Eliminar un usuario de favoritos
+   removeFavorite(user: any): void {
+    /*this.friendshipsService.removeFavorite(user.id).subscribe({
+      next: () => {
+        this.snackBar.open(`${user.name} has been removed from favorites.`, "Close", {
+          duration: 2000,
+        });
+        this.loadFriendships();  // Recargar los datos
+      },
+      error: () => {
+        this.snackBar.open("Error removing user from favorites.", "Close", {
+          duration: 2000,
+        });
+      },
+    });*/
   }
 }
