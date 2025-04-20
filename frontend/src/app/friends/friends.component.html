@@ -10,7 +10,11 @@
    <!-- Tab Group for Favorites and Add Favorites -->
    <mat-tab-group animationDuration="500ms">
     <!-- Tab 1 - Favorites -->
-    <mat-tab label="Favorites">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon" style="color: #e30000fe">favorite</mat-icon>
+        Favorites
+      </ng-template>
       <div class="filters">
         <mat-form-field class="full-width">
           <mat-label>Search by Email</mat-label>
@@ -48,7 +52,11 @@
       </div>
     </mat-tab>
     <!-- Tab 2 - Add Favorites -->
-    <mat-tab label="Add Favorites">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">person_add</mat-icon>
+        Add Favorites
+      </ng-template>
       <div class="filters">
         <mat-form-field class="full-width">
           <mat-label>Search by Email</mat-label>
