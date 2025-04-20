@@ -31,8 +31,7 @@
     [enableSelection]="false"
     [enableActions]="true"
     (action1)="toggleFavorite($event)"
-    [action1Icon]="'favorite'"
-    [action1Tooltip]="'Add/Remove from Favorites'"
+    [action1Icon]="isFavorite ? 'favorite' : 'favorite_border'"    [action1Tooltip]="'Add/Remove from Favorites'"
   >
   </app-table>
 </div>

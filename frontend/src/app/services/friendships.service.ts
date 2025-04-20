@@ -13,7 +13,7 @@ export class FriendshipsService {
   constructor(private http: HttpClient) {}
 
   getAllFriendships(): Observable<any> {
-    return this.http.get<any>(this.urlFriendsGetAllSorted, {
+    return this.http.get<any>(this.urlGetFavs, {
       withCredentials: true,
     });
   }

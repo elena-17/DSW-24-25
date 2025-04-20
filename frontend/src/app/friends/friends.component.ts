@@ -27,7 +27,7 @@ import { TableComponent } from "../shared/table/table.component";
   styleUrls: ["./friends.component.scss"],
 })
 export class FriendsComponent {
-
+  isFavorite: boolean = false;  // Estado de favorito
   columns: any[] = [];  // Columnas de la tabla
   data: any[] = [];  // Datos de los usuarios
   filteredData: any[] = [];  // Datos filtrados por búsqueda
@@ -81,6 +81,6 @@ export class FriendsComponent {
   }
 
   toggleFavorite($event: any) {
-    throw new Error('Method not implemented.');
-    }
+    this.isFavorite = !this.isFavorite;  // Cambiar el estado de favorito}
+  }
 }
