@@ -9,21 +9,6 @@ from .models import Favorite
 
 
 # Create your views here.
-# This function retrieves all users except the current user and sorts them by favorites.
-@api_view(["GET"])
-def get_users_sorted_by_favorites(request):
-    current_user = request.user
-
-    users = (
-        User.objects.exclude(email=current_user.email)
-        .annotate(is_favorite=ExpressionWrapper(Q(favorite_by__user=current_user), output_field=BooleanField()))
-        .order_by("-is_favorite", "name")
-    )
-
-    serializer = UserProfileSerializer(users, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 # This function retrieves all users who are marked as favorites by the current user.
 @api_view(["GET"])
 def get_favorite_users(request):
@@ -32,6 +17,15 @@ def get_favorite_users(request):
     serializer = UserProfileSerializer(favorite_users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+# This function retrieves all users who are not marked as favorites by the current user and avoid current user.
+@api_view(["GET"])
+def get_non_favorite_users(request):
+    current_user = request.user
+    non_favorite_users = User.objects.exclude(
+        Q(favorite_by__user=current_user) | Q(email=current_user.email)
+    ).order_by("name")
+    serializer = UserProfileSerializer(non_favorite_users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # This function allows the current user to add a user to their favorites.
 @api_view(["POST"])

@@ -25,12 +25,20 @@ class FavoriteTest(APITestCase):
             password="testpassword",
             is_confirmed=True,
         )
+        self.user3 = User.objects.create_user(
+            email="user3@test.com",
+            phone="456789123",
+            name="Test User3",
+            id_number="456789123",
+            password="testpassword",
+            is_confirmed=True,
+        )
         self.token = self.get_token()
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
-        self.get_users_sorted_by_favorites_url = reverse("favorites:get-users-sorted-by-favorites")
         self.get_favorite_users_url = reverse("favorites:get-favorite-users")
         self.add_to_favorites_url = reverse("favorites:add-to-favorites")
         self.remove_from_favorites_url = reverse("favorites:remove-from-favorites")
+        self.get_non_favorite_users_url = reverse("favorites:get-non-favorite-users")
 
     def get_token(self):
         data = {"email": self.user1.email, "password": "testpassword"}
@@ -68,13 +76,19 @@ class FavoriteTest(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["email"], self.user2.email)
 
-    def test_get_users_sorted_by_favorites(self):
-        """Test that users are sorted by favorites"""
+    def test_non_favorite_users(self):
+        """Test that user1 sees only non-favorite users"""
+        # Agregamos user2 como favorito de user1
         Favorite.objects.create(user=self.user1, favorite_user=self.user2)
-        response = self.client.get(self.get_users_sorted_by_favorites_url)
+        # Hacemos la petición al endpoint
+        response = self.client.get(self.get_non_favorite_users_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Verify that the first user in the list is the favorite user
-        self.assertEqual(response.data[0]["email"], self.user2.email)
+        # Extraemos los correos de los usuarios devueltos
+        emails = [user["email"] for user in response.data]
+        # user3 debería estar, user2 (favorito) no, y user1 (autenticado) tampoco
+        self.assertIn(self.user3.email, emails)
+        self.assertNotIn(self.user2.email, emails)
+        self.assertNotIn(self.user1.email, emails)
 
     def test_remove_from_favorites(self):
         """Test that user1 can remove user2 from their favorites"""
