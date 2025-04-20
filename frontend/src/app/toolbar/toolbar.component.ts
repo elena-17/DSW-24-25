@@ -31,13 +31,15 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userName = sessionStorage.getItem("userName") || "User";
-    this.getNotifications();
-    window.addEventListener("userNameUpdated", this.updateUserName);
-    this.counterNotfService.startListening();
-    this.counterNotfService.pendingCount$.subscribe((count) => {
-      console.log("Pending count updated:", count);
-      this.notifications = count;
-    });
+    if (!this.isAdmin()) {
+      this.getNotifications();
+      window.addEventListener("userNameUpdated", this.updateUserName);
+      this.counterNotfService.startListening();
+      this.counterNotfService.pendingCount$.subscribe((count) => {
+        console.log("Pending count updated:", count);
+        this.notifications = count;
+      });
+    }
   }
 
   ngOnDestroy(): void {
