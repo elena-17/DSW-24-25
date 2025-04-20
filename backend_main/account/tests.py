@@ -25,7 +25,7 @@ class AccountTestCase(APITestCase):
         self.withdraw_url = reverse("account:subtracting-money")
         self.get_accounts = reverse("account:get-accounts")
         self.update_account_balance = reverse("account:update-account-balance")
-       
+
         self.account, created = Account.objects.get_or_create(user=self.user, defaults={"balance": Decimal("0.00")})
 
     def get_token(self):
@@ -77,11 +77,16 @@ class AccountTestCase(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["user"], self.user.email)  # El correo electrónico ahora debe coincidir.
         self.assertEqual(Decimal(response.data[0]["balance"]), Decimal("0.00"))
-        
+
     def test_update_account_balance(self):
-        response = self.client.put( self.update_account_balance, {"email": self.user.email, "amount": "500.00"})
+        response = self.client.put(self.update_account_balance, {"email": self.user.email, "amount": "500.00"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.account.refresh_from_db()
         self.assertEqual(self.account.balance, Decimal("500.00"))
         self.assertEqual(response.data["balance"], "500.00")
-        self.assertEqual(response.data["user"], self.user.email)  
+        self.assertEqual(response.data["user"], self.user.email)
+
+    def test_update_account_negative(self):
+        response = self.client.put(self.update_account_balance, {"email": self.user.email, "amount": "-500.00"})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["amount"], "Amount must be positive")

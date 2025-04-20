@@ -1,4 +1,6 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -43,6 +45,21 @@ def get_all_transactions_receiver(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(["GET"])
+def number_pending(request):
+    """
+    get number of pending transactions
+    """
+    transactions = Transaction.objects.filter(
+        (
+            (Q(receiver=request.user) & Q(status="pending") & Q(type="send"))
+            | (Q(sender=request.user) & Q(status="pending") & Q(type="request"))
+        )
+    )
+    serializer = TransactionSerializer(transactions, many=True)
+    return Response({"number_pending": len(serializer.data)}, status=status.HTTP_200_OK)
+
+
 @api_view(["POST"])
 def send_money(request):
     request_data = request.data.copy()
@@ -52,6 +69,9 @@ def send_money(request):
     if serializer.is_valid():
         transactions = serializer.save()
         tr_serialized = TransactionSerializer(transactions, many=True)
+        for transaction in tr_serialized.data:
+            topic = f"user/{transaction['receiver']}"
+            publish_to_mercure(topic, transaction)
         return Response(
             {"message": "Transaction successful", "transactions": tr_serialized.data},
             status=status.HTTP_201_CREATED,
@@ -69,6 +89,9 @@ def request_money(request):
     if serializer.is_valid():
         transactions = serializer.save()
         tr_serialized = TransactionSerializer(transactions, many=True)
+        for transaction in tr_serialized.data:
+            topic = f"user/{transaction['sender']}"
+            publish_to_mercure(topic, transaction)
         return Response(
             {"message": "Transaction successful", "transactions": tr_serialized.data},
             status=status.HTTP_201_CREATED,

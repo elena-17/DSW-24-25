@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -42,32 +44,33 @@ class TransactionAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         return response.data["access"]
 
-    # def test_get_transaction_successful(self) -> None:
-    #     # Send GET request to retrieve the transaction
-    #     self.transaction = Transaction.objects.create(
-    #         sender=self.user1,
-    #         receiver=self.user2,
-    #         amount=150,
-    #         title="Sample Transaction",
-    #         description="This is a test transaction",
-    #         status="pending",
-    #         type="send",
-    #     )
+    def test_get_transaction_successful(self) -> None:
+        # Send GET request to retrieve the transaction
+        self.transaction = Transaction.objects.create(
+            sender=self.user1,
+            receiver=self.user2,
+            amount=150,
+            title="Sample Transaction",
+            description="This is a test transaction",
+            status="pending",
+            type="send",
+        )
 
-    #     transaction_url = reverse("get_transaction", kwargs={"id": self.transaction.id})
-    #     response = self.client.get(transaction_url)
+        transaction_url = reverse("get_transaction", kwargs={"id": self.transaction.id})
+        response = self.client.get(transaction_url)
 
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(response.data["id"], self.transaction.id)
-    #     self.assertEqual(response.data["sender"], self.user1.email)
-    #     self.assertEqual(response.data["receiver"], self.user2.email)
-    #     self.assertEqual(response.data["amount"], "150.00")
-    #     self.assertEqual(response.data["title"], "Sample Transaction")
-    #     self.assertEqual(response.data["description"], "This is a test transaction")
-    #     self.assertEqual(response.data["status"], "pending")
-    #     self.assertEqual(response.data["type"], "send")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["id"], self.transaction.id)
+        self.assertEqual(response.data["sender"], self.user1.email)
+        self.assertEqual(response.data["receiver"], self.user2.email)
+        self.assertEqual(response.data["amount"], "150.00")
+        self.assertEqual(response.data["title"], "Sample Transaction")
+        self.assertEqual(response.data["description"], "This is a test transaction")
+        self.assertEqual(response.data["status"], "pending")
+        self.assertEqual(response.data["type"], "send")
 
-    def test_send_money(self):
+    @patch("transactions.views.viewsUser.publish_to_mercure")
+    def test_send_money(self, mock_mercure):
         send_money_url = reverse("send_money")
 
         payload = {
@@ -98,7 +101,8 @@ class TransactionAPI(APITestCase):
         self.user1.account.refresh_from_db()
         self.assertEqual(str(self.user1.account.balance), "950.00")
 
-    def test_send_money_same_user(self):
+    @patch("transactions.views.viewsUser.publish_to_mercure")
+    def test_send_money_same_user(self, mock_mercure):
         send_money_url = reverse("send_money")
 
         payload = {
@@ -114,7 +118,8 @@ class TransactionAPI(APITestCase):
         self.assertIn("sender", response.data)
         self.assertEqual(response.data["sender"], ["Sender and receiver cannot be the same."])
 
-    def test_request_money(self):
+    @patch("transactions.views.viewsUser.publish_to_mercure")
+    def test_request_money(self, mock_mercure):
         request_money_url = reverse("request_money")
 
         payload = {

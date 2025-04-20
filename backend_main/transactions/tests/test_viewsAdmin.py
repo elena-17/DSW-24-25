@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -95,7 +97,7 @@ class TransactionListViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
 
-    def test_update(self):
+    def test_update_pending_approved(self):
         data = {"status": "approved"}
         response = self.client.patch(reverse("transaction_update", args=[self.transaction2.id]), data=data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -116,7 +118,8 @@ class TransactionListViewTests(APITestCase):
         self.transaction1.refresh_from_db()
         self.assertEqual(self.transaction1.status, "pending")
 
-    def test_create(self):
+    @patch("transactions.views.viewsAdmin.publish_to_mercure")
+    def test_create(self, mock_mercure):
         data = {
             "sender": self.user1.email,
             "receiver": self.user2.email,

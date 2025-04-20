@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 from users.models import User
 
@@ -42,6 +41,12 @@ class Transaction(models.Model):
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="send")
 
     def approveSend(self):
+        if self.status == "rejected":
+            # if self.sender.account.balance < self.amount:
+            #     raise ValidationError("Insufficient balance for this transaction.")
+            self.sender.account.balance -= self.amount
+            self.sender.account.save()
+
         self.receiver.account.balance += self.amount
         self.receiver.account.save()
 
@@ -50,17 +55,19 @@ class Transaction(models.Model):
 
     def rejectSend(self):
         if self.status == "approved":
-            # withdraw the money from the receiver account
+            # if self.receiver.account.balance < self.amount:
+            #     raise ValidationError("Insufficient balance for this transaction.")
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
+
         self.sender.account.balance += self.amount
         self.sender.account.save()
         self.status = "rejected"
         self.save()
 
     def approveRequest(self):
-        if self.sender.account.balance < self.amount:
-            raise ValidationError("Insufficient balance for this transaction.")
+        # if self.sender.account.balance < self.amount:
+        #     raise ValidationError("Insufficient balance for this transaction.")
         # Actualizar los saldos
         self.sender.account.balance -= self.amount
         self.sender.account.save()
@@ -73,32 +80,39 @@ class Transaction(models.Model):
 
     def rejectRequest(self):
         if self.status == "approved":
-            # If the transaction was approved, we need to revert the balances
-            self.sender.account.balance += self.amount
-            self.sender.account.save()
-
+            # if self.receiver.account.balance < self.amount:
+            #     raise ValidationError("Insufficient balance for this transaction.")
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
+            self.sender.account.balance += self.amount
+            self.sender.account.save()
 
         self.status = "rejected"
         self.save()
 
     def pendingSend(self):
         if self.status == "approved":
-            # withdraw the money from the receiver account
+            # if self.receiver.account.balance < self.amount:
+            #     raise ValidationError("Insufficient balance for this transaction.")
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
+        if self.status == "rejected":
+            # if self.sender.account.balance < self.amount:
+            #     raise ValidationError("Insufficient balance for this transaction.")
+            self.sender.account.balance -= self.amount
+            self.sender.account.save()
         self.status = "pending"
         self.save()
 
     def pendingRequest(self):
         if self.status == "approved":
-            # If the transaction was approved, we need to revert the balances
-            self.sender.account.balance += self.amount
-            self.sender.account.save()
-
+            # if self.receiver.account.balance < self.amount:
+            #     raise ValidationError("Insufficient balance for this transaction.")
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
+
+            self.sender.account.balance += self.amount
+            self.sender.account.save()
 
         self.status = "pending"
         self.save()
