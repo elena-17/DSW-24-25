@@ -6,7 +6,7 @@ import { Observable } from "rxjs";
 })
 export class FriendshipsService {
   private baseApiUrl = "http://localhost:8000/favorites";
-  private urlFriendsGetAllSorted = `${this.baseApiUrl}/users/`;
+  private urlGetNotFavs = `${this.baseApiUrl}/non-favorites/`;
   private urlGetFavs = `${this.baseApiUrl}/`;
   private urlAddFav = `${this.baseApiUrl}/add`;
   private urlRemoveFav = `${this.baseApiUrl}/remove`;
@@ -14,6 +14,12 @@ export class FriendshipsService {
 
   getAllFriendships(): Observable<any> {
     return this.http.get<any>(this.urlGetFavs, {
+      withCredentials: true,
+    });
+  }
+
+  getNonFriendships(): Observable<any> {
+    return this.http.get<any>(this.urlGetNotFavs, {
       withCredentials: true,
     });
   }

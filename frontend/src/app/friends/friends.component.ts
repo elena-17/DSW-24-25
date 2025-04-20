@@ -43,6 +43,7 @@ export class FriendsComponent {
   ngOnInit(): void {
     this.columns = getFriendshipsColumns();
     this.loadFriendships();  // Cargar los datos de las amistades (usuarios)
+    this.loadNonFriendships();  // Cargar los datos de los no amigos (usuarios disponibles)
   }
 
   loadFriendships(): void {
@@ -55,6 +56,27 @@ export class FriendsComponent {
       error: (error) => {
         this.snackBar.open(
           error.error.error || "Error loading friendships",
+          "Close",
+          {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          }
+        );
+      },
+    });
+  }
+
+  loadNonFriendships(): void {
+    this.friendshipsService.getNonFriendships().subscribe({
+      next: (response) => {
+        this.data = response;
+        this.filteredAvailableUsers = [...this.data];  // Inicializamos los datos filtrados
+        console.log("Available users loaded successfully.", this.data);
+      },
+      error: (error) => {
+        this.snackBar.open(
+          error.error.error || "Error loading available users.",
           "Close",
           {
             duration: 3000,
