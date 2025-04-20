@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 from transactions.models import Transaction
 
@@ -35,6 +37,8 @@ class TransactionStatusUpdateSerializer(serializers.ModelSerializer):
 
         action = action_map.get((new_status, instance.type))
         if action:
-            action()
-
+            try:
+                action()
+            except DjangoValidationError as e:
+                raise DRFValidationError(str(e))
         return instance
