@@ -1,24 +1,22 @@
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
-from django.test import TestCase
+from rest_framework import status
 from users.models import User
+from django.urls import reverse
+from rest_framework.test import APITestCase
+from .models import Favorite
 
-from .models import FriendRequest, Friendship
 
-
-class FriendshipTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+class FavoriteTest(APITestCase):
+    def setUp(self):
         """Executed once for all tests of the class."""
-        cls.user1 = User.objects.create(
-            email="user@test.com",
+        self.user1 = User.objects.create_user(
+            email="user1@test.com",
             phone="123456789",
-            name="Test User",
+            name="Test User1",
             id_number="123456789",
             password="testpassword",
             is_confirmed=True,
         )
-        cls.user2 = User.objects.create(
+        self.user2 = User.objects.create_user(
             email="user2@test.com",
             phone="987654321",
             name="Test User2",
@@ -26,69 +24,73 @@ class FriendshipTest(TestCase):
             password="testpassword",
             is_confirmed=True,
         )
+        self.token = self.get_token()
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
+        self.get_users_sorted_by_favorites_url = reverse("favorites:get-users-sorted-by-favorites")
+        self.get_favorite_users_url = reverse("favorites:get-favorite-users")
+        self.add_to_favorites_url = reverse("favorites:add-to-favorites")
+        self.remove_from_favorites_url = reverse("favorites:remove-from-favorites")
 
-    def test_friendship_creation(self) -> None:
-        friendship = Friendship.objects.create(user1=self.user1, user2=self.user2)
+    def get_token(self):
+        data = {"email": self.user1.email, "password": "testpassword"}
+        response = self.client.post(reverse("user:login_user"), data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        return response.data["access"]
 
-        self.assertEqual(friendship.user1, self.user1)
-        self.assertEqual(friendship.user2, self.user2)
+    def test_add_to_favorites(self):
+        """Test that user1 can add user2 to their favorites"""
+        response = self.client.post(self.add_to_favorites_url, data={"email": self.user2.email})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # Verify that the favorite relationship was created
+        favorite = Favorite.objects.filter(user=self.user1, favorite_user=self.user2).first()
+        self.assertIsNotNone(favorite)
 
-    def test_duplicate_friendship(self) -> None:
-        # friendship user1 with user2
-        Friendship.objects.create(user1=self.user1, user2=self.user2)
+    def test_add_to_favorites_duplicate(self):
+        """Test that adding the same favorite again does not create duplicate entries"""
+        Favorite.objects.create(user=self.user1, favorite_user=self.user2)
+        response = self.client.post(self.add_to_favorites_url, data={"email": self.user2.email})
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        # VerifY that the count of favorites is still 1
+        self.assertEqual(Favorite.objects.filter(user=self.user1, favorite_user=self.user2).count(), 1)
 
-        # try make friendship user2 with user1
-        with self.assertRaises(IntegrityError):
-            Friendship.objects.create(user1=self.user1, user2=self.user2)
+    def test_add_to_favorites_self(self):
+        """Test that a user cannot add themselves to favorites"""
+        response = self.client.post(self.add_to_favorites_url, data={"email": self.user1.email})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["error"], "Cannot favorite yourself")
 
+    def test_get_favorite_users(self):
+        """Test that user1 can view their favorite users"""
+        Favorite.objects.create(user=self.user1, favorite_user=self.user2)
+        response = self.client.get(self.get_favorite_users_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["email"], self.user2.email)
 
-class FriendRequestTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        """Executed once for all tests of the class."""
-        cls.user1 = User.objects.create(
-            email="user@test.com",
-            phone="123456789",
-            name="Test User",
-            id_number="123456789",
-            password="testpassword",
-            is_confirmed=True,
-        )
-        cls.user2 = User.objects.create(
-            email="user2@test.com",
-            phone="987654321",
-            name="Test User2",
-            id_number="987654321",
-            password="testpassword",
-            is_confirmed=True,
-        )
+    def test_get_users_sorted_by_favorites(self):
+        """Test that users are sorted by favorites"""
+        Favorite.objects.create(user=self.user1, favorite_user=self.user2)
+        response = self.client.get(self.get_users_sorted_by_favorites_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Verify that the first user in the list is the favorite user
+        self.assertEqual(response.data[0]['email'], self.user2.email)
 
-    def test_friend_request_creation(self) -> None:
-        friend_request = FriendRequest.objects.create(sender=self.user1, receiver=self.user2)
+    def test_remove_from_favorites(self):
+        """Test that user1 can remove user2 from their favorites"""
+        favorite = Favorite.objects.create(user=self.user1, favorite_user=self.user2)
+        response = self.client.delete(self.remove_from_favorites_url, data={"email": self.user2.email})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Verify that the favorite relationship was deleted
+        self.assertFalse(Favorite.objects.filter(user=self.user1, favorite_user=self.user2).exists())
 
-        self.assertEqual(friend_request.sender, self.user1)
-        self.assertEqual(friend_request.receiver, self.user2)
-        self.assertEqual(friend_request.status, "pending")
-
-    def test_duplicate_friend_request_pending(self) -> None:
-        # friend request from user1 to user2
-        FriendRequest.objects.create(sender=self.user1, receiver=self.user2)
-
-        # try to make the same request again
-        with self.assertRaises(ValidationError):
-            FriendRequest.objects.create(sender=self.user1, receiver=self.user2)
-
-    def test_duplicate_friend_request_accepted(self) -> None:
-        # friend request from user1 to user2
-        FriendRequest.objects.create(sender=self.user1, receiver=self.user2, status="accepted")
-
-        # try to make new request
-        FriendRequest.objects.create(sender=self.user1, receiver=self.user2)
-
-    def test_duplicate_friend_request_interchanged(self) -> None:
-        # friend request from user1 to user2
-        FriendRequest.objects.create(sender=self.user1, receiver=self.user2)
-
-        # try to make a request user2 to user1
-        with self.assertRaises(Exception):
-            FriendRequest.objects.create(sender=self.user2, receiver=self.user1)
+    def test_remove_from_favorites_not_favorite(self):
+        """Test that trying to remove a non-favorite user returns an error"""
+        response = self.client.delete(self.remove_from_favorites_url, data={"email": self.user2.email})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data["error"], "Favorite user not found")
+    
+    def test_remove_from_favorites_user_not_found(self):
+        """Test that trying to remove a user who does not exist returns an error"""
+        response = self.client.delete(self.remove_from_favorites_url, data={"email": "nonexistent@test.com"})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data["error"], "Favorite user not found")
