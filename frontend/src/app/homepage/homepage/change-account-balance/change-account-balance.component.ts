@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, Inject, OnInit } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
@@ -14,9 +14,10 @@ import { MaterialModule } from "../../../material.module";
 import { MatSelectModule } from "@angular/material/select";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatStepperModule } from "@angular/material/stepper";
-import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
+import { MatStepper, MatStepperModule } from "@angular/material/stepper";
+import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from "@angular/cdk/stepper";
 import { NotificationService } from "../../../services/notification.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-create-transaction",
@@ -46,12 +47,28 @@ export class ChangeAccountBalanceComponent {
   emailCtrl = new FormControl("", [Validators.email]);
   creditCards: any[] = [];
   action: string;
+  isStripeValidated: boolean = false;
+  isStripeReady: boolean = false;
+
+  stripeValidationRequested: boolean = false;
+  stripeLoaded: boolean = false;
+  stripeCardComplete: boolean = false;
+
+  clientSecretKey: string = "";
+  stripe: any;
+  elements: any;
+  cardElement: any;
+  //stripeCard: any;
+  STRIPE_PUBLIC_KEY: string =
+    "pk_test_51Q7a3vP0LaAzN5HUVqMSpL38bzpaZDhPylsy5t0rkLoCM9aQbC3F5VFJV4hJdBX9ouE4QrqnO5p0Oh9d02ShLTNC00muyYlhEa";
   waitingValidation: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<ChangeAccountBalanceComponent>,
     private formBuilder: FormBuilder,
     private userService: UserService,
+    private snackBar: MatSnackBar,
+    private cdRef: ChangeDetectorRef,
     private notificationService: NotificationService,
     @Inject(MAT_DIALOG_DATA) public data: { title: string; action: string },
   ) {
@@ -73,6 +90,7 @@ export class ChangeAccountBalanceComponent {
           Validators.pattern(/^\d+(\.\d{1,2})?$/),
         ],
       ],
+      paymentMethod: ["ourBank", Validators.required],
     });
   }
 
@@ -92,6 +110,39 @@ export class ChangeAccountBalanceComponent {
         );
       },
     });
+  }
+  
+  onStepChange(event: StepperSelectionEvent, stepper: MatStepper): void {
+    const fromStep = event.previouslySelectedIndex;
+    const toStep = event.selectedIndex;
+    const paymentMethod = this.amountForm.get('paymentMethod')?.value;
+
+    // Bloqueamos si se intenta ir del paso 2 al 3 sin validación
+    if ((fromStep === 0 || fromStep === 1) && toStep === 2 && paymentMethod === 'stripe' && !this.stripeValidationRequested) {
+      this.snackBar.open('Please validate your payment method before proceeding.', 'Close', {
+        duration: 2500,
+        horizontalPosition: 'center',
+        verticalPosition: 'top',
+      });
+
+      // Cancelamos el cambio de paso
+      setTimeout(() => {
+        stepper.selectedIndex = fromStep;
+      }, 0);
+
+      return;
+    }
+    
+    // Si volvemos al paso 0 y el método de pago es Stripe, reseteamos Stripe
+    if (toStep === 0 && paymentMethod === 'stripe') {
+      this.stripeValidationRequested = false;
+      this.isStripeValidated = false;
+
+      if (this.cardElement) {
+        this.cardElement.unmount();
+        this.cardElement = null;
+      }
+    }
   }
 
   validateCard(): void {
@@ -131,6 +182,113 @@ export class ChangeAccountBalanceComponent {
     });
   }
 
+  requestStripeValidation() {
+    this.userService
+      .paymentRequestStripe(this.amountForm.value.amount)
+      .subscribe(
+        (response) => {
+          const clientSecret = response;
+          this.clientSecretKey = response.client_secret;
+          this.snackBar.open("Request loaded successfully", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+          this.stripeValidationRequested = true;
+          this.isStripeReady = true;
+          this.loadStripePayment(clientSecret);
+        },
+        (error) => {
+          this.snackBar.open("Failed to load request", "Close", {
+            duration: 2000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+          });
+        },
+      );
+  }
+
+  loadStripePayment(clientSecret: string) {
+    if (!this.stripeLoaded) {
+      this.loadStripeScript(clientSecret);
+    } else {
+      this.initializeStripePayment(clientSecret);
+    }
+  }
+
+  loadStripeScript(clientSecret: string) {
+    // Verificamos si el script de Stripe ya está presente
+    if (document.querySelector('script[src="https://js.stripe.com/v3/"]')) {
+      this.stripeLoaded = true;
+      this.initializeStripePayment(clientSecret);
+      return;
+    }
+
+    // Si no está cargado, creamos y añadimos el script de Stripe
+    const script = document.createElement("script");
+    script.src = "https://js.stripe.com/v3/";
+    script.async = true;
+    script.onload = () => {
+      this.stripeLoaded = true;
+      this.initializeStripePayment(clientSecret);
+    };
+    document.head.appendChild(script);
+  }
+
+  private initializeStripePayment(clientSecret: string) {
+    this.stripe = (window as any).Stripe(this.STRIPE_PUBLIC_KEY, {
+      locale: "en",
+    });
+    if (!this.stripe) {
+      this.snackBar.open("Stripe not loaded", "Close", {
+        duration: 2000,
+        horizontalPosition: "center",
+        verticalPosition: "top",
+      });
+      return;
+    }
+
+    //Create payment forms with Stripe
+    this.elements = this.stripe.elements();
+    this.cardElement = this.elements.create("card");
+    setTimeout(() => {
+      const target = document.getElementById("stripe-card-element");
+      if (target) {
+        this.cardElement.mount("#stripe-card-element");
+
+        // Listen for changes
+        this.cardElement.on("change", (event: any) => {
+          this.isStripeValidated = event.complete;
+          this.cdRef.detectChanges?.();
+        });
+      } else {
+        console.warn("Stripe card element container not found.");
+      }
+    }, 0);
+  }
+
+  async onStripeConfirm() {
+    if (!this.stripe || !this.cardElement) {
+      alert("Stripe not initialized properly.");
+      return;
+    }
+  
+    const { paymentIntent, error } = await this.stripe.confirmCardPayment(
+      this.clientSecretKey,
+      {
+        payment_method: {
+          card: this.cardElement,
+        },
+      }
+    );
+  
+    if (error) {
+      console.error("Error confirming Stripe payment:", error);
+    } else if (paymentIntent?.status === "succeeded") {
+      this.onSubmit(); // o cualquier lógica posterior
+    }
+  }
+
   onCancel() {
     this.creditForm.reset();
     this.amountForm.reset();
@@ -138,7 +296,7 @@ export class ChangeAccountBalanceComponent {
   }
 
   onSubmit() {
-    if (this.creditForm.valid && this.amountForm.valid) {
+    if (this.amountForm.valid) {
       const amount = this.amountForm.value.amount;
 
       if (this.action === "deposit") {
