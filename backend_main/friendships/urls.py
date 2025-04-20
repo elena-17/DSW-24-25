@@ -1,6 +1,12 @@
 from django.urls import path
 
-from .views import get_users_sorted_by_favorites, get_favorite_users, add_to_favorites, remove_from_favorites
+from .views import (
+    add_to_favorites,
+    get_favorite_users,
+    get_users_sorted_by_favorites,
+    remove_from_favorites,
+)
+
 app_name = "favorites"
 
 urlpatterns = [

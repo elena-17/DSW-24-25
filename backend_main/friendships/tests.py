@@ -1,7 +1,8 @@
-from rest_framework import status
-from users.models import User
 from django.urls import reverse
+from rest_framework import status
 from rest_framework.test import APITestCase
+from users.models import User
+
 from .models import Favorite
 
 
@@ -73,7 +74,7 @@ class FavoriteTest(APITestCase):
         response = self.client.get(self.get_users_sorted_by_favorites_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Verify that the first user in the list is the favorite user
-        self.assertEqual(response.data[0]['email'], self.user2.email)
+        self.assertEqual(response.data[0]["email"], self.user2.email)
 
     def test_remove_from_favorites(self):
         """Test that user1 can remove user2 from their favorites"""
@@ -88,7 +89,7 @@ class FavoriteTest(APITestCase):
         response = self.client.delete(self.remove_from_favorites_url, data={"email": self.user2.email})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["error"], "Favorite user not found")
-    
+
     def test_remove_from_favorites_user_not_found(self):
         """Test that trying to remove a user who does not exist returns an error"""
         response = self.client.delete(self.remove_from_favorites_url, data={"email": "nonexistent@test.com"})

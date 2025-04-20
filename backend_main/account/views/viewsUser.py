@@ -1,12 +1,13 @@
+from decimal import Decimal
 
+import stripe
+
+from account.models import Account
+from account.serializers import AccountSerializer
 from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from decimal import Decimal
-import stripe
-from account.models import Account
-from account.serializers import AccountSerializer
 
 
 @api_view(["GET"])
@@ -47,9 +48,10 @@ def subtracting_money(request):
     except Account.DoesNotExist:
         return Response({"error": "Account not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
 @api_view(["PUT"])
 def paymentRequest(request):
-    stripe.api_key=settings.SECRET_KEY_STRIPE
+    stripe.api_key = settings.SECRET_KEY_STRIPE
     print(stripe.api_key)
     try:
         amount = Decimal(request.data.get("amount"))
@@ -61,9 +63,9 @@ def paymentRequest(request):
             amount=amount_in_cents,
             currency="eur",
         )
-        
+
         return Response({"client_secret": intent.client_secret}, status=status.HTTP_200_OK)
     except stripe.error.StripeError as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
+    except Exception:
         return Response({"error": "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
