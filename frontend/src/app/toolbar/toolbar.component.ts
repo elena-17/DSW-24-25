@@ -69,7 +69,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.router.navigate(["/help"]);
   }
 
-  goToFriends(): void {
+  goToFavorites(): void {
     this.router.navigate(["/friends"]);
   }
 

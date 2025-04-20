@@ -1,4 +1,38 @@
 <app-toolbar></app-toolbar>
-<div class="content">
-  <h1>FRIENDS</h1>
+<div class="page-container">
+  <div class="underlined-title">
+    <div class="title-buttons">
+      <h2>Users & Favorites</h2>
+    </div>
+    <hr />
+  </div>
+
+  <!-- Search Filter Section -->
+  <div class="filters">
+    <mat-form-field class="full-width">
+      <mat-label>Search by Email</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        (keyup)="updateSearchFilter($event)"
+        placeholder="Ex: jane@example.com"
+        #input
+      />
+      <button mat-icon-button matSuffix (click)="clearFilter(input)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <!-- Table Section -->
+  <app-table
+    [columns]="columns"
+    [data]="filteredData"
+    [enableSelection]="false"
+    [enableActions]="true"
+    (action1)="toggleFavorite($event)"
+    [action1Icon]="'favorite'"
+    [action1Tooltip]="'Add/Remove from Favorites'"
+  >
+  </app-table>
 </div>
