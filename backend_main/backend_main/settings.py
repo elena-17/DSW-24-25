@@ -32,6 +32,9 @@ SECRET_KEY = os.getenv("SECRET_KEY_BANK", "django-insecure-dz4=-7p1kervdkfv4$*2y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG_BANK", "") != "False"
 
+# SECRET KEY STRIPE
+SECRET_KEY_STRIPE = os.getenv("SECRET_KEY_STRIPE", "")
+
 ALLOWED_HOSTS = []
 
 
