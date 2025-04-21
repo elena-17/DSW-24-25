@@ -52,11 +52,13 @@ export class FriendsComponent {
   onTabChange(event: MatTabChangeEvent): void {
     if (event.index === 0) {
       // Favorites tab
-      this.clearFilterFavorites(this.inputFavorites.nativeElement);  // Limpiar el filtro de favoritos
-      this.updateSearchFilterFavorites({ target: { value: '' } });  // Restablecer la búsqueda de favoritos
+      this.inputFavorites.nativeElement.value = "";  // Clear the input field for available users
+      console.log("Favorites list filtered loaded successfully", this.filteredFavoriteUsers);
     } else if (event.index === 1) {
       // Available tab
-      this.clearFilterAvailable(this.inputAddFavorites.nativeElement);  // Limpiar el filtro de disponibles
+      this.inputAddFavorites.nativeElement.value = "";  // Clear the input field for available users
+      console.log ("Available users filtered loaded successfully", this.filteredAvailableUsers);
+      console.log("Available users loaded successfully", this.availableUsers);
       this.updateSearchFilterAvailable({ target: { value: '' } });  // Restablecer la búsqueda de disponibles
     }
   }
@@ -145,6 +147,8 @@ export class FriendsComponent {
           horizontalPosition: "center",
           verticalPosition: "top",
         });
+        //Quitar de available users and add to favorites
+        this.availableUsers = this.availableUsers.filter(u => u.email !== user.email);
         this.filteredAvailableUsers = this.filteredAvailableUsers.filter(u => u.email !== user.email);
         this.filteredFavoriteUsers = [...this.filteredFavoriteUsers, user];
 
@@ -168,7 +172,7 @@ export class FriendsComponent {
           verticalPosition: "top",
         });
         this.filteredFavoriteUsers = this.filteredFavoriteUsers.filter(u => u.email !== user.email);
-        this.filteredAvailableUsers = [...this.filteredAvailableUsers, user];
+        this.availableUsers = [...this.availableUsers, user]; 
       },
       error: () => {
         this.snackBar.open("Error removing user from favorites.", "Close", {
