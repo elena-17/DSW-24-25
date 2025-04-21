@@ -29,15 +29,12 @@ def transaction_list(request):
         "title": "title__icontains",
         "date_start": "created_at__gte",
         "date_end": "created_at__lte",
+        "status": "status__in",
     }
 
     for field, lookup in filter_fields.items():
         if field in data:
             queryset = queryset.filter(**{lookup: data[field]})
-
-    if "status" in data:
-        statuses = data["status"]
-        queryset = queryset.filter(status__in=statuses)
 
     if "user" in data:
         email = data["user"]

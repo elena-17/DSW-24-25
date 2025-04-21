@@ -58,16 +58,12 @@ def get_all_transactions(request):
         "title": "title__icontains",
         "date_start": "created_at__gte",
         "date_end": "created_at__lte",
+        "status": "status__in",
     }
 
     for field, lookup in filter_fields.items():
         if field in data:
             queryset = queryset.filter(**{lookup: data[field]})
-
-    if "status" in data:
-        statuses = data["status"].split(",")
-        queryset = queryset.filter(status__in=statuses)
-
     paginator = LimitOffsetPagination()
     paginator.default_limit = 30
     paginated_qs = paginator.paginate_queryset(queryset.order_by("-created_at"), request)
