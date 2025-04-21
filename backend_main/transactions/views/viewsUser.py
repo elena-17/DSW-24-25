@@ -31,7 +31,7 @@ def get_all_transactions(request):
     """
     Endpoint unificado para transacciones de usuario:
     /api/transactions/&type=send|request
-        &status=pending|approved|rejected
+        &status=pending,approved,rejected
         &min_amount=&max_amount=
         &date_start=YYYY-MM-DD
         &date_end=YYYY-MM-DD
@@ -53,7 +53,6 @@ def get_all_transactions(request):
         )
 
     filter_fields = {
-        "status": "status",
         "min_amount": "amount__gte",
         "max_amount": "amount__lte",
         "title": "title__icontains",
@@ -65,20 +64,16 @@ def get_all_transactions(request):
         if field in data:
             queryset = queryset.filter(**{lookup: data[field]})
 
-    # Paginación
+    if "status" in data:
+        statuses = data["status"].split(",")
+        queryset = queryset.filter(status__in=statuses)
+
     paginator = LimitOffsetPagination()
     paginator.default_limit = 30
     paginated_qs = paginator.paginate_queryset(queryset.order_by("-created_at"), request)
 
     serializer = TransactionSerializer(paginated_qs, many=True)
     return paginator.get_paginated_response(serializer.data)
-
-
-# @api_view(["GET"])
-# def get_all_transactions(request):
-#     transactions = Transaction.objects.filter(sender=request.user) | Transaction.objects.filter(receiver=request.user)
-#     serializer = TransactionSerializer(transactions, many=True)
-#     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])

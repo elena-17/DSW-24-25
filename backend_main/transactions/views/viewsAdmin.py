@@ -23,7 +23,6 @@ def transaction_list(request):
     queryset = Transaction.objects.select_related("sender", "receiver").all()
 
     filter_fields = {
-        "status": "status",
         "type": "type",
         "min_amount": "amount__gte",
         "max_amount": "amount__lte",
@@ -35,6 +34,10 @@ def transaction_list(request):
     for field, lookup in filter_fields.items():
         if field in data:
             queryset = queryset.filter(**{lookup: data[field]})
+
+    if "status" in data:
+        statuses = data["status"]
+        queryset = queryset.filter(status__in=statuses)
 
     if "user" in data:
         email = data["user"]
