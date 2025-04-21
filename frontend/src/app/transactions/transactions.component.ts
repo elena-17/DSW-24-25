@@ -89,11 +89,11 @@ export class TransactionsComponent implements OnInit {
       if (this.activeTab === "pending") {
         this.ngZone.run(() => {
           // add to pending transactions
-          this.transactionsArray["pending"].data = [
+          this.transactionsArray["pendingMyApproval"].data = [
             data,
-            ...this.transactionsArray["pending"].data,
+            ...this.transactionsArray["pendingMyApproval"].data,
           ];
-          this.transactionsArray["pending"].totalCount += 1;
+          this.transactionsArray["pendingMyApproval"].totalCount += 1;
         });
       }
     };
