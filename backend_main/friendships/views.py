@@ -22,7 +22,7 @@ def get_favorite_users(request):
 def get_non_favorite_users(request):
     current_user = request.user
     non_favorite_users = User.objects.exclude(
-        Q(favorite_by__user=current_user) | Q(email=current_user.email)
+        Q(favorite_by__user=current_user) | Q(email=current_user.email) | Q(is_admin=True)
     ).order_by("name")
     serializer = UserProfileSerializer(non_favorite_users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
