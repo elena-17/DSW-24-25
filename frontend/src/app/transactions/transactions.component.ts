@@ -80,7 +80,6 @@ export class TransactionsComponent implements OnInit {
 
   ngOnInit() {
     this.columns = getTransactionColumns(this.datePipe);
-    console.log("Columns:", this.columns);
     this.initFilters();
     this.eventSource = new EventSource(
       `http://localhost:3000/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
@@ -102,7 +101,6 @@ export class TransactionsComponent implements OnInit {
     this.eventSource.onerror = (error) => {
       console.error("Error en Mercure:", error);
     };
-    console.log("EventSource initialized:", this.eventSource);
   }
 
   ngOnDestroy(): void {
@@ -117,8 +115,6 @@ export class TransactionsComponent implements OnInit {
         ? "pendingOthers"
         : "pendingMyApproval"
       : activeTab;
-
-    console.log("Loading transactions for:", key);
 
     const state = this.transactionsArray[key];
     const offset = state.pageIndex * state.pageSize;
@@ -140,12 +136,11 @@ export class TransactionsComponent implements OnInit {
     this.loading = true;
     this.transactionsService.getTransactions(params).subscribe({
       next: (res: any) => {
-        console.log("Response:", res);
         state.data = res.results;
         state.totalCount = res.count;
       },
       error: (err) => {
-        console.error(`Error loading ${status} transactions: `, err);
+        console.error(`Error loading transactions: `, err);
         this.notificationService.showErrorMessage(
           "Error loading transactions.",
         );
@@ -158,7 +153,6 @@ export class TransactionsComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    console.log("ngAfterViewInit called");
     setTimeout(() => {
       this.filtersForm.updateValueAndValidity();
       this.filterData();
@@ -321,7 +315,6 @@ export class TransactionsComponent implements OnInit {
   }
 
   openDetails(transaction: any) {
-    console.log(transaction);
     transaction.formattedDate =
       this.datePipe.transform(
         new Date(transaction.created_at),
@@ -402,10 +395,10 @@ export class TransactionsComponent implements OnInit {
     this.activeTab = status as "sender" | "receiver" | "pending";
     const filters = this.transformFilters();
     if (this.activeTab === "pending") {
-      this.loadTransactions(this.activeTab, false);
-      this.loadTransactions(this.activeTab, true);
+      this.loadTransactions(this.activeTab, false, filters);
+      this.loadTransactions(this.activeTab, true, filters);
     } else {
-      this.loadTransactions(this.activeTab, false);
+      this.loadTransactions(this.activeTab, false, filters);
     }
   }
 
