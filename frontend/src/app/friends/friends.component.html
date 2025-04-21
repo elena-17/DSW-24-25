@@ -1,11 +1,5 @@
 <app-toolbar></app-toolbar>
-<div class="page-container">
-  <div class="underlined-title">
-    <div class="title-buttons">
-      <h2>Users & Favorites</h2>
-    </div>
-    <hr />
-  </div>
+<div class="age-container">
 
    <!-- Tab Group for Favorites and Add Favorites -->
    <mat-tab-group animationDuration="500ms" (selectedTabChange)="onTabChange($event)">
@@ -15,23 +9,22 @@
         Favorites
         <mat-icon class="tab-icon" style="color: #e30000fe">favorite</mat-icon>
       </ng-template>
-      <div class="filters">
-        <mat-form-field class="full-width">
-          <mat-label>Search by Email</mat-label>
-          <mat-icon matPrefix>search</mat-icon>
-          <input
-            matInput
-            (keyup)="updateSearchFilterFavorites($event)"
-            placeholder="Ex: jane@example.com"
-            #inputFavorites
-          />
-          <button mat-icon-button matSuffix (click)="clearFilterFavorites(inputFavorites)">
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
-
       <div class="page-container">
+        <div class="filters">
+          <mat-form-field class="full-width">
+            <mat-label>Search by Email</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input
+              matInput
+              (keyup)="updateSearchFilterFavorites($event)"
+              placeholder="Ex: jane@example.com"
+              #inputFavorites
+            />
+            <button mat-icon-button matSuffix (click)="clearFilterFavorites(inputFavorites)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
         <div class="underlined-title">
           <div class="title-buttons">
             <h2>Favorite Users</h2>
@@ -58,23 +51,22 @@
         Add Favorites
         <mat-icon class="tab-icon" style="color: #04bcc4; " >person_add</mat-icon>
       </ng-template>
-      <div class="filters">
-        <mat-form-field class="full-width">
-          <mat-label>Search by Email</mat-label>
-          <mat-icon matPrefix>search</mat-icon>
-          <input
-            matInput
-            (keyup)="updateSearchFilterAvailable($event)"
-            placeholder="Ex: john@example.com"
-            #inputAddFavorites
-          />
-          <button mat-icon-button matSuffix (click)="clearFilterAvailable(inputAddFavorites)">
-            <mat-icon>close</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
-
       <div class="page-container">
+        <div class="filters">
+          <mat-form-field class="full-width">
+            <mat-label>Search by Email</mat-label>
+            <mat-icon matPrefix>search</mat-icon>
+            <input
+              matInput
+              (keyup)="updateSearchFilterAvailable($event)"
+              placeholder="Ex: john@example.com"
+              #inputAddFavorites
+            />
+            <button mat-icon-button matSuffix (click)="clearFilterAvailable(inputAddFavorites)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
         <div class="underlined-title">
           <div class="title-buttons">
             <h2>Add to Favorites</h2>
