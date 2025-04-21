@@ -3,9 +3,11 @@ from django.shortcuts import get_object_or_404
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from transactions.models import Transaction
+from transactions.serializers.filter import TransactionFilterSerializer
 from transactions.serializers.send_request import (
     RequestTransactionSerializer,
     SendTransactionSerializer,
@@ -26,23 +28,57 @@ def get_transaction(request, id):
 
 @api_view(["GET"])
 def get_all_transactions(request):
-    transactions = Transaction.objects.filter(sender=request.user) | Transaction.objects.filter(receiver=request.user)
-    serializer = TransactionSerializer(transactions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    """
+    Endpoint unificado para transacciones de usuario:
+    /api/transactions/&type=send|request
+        &status=pending|approved|rejected
+        &min_amount=&max_amount=
+        &date_start=YYYY-MM-DD
+        &date_end=YYYY-MM-DD
+        &limit=&offset=
+    """
+    filter_serializer = TransactionFilterSerializer(data=request.GET)
+
+    if not filter_serializer.is_valid():
+        return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    data = filter_serializer.validated_data
+
+    if data.get("type") == "send":
+        queryset = Transaction.objects.filter(sender=request.user).select_related("receiver")
+    elif data.get("type") == "request":
+        queryset = Transaction.objects.filter(receiver=request.user).select_related("sender")
+    else:
+        queryset = Transaction.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).select_related(
+            "sender", "receiver"
+        )
+
+    filter_fields = {
+        "status": "status",
+        "min_amount": "amount__gte",
+        "max_amount": "amount__lte",
+        "title": "title__icontains",
+        "date_start": "created_at__gte",
+        "date_end": "created_at__lte",
+    }
+
+    for field, lookup in filter_fields.items():
+        if field in data:
+            queryset = queryset.filter(**{lookup: data[field]})
+
+    # Paginación
+    paginator = LimitOffsetPagination()
+    paginator.default_limit = 30
+    paginated_qs = paginator.paginate_queryset(queryset.order_by("-created_at"), request)
+
+    serializer = TransactionSerializer(paginated_qs, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 
-@api_view(["GET"])
-def get_all_transactions_sender(request):
-    transactions = Transaction.objects.filter(sender=request.user)
-    serializer = TransactionSerializer(transactions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(["GET"])
-def get_all_transactions_receiver(request):
-    transactions = Transaction.objects.filter(receiver=request.user)
-    serializer = TransactionSerializer(transactions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+# @api_view(["GET"])
+# def get_all_transactions(request):
+#     transactions = Transaction.objects.filter(sender=request.user) | Transaction.objects.filter(receiver=request.user)
+#     serializer = TransactionSerializer(transactions, many=True)
+#     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])

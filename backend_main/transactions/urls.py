@@ -7,8 +7,6 @@ from transactions.views.viewsAdmin import (
 )
 from transactions.views.viewsUser import (
     get_all_transactions,
-    get_all_transactions_receiver,
-    get_all_transactions_sender,
     get_transaction,
     number_pending,
     request_money,
@@ -22,8 +20,6 @@ urlpatterns = [
     path("admin/<int:id>/", transaction_update, name="transaction_update"),
     path("admin/create/", transaction_create, name="transaction_create"),
     path("", get_all_transactions, name="get_transactions"),
-    path("sender/", get_all_transactions_sender, name="get_transactions_sender"),
-    path("receiver/", get_all_transactions_receiver, name="get_transactions_receiver"),
     path("send-money/", send_money, name="send_money"),
     path("request-money/", request_money, name="request_money"),
     path("pending/", number_pending, name="number_pending"),
