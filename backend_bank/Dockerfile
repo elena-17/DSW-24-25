@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY backend_bank /app/
+COPY . /app/
 
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc

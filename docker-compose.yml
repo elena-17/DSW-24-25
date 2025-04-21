@@ -38,8 +38,8 @@ services:
   bank:
     container_name: zap-bank
     build:
-      context: .
-      dockerfile: backend_bank/Dockerfile
+      context: backend_bank
+      dockerfile: Dockerfile
     depends_on:
       db_bank:
         condition: service_healthy
