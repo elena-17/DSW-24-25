@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from users.models import User
 from users.serializers.user import UserProfileSerializer
 
-from .models import Favorite
+from ..models import Favorite
 
 
 # Create your views here.

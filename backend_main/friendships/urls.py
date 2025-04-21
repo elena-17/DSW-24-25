@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (
+from .views.viewsUser import (
     add_to_favorites,
     get_favorite_users,
     remove_from_favorites,
