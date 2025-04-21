@@ -124,17 +124,15 @@ export class FriendsComponent {
    addFavorite(user: any): void {
     this.friendshipsService.addFavorite(user.email).subscribe({
       next: () => {
-        this.snackBar.open(`${user.name} has been added to favorites.`, "Close", {
+        this.snackBar.open(`${user.email} has been added to favorites.`, "Close", {
           duration: 2000,
           horizontalPosition: "center",
           verticalPosition: "top",
         });
-        // Quitar el usuario de la lista de disponibles
-        this.availableUsers = this.availableUsers.filter(u => u.email !== user.email);
+        this.filteredAvailableUsers = this.filteredAvailableUsers.filter(u => u.email !== user.email);
+        this.filteredFavoriteUsers = [...this.filteredFavoriteUsers, user];
 
-        // Añadir el usuario a la lista de favoritos
-        this.favoriteUsers = [...this.favoriteUsers, user];
-},
+      },  
       error: () => {
         this.snackBar.open("Error adding user to favorites.", "Close", {
           duration: 2000,
@@ -146,18 +144,23 @@ export class FriendsComponent {
   }
    // Eliminar un usuario de favoritos
    removeFavorite(user: any): void {
-    /*this.friendshipsService.removeFavorite(user.id).subscribe({
+    this.friendshipsService.removeFavorite(user.email).subscribe({
       next: () => {
-        this.snackBar.open(`${user.name} has been removed from favorites.`, "Close", {
+        this.snackBar.open(`${user.email} has been removed from favorites.`, "Close", {
           duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
         });
-        this.loadFriendships();  // Recargar los datos
+        this.filteredFavoriteUsers = this.filteredFavoriteUsers.filter(u => u.email !== user.email);
+        this.filteredAvailableUsers = [...this.filteredAvailableUsers, user];
       },
       error: () => {
         this.snackBar.open("Error removing user from favorites.", "Close", {
           duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
         });
       },
-    });*/
+    });
   }
 }
