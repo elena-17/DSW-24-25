@@ -37,19 +37,20 @@ def get_all_transactions(request):
         &date_end=YYYY-MM-DD
         &limit=&offset=
     """
+    pending_type = request.GET.get("pending_type")
     params = request.GET.copy()
-    role = params.pop("role", None)
+    params.pop("pending_type", None)
     filter_serializer = TransactionFilterSerializer(data=params)
 
     if not filter_serializer.is_valid():
         return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     data = filter_serializer.validated_data
     user = request.user
-    if role == "pendingMyApproval":
+    if pending_type == "pendingMyApproval":
         queryset = Transaction.objects.filter(
             (Q(type="send") & Q(receiver=user)) | (Q(type="request") & Q(sender=user))
         )
-    elif role == "pendingOthers":
+    elif pending_type == "pendingOthers":
         queryset = Transaction.objects.filter(
             (Q(type="send") & Q(sender=user)) | (Q(type="request") & Q(receiver=user))
         )
