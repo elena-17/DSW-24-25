@@ -8,7 +8,7 @@
   </div>
 
    <!-- Tab Group for Favorites and Add Favorites -->
-   <mat-tab-group animationDuration="500ms">
+   <mat-tab-group animationDuration="500ms" (selectedTabChange)="onTabChange($event)">
     <!-- Tab 1 - Favorites -->
     <mat-tab>
       <ng-template mat-tab-label>

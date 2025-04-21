@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit, ElementRef, ViewChild } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { CommonModule } from "@angular/common";
 import { MaterialModule } from "../material.module";  // Asegúrate de tener MaterialModule para los componentes de Angular Material
@@ -11,6 +11,7 @@ import { FriendshipsService } from "../services/friendships.service";  // Servic
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatNativeDateModule, provideNativeDateAdapter } from "@angular/material/core";
 import { TableComponent } from "../shared/table/table.component";
+import { MatTabChangeEvent } from "@angular/material/tabs";
 
 
 @Component({
@@ -27,6 +28,9 @@ import { TableComponent } from "../shared/table/table.component";
   styleUrls: ["./friends.component.scss"],
 })
 export class FriendsComponent {
+  @ViewChild('inputFavorites') inputFavorites!: ElementRef<HTMLInputElement>;
+  @ViewChild('inputAddFavorites') inputAddFavorites!: ElementRef<HTMLInputElement>;
+
   isFavorite: boolean = false;  // Estado de favorito
   columns: any[] = [];  // Columnas de la tabla
   data: any[] = [];  // Datos de los usuarios
@@ -44,6 +48,19 @@ export class FriendsComponent {
     this.columns = getFriendshipsColumns();
     this.loadFriendships();  // Cargar los datos de las amistades (usuarios)
     this.loadNonFriendships();  // Cargar los datos de los no amigos (usuarios disponibles)
+  }
+
+  onTabChange(event: MatTabChangeEvent): void {
+    // Limpiar filtros y buscar de acuerdo a la pestaña seleccionada
+    if (event.index === 0) {
+      // Pestaña de "Favoritos"
+      this.clearFilterFavorites(this.inputFavorites.nativeElement);  // Limpiar el filtro de favoritos
+      this.updateSearchFilterFavorites({ target: { value: '' } });  // Restablecer la búsqueda de favoritos
+    } else if (event.index === 1) {
+      // Pestaña de "Agregar a Favoritos"
+      this.clearFilterAvailable(this.inputAddFavorites.nativeElement);  // Limpiar el filtro de disponibles
+      this.updateSearchFilterAvailable({ target: { value: '' } });  // Restablecer la búsqueda de disponibles
+    }
   }
 
   loadFriendships(): void {
@@ -70,8 +87,8 @@ export class FriendsComponent {
   loadNonFriendships(): void {
     this.friendshipsService.getNonFriendships().subscribe({
       next: (response) => {
-        this.data = response;
-        this.filteredAvailableUsers = [...this.data];  // Inicializamos los datos filtrados
+        this.availableUsers = response
+        this.filteredAvailableUsers = [];  // Inicializamos vacío
         console.log("Available users loaded successfully.", this.data);
       },
       error: (error) => {
@@ -107,9 +124,14 @@ export class FriendsComponent {
   // Filtrar las amistades por email o nombre mientras escribes
   updateSearchFilterAvailable(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
-    this.filteredAvailableUsers = this.data.filter((user) =>
-      user.email.toLowerCase().includes(searchTerm)
-    );
+    if (searchTerm === "") {
+      this.filteredAvailableUsers = [];
+    } else {
+      // Filtrar según el término de búsqueda
+      this.filteredAvailableUsers = this.availableUsers.filter((user) =>
+        user.email.toLowerCase().includes(searchTerm)
+      );
+    }
     // Forzar la detección de cambios (solo necesario si Angular no lo hace automáticamente)
     this.cdr.detectChanges();
   }
@@ -117,7 +139,7 @@ export class FriendsComponent {
   // Limpiar el filtro de búsqueda
   clearFilterAvailable(input: HTMLInputElement): void {
     input.value = "";  // Limpiar el campo de búsqueda
-    this.filteredAvailableUsers = [...this.data];  // Restablecer los datos para mostrar todas las amistades
+    this.filteredAvailableUsers = [];  // Restablecer los datos para mostrar todas las amistades
   }
 
    // Agregar un usuario a favoritos
