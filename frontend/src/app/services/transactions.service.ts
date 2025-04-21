@@ -61,6 +61,7 @@ export class TransactionsService {
     date_end?: string;
     limit?: number;
     offset?: number;
+    pending_type?: any;
   }): Observable<any> {
     let httpParams = new HttpParams();
 

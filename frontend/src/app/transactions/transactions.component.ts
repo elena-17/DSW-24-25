@@ -111,50 +111,38 @@ export class TransactionsComponent implements OnInit {
     }
   }
   loadTransactions(activeTab: string, others: boolean, filters: any = {}) {
-    let state;
-    if (activeTab == "pending" && others) {
-      state = this.transactionsArray["pendingOthers"];
-    } else if (activeTab == "pending" && !others) {
-      state = this.transactionsArray["pendingMyApproval"];
-    } else {
-      state = this.transactionsArray[activeTab];
-    }
+    const isPending = activeTab === "pending";
+    const key = isPending
+      ? others
+        ? "pendingOthers"
+        : "pendingMyApproval"
+      : activeTab;
 
+    console.log("Loading transactions for:", key);
+
+    const state = this.transactionsArray[key];
     const offset = state.pageIndex * state.pageSize;
-    if (activeTab === "pending") {
-      filters.status = "pending";
-    }
-    const params = {
+    const params: any = {
       ...filters,
-      type:
-        activeTab === "sender"
-          ? "send"
-          : activeTab === "receiver"
-            ? "request"
-            : undefined,
       limit: state.pageSize.toString(),
       offset: offset.toString(),
     };
-    console.log("Params:", params);
+
+    if (activeTab === "sender") {
+      params.type = "send";
+    } else if (activeTab === "receiver") {
+      params.type = "request";
+    }
+    if (isPending) {
+      params.status = "pending";
+      params.pending_type = key;
+    }
     this.loading = true;
     this.transactionsService.getTransactions(params).subscribe({
       next: (res: any) => {
         console.log("Response:", res);
-        if (activeTab == "pending") {
-          const type_sender = others ? "send" : "request";
-          const type_receiver = others ? "request" : "send";
-          state.data = res.results.filter((transaction: any) => {
-            return (
-              (transaction.type === type_sender &&
-                transaction.sender === sessionStorage.getItem("userEmail")) ||
-              (transaction.type === type_receiver &&
-                transaction.receiver === sessionStorage.getItem("userEmail"))
-            );
-          });
-        } else {
-          state.data = res.results;
-          state.totalCount = res.count;
-        }
+        state.data = res.results;
+        state.totalCount = res.count;
       },
       error: (err) => {
         console.error(`Error loading ${status} transactions: `, err);
@@ -412,6 +400,7 @@ export class TransactionsComponent implements OnInit {
   onTabChange(index: number) {
     const status = ["pending", "sender", "receiver"][index];
     this.activeTab = status as "sender" | "receiver" | "pending";
+    const filters = this.transformFilters();
     if (this.activeTab === "pending") {
       this.loadTransactions(this.activeTab, false);
       this.loadTransactions(this.activeTab, true);
