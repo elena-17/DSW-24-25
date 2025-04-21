@@ -37,20 +37,29 @@ def get_all_transactions(request):
         &date_end=YYYY-MM-DD
         &limit=&offset=
     """
-    filter_serializer = TransactionFilterSerializer(data=request.GET)
+    params = request.GET.copy()
+    role = params.pop("role", None)
+    filter_serializer = TransactionFilterSerializer(data=params)
 
     if not filter_serializer.is_valid():
         return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     data = filter_serializer.validated_data
-
-    if data.get("type") == "send":
-        queryset = Transaction.objects.filter(sender=request.user).select_related("receiver")
-    elif data.get("type") == "request":
-        queryset = Transaction.objects.filter(receiver=request.user).select_related("sender")
-    else:
-        queryset = Transaction.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).select_related(
-            "sender", "receiver"
+    user = request.user
+    if role == "pendingMyApproval":
+        queryset = Transaction.objects.filter(
+            (Q(type="send") & Q(receiver=user)) | (Q(type="request") & Q(sender=user))
         )
+    elif role == "pendingOthers":
+        queryset = Transaction.objects.filter(
+            (Q(type="send") & Q(sender=user)) | (Q(type="request") & Q(receiver=user))
+        )
+    else:
+        if data.get("type") == "send":
+            queryset = Transaction.objects.filter(sender=user)
+        elif data.get("type") == "request":
+            queryset = Transaction.objects.filter(receiver=user)
+        else:
+            queryset = Transaction.objects.filter(Q(sender=user) | Q(receiver=user))
 
     filter_fields = {
         "min_amount": "amount__gte",
@@ -133,7 +142,8 @@ def update_transaction_status(request, id):
 
     if transaction.sender != request.user and transaction.receiver != request.user:
         return Response(
-            {"error": "You are not authorized to update this transaction."}, status=status.HTTP_403_FORBIDDEN
+            {"error": "You are not authorized to update this transaction."},
+            status=status.HTTP_403_FORBIDDEN,
         )
 
     serializer = TransactionStatusUpdateSerializer(transaction, data=request.data, partial=True)
