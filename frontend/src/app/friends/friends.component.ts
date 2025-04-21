@@ -122,19 +122,27 @@ export class FriendsComponent {
 
    // Agregar un usuario a favoritos
    addFavorite(user: any): void {
-    /*this.friendshipsService.addFavorite(user.id).subscribe({
+    this.friendshipsService.addFavorite(user.email).subscribe({
       next: () => {
         this.snackBar.open(`${user.name} has been added to favorites.`, "Close", {
           duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
         });
-        this.loadFriendships();  // Recargar los datos
-      },
+        // Quitar el usuario de la lista de disponibles
+        this.availableUsers = this.availableUsers.filter(u => u.email !== user.email);
+
+        // Añadir el usuario a la lista de favoritos
+        this.favoriteUsers = [...this.favoriteUsers, user];
+},
       error: () => {
         this.snackBar.open("Error adding user to favorites.", "Close", {
           duration: 2000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
         });
       },
-    });*/
+    });
   }
    // Eliminar un usuario de favoritos
    removeFavorite(user: any): void {

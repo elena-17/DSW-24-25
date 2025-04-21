@@ -23,4 +23,9 @@ export class FriendshipsService {
       withCredentials: true,
     });
   }
+
+  addFavorite(email: string): Observable<any> {
+    return this.http.post<any>(this.urlAddFav, { email },
+       { withCredentials: true });
+  }
 }
