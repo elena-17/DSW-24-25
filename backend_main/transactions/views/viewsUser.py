@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -34,8 +37,8 @@ def get_all_transactions(request):
         &status=pending,approved,rejected
         &title=&user=
         &min_amount=&max_amount=
-        &date_start=YYYY-MM-DD
-        &date_end=YYYY-MM-DD
+        &date_start=DD-MM-YYYY
+        &date_end=DD-MM-YYYY
         &limit=&offset=
     """
     pending_type = request.GET.get("pending_type")
@@ -72,14 +75,22 @@ def get_all_transactions(request):
         "min_amount": "amount__gte",
         "max_amount": "amount__lte",
         "title": "title__icontains",
-        "date_start": "created_at__gte",
-        "date_end": "created_at__lte",
         "status": "status__in",
     }
 
     for field, lookup in filter_fields.items():
         if field in data:
             queryset = queryset.filter(**{lookup: data[field]})
+
+    if "date_start" in data:
+        queryset = queryset.filter(
+            created_at__gte=timezone.make_aware(datetime.combine(data["date_start"], datetime.min.time()))
+        )
+
+    if "date_end" in data:
+        queryset = queryset.filter(
+            created_at__lte=timezone.make_aware(datetime.combine(data["date_end"], datetime.max.time()))
+        )
 
     paginator = LimitOffsetPagination()
     paginator.default_limit = 30

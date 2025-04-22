@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -23,18 +26,25 @@ def transaction_list(request):
     queryset = Transaction.objects.select_related("sender", "receiver").all()
 
     filter_fields = {
-        "type": "type",
         "min_amount": "amount__gte",
         "max_amount": "amount__lte",
         "title": "title__icontains",
-        "date_start": "created_at__gte",
-        "date_end": "created_at__lte",
         "status": "status__in",
     }
 
     for field, lookup in filter_fields.items():
         if field in data:
             queryset = queryset.filter(**{lookup: data[field]})
+
+    if "date_start" in data:
+        queryset = queryset.filter(
+            created_at__gte=timezone.make_aware(datetime.combine(data["date_start"], datetime.min.time()))
+        )
+
+    if "date_end" in data:
+        queryset = queryset.filter(
+            created_at__lte=timezone.make_aware(datetime.combine(data["date_end"], datetime.max.time()))
+        )
 
     if "user" in data:
         email = data["user"]
