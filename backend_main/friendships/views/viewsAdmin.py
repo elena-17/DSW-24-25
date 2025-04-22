@@ -35,8 +35,20 @@ def admin_add_favorite_relation(request):
     try:
         user = User.objects.get(email=user_email)
         favorite_user = User.objects.get(email=favorite_email)
-        Favorite.objects.get_or_create(user=user, favorite_user=favorite_user)
-        return Response({"message": f"Relation added: {user_email} ➜ {favorite_email}"}, status=status.HTTP_201_CREATED)
+
+        # Verificar si ya existe la relación
+        if Favorite.objects.filter(user=user, favorite_user=favorite_user).exists():
+            return Response(
+                {"error": "This favorite relation already exists."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Si no existe, se crea
+        Favorite.objects.create(user=user, favorite_user=favorite_user)
+        return Response(
+            {"message": f"Relation added: {user_email} ➜ {favorite_email}"},
+            status=status.HTTP_201_CREATED,
+        )
     except User.DoesNotExist:
         return Response({"error": "One or both users not found."}, status=status.HTTP_404_NOT_FOUND)
 
