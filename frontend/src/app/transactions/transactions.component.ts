@@ -361,6 +361,10 @@ export class TransactionsComponent implements OnInit {
   }
 
   applyFilters() {
+    this.transactionsArray["pendingMyApproval"].pageIndex = 0;
+    this.transactionsArray["pendingOthers"].pageIndex = 0;
+    this.transactionsArray["sender"].pageIndex = 0;
+    this.transactionsArray["receiver"].pageIndex = 0;
     this.filterData();
     this.closeFilters();
   }
