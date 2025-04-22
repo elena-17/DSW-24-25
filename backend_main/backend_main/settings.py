@@ -16,6 +16,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
 
 load_dotenv()
 
@@ -161,6 +162,10 @@ CORS_ALLOW_CREDENTIALS = True
 # Origenes permitidos
 CORS_ALLOWED_ORIGINS = [
     os.getenv("FRONTEND_BASE_URL", "http://localhost:4200"),
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-timezone',  # Permitir el header X-Timezone
 ]
 
 FIELD_ENCRYPTION_KEY = os.getenv("FIELD_ENCRYPTION_KEY", "")

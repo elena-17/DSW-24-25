@@ -1,3 +1,6 @@
+from datetime import datetime, time
+from zoneinfo import ZoneInfo
+
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from mercure.mercure import publish_to_mercure
@@ -21,20 +24,33 @@ def transaction_list(request):
         return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     data = filter_serializer.validated_data
     queryset = Transaction.objects.select_related("sender", "receiver").all()
+    user_tz_str = request.headers.get("X-Timezone", "UTC")
+
+    try:
+        user_tz = ZoneInfo(user_tz_str)
+    except KeyError:  # Si la zona horaria no es válida
+        user_tz = ZoneInfo("UTC")
 
     filter_fields = {
-        "status": "status",
-        "type": "type",
         "min_amount": "amount__gte",
         "max_amount": "amount__lte",
         "title": "title__icontains",
-        "date_start": "created_at__gte",
-        "date_end": "created_at__lte",
+        "status": "status__in",
     }
 
     for field, lookup in filter_fields.items():
         if field in data:
             queryset = queryset.filter(**{lookup: data[field]})
+
+    if "date_start" in data:
+        start_dt_local = datetime.combine(data["date_start"], time.min).replace(tzinfo=user_tz)
+        start_dt_utc = start_dt_local.astimezone(ZoneInfo("UTC"))
+        queryset = queryset.filter(created_at__gte=start_dt_utc)
+
+    if "date_end" in data:
+        end_dt_local = datetime.combine(data["date_end"], time.max).replace(tzinfo=user_tz)
+        end_dt_utc = end_dt_local.astimezone(ZoneInfo("UTC"))
+        queryset = queryset.filter(created_at__lte=end_dt_utc)
 
     if "user" in data:
         email = data["user"]

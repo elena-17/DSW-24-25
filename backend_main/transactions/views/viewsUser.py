@@ -1,11 +1,16 @@
+from datetime import datetime, time
+from zoneinfo import ZoneInfo
+
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from transactions.models import Transaction
+from transactions.serializers.filter import TransactionFilterSerializer
 from transactions.serializers.send_request import (
     RequestTransactionSerializer,
     SendTransactionSerializer,
@@ -26,23 +31,78 @@ def get_transaction(request, id):
 
 @api_view(["GET"])
 def get_all_transactions(request):
-    transactions = Transaction.objects.filter(sender=request.user) | Transaction.objects.filter(receiver=request.user)
-    serializer = TransactionSerializer(transactions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    """
+    Endpoint unificado para transacciones de usuario:
+    /api/transactions/&type=send|request
+        &status=pending,approved,rejected
+        &title=&user=
+        &min_amount=&max_amount=
+        &date_start=DD-MM-YYYY
+        &date_end=DD-MM-YYYY
+        &limit=&offset=
+    """
+    pending_type = request.GET.get("pending_type")
+    params = request.GET.copy()
+    params.pop("pending_type", None)
+    filter_serializer = TransactionFilterSerializer(data=params)
 
+    if not filter_serializer.is_valid():
+        return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    data = filter_serializer.validated_data
+    user = request.user
+    other_user_email = data.get("user")
+    user_tz_str = request.headers.get("X-Timezone", "UTC")
+    try:
+        user_tz = ZoneInfo(user_tz_str)
+    except KeyError:  # Si la zona horaria no es válida
+        user_tz = ZoneInfo("UTC")
 
-@api_view(["GET"])
-def get_all_transactions_sender(request):
-    transactions = Transaction.objects.filter(sender=request.user)
-    serializer = TransactionSerializer(transactions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    if pending_type == "pendingMyApproval":
+        queryset = Transaction.objects.filter(
+            (Q(type="send") & Q(receiver=user)) | (Q(type="request") & Q(sender=user))
+        )
+    elif pending_type == "pendingOthers":
+        queryset = Transaction.objects.filter(
+            (Q(type="send") & Q(sender=user)) | (Q(type="request") & Q(receiver=user))
+        )
+    else:
+        if data.get("type") == "send":
+            queryset = Transaction.objects.filter(sender=user)
+        elif data.get("type") == "request":
+            queryset = Transaction.objects.filter(receiver=user)
+        else:
+            queryset = Transaction.objects.filter(Q(sender=user) | Q(receiver=user))
 
+    if other_user_email:
+        queryset = queryset.filter(Q(sender__email=other_user_email) | Q(receiver__email=other_user_email))
 
-@api_view(["GET"])
-def get_all_transactions_receiver(request):
-    transactions = Transaction.objects.filter(receiver=request.user)
-    serializer = TransactionSerializer(transactions, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    filter_fields = {
+        "min_amount": "amount__gte",
+        "max_amount": "amount__lte",
+        "title": "title__icontains",
+        "status": "status__in",
+    }
+
+    for field, lookup in filter_fields.items():
+        if field in data:
+            queryset = queryset.filter(**{lookup: data[field]})
+
+    if "date_start" in data:
+        start_dt_local = datetime.combine(data["date_start"], time.min).replace(tzinfo=user_tz)
+        start_dt_utc = start_dt_local.astimezone(ZoneInfo("UTC"))
+        queryset = queryset.filter(created_at__gte=start_dt_utc)
+
+    if "date_end" in data:
+        end_dt_local = datetime.combine(data["date_end"], time.max).replace(tzinfo=user_tz)
+        end_dt_utc = end_dt_local.astimezone(ZoneInfo("UTC"))
+        queryset = queryset.filter(created_at__lte=end_dt_utc)
+
+    paginator = LimitOffsetPagination()
+    paginator.default_limit = 30
+    paginated_qs = paginator.paginate_queryset(queryset.order_by("-created_at"), request)
+
+    serializer = TransactionSerializer(paginated_qs, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 
 @api_view(["GET"])
@@ -106,7 +166,8 @@ def update_transaction_status(request, id):
 
     if transaction.sender != request.user and transaction.receiver != request.user:
         return Response(
-            {"error": "You are not authorized to update this transaction."}, status=status.HTTP_403_FORBIDDEN
+            {"error": "You are not authorized to update this transaction."},
+            status=status.HTTP_403_FORBIDDEN,
         )
 
     serializer = TransactionStatusUpdateSerializer(transaction, data=request.data, partial=True)
