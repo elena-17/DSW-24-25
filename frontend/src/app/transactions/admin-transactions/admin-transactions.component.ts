@@ -14,6 +14,8 @@ import {
   MatNativeDateModule,
   provideNativeDateAdapter,
   MAT_DATE_LOCALE,
+  DateAdapter,
+  NativeDateAdapter,
 } from "@angular/material/core";
 import {
   createFilters,
@@ -33,6 +35,7 @@ import { CreateTransactionComponent } from "../create-transaction/create-transac
     DatePipe,
     provideNativeDateAdapter(),
     { provide: MAT_DATE_LOCALE, useValue: "es-ES" },
+    { provide: DateAdapter, useClass: NativeDateAdapter },
   ],
   imports: [
     MaterialModule,

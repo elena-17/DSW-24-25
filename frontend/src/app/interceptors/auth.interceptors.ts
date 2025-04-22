@@ -27,11 +27,12 @@ export class AuthInterceptor implements HttpInterceptor {
     ) {
       return next.handle(req);
     }
-
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if (token) {
       const clonedRequest = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
+          "X-Timezone": timezone,
         },
       });
       return next.handle(clonedRequest).pipe(

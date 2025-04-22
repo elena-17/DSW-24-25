@@ -70,6 +70,7 @@ export class TransactionsService {
         httpParams = httpParams.set(key, value);
       }
     });
+
     return this.http.get<any>(this.baseApiUrl, {
       params: httpParams,
       withCredentials: true,
