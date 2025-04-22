@@ -15,6 +15,7 @@ import { ConfirmRegisterComponent } from "./register/confirm-register/confirm-re
 import { ForgotPasswordComponent } from "./login/forgot-password/forgot-password.component";
 import { AdminAccountsComponent } from "./admin-accounts/admin-accounts.component";
 import { AdminTransactionsComponent } from "./transactions/admin-transactions/admin-transactions.component";
+import { AdminFriendsComponent } from "./friends/admin-friends/admin-friends.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
@@ -43,6 +44,11 @@ export const routes: Routes = [
       {
         path: "transactions",
         component: AdminTransactionsComponent,
+        data: { role: "admin" },
+      },
+      {
+        path: "friends",
+        component: AdminFriendsComponent,
         data: { role: "admin" },
       },
     ],

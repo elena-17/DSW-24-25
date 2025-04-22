@@ -6,10 +6,15 @@ import { Observable } from "rxjs";
 })
 export class FriendshipsService {
   private baseApiUrl = "http://localhost:8000/favorites";
+  
   private urlGetNotFavs = `${this.baseApiUrl}/non-favorites/`;
   private urlGetFavs = `${this.baseApiUrl}/`;
   private urlAddFav = `${this.baseApiUrl}/add/`;
   private urlRemoveFav = `${this.baseApiUrl}/remove/`;
+  private urlGetAllRelations = `${this.baseApiUrl}/admin/all/`;
+  private urlAddRelation = `${this.baseApiUrl}/admin/add/`;
+  private urlRemoveRelation = `${this.baseApiUrl}/admin/remove/`;
+  
   constructor(private http: HttpClient) {}
 
   getAllFriendships(): Observable<any> {
@@ -35,4 +40,27 @@ export class FriendshipsService {
       withCredentials: true,
     });
   }
+
+  getAllRelations(): Observable<any> {
+    return this.http.get<any>(this.urlGetAllRelations, {
+      withCredentials: true,
+    });
+  }
+
+  addRelation(data: { user: string; favorite_user: string }): Observable<any> {
+    return this.http.post<any>(this.urlAddRelation, data, {
+      withCredentials: true,
+    });
+  }
+
+  removeRelation(data: { user: string; favorite_user: string }): Observable<any> {
+    return this.http.request<any>('delete', this.urlRemoveRelation, {
+      body: data,
+      withCredentials: true,
+    });
+  }
+
+  
 }
+
+ 
