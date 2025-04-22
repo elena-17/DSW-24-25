@@ -19,6 +19,7 @@ import {
 import {
   MatNativeDateModule,
   provideNativeDateAdapter,
+  MAT_DATE_LOCALE,
 } from "@angular/material/core";
 import { take } from "rxjs";
 import { SliderComponent } from "../shared/slider/slider.component";
@@ -32,10 +33,16 @@ import {
 
 import { MatBadgeModule } from "@angular/material/badge";
 import { CounterNotificationService } from "../services/counter-notification.service";
+import { TransactionData } from "./config/transaction-state.config";
+import { PageEvent } from "@angular/material/paginator";
 
 @Component({
   selector: "app-transactions",
-  providers: [DatePipe, provideNativeDateAdapter()],
+  providers: [
+    DatePipe,
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: "es-ES" },
+  ],
   imports: [
     ToolbarComponent,
     MaterialModule,
@@ -52,14 +59,12 @@ import { CounterNotificationService } from "../services/counter-notification.ser
   styleUrl: "./transactions.component.scss",
 })
 export class TransactionsComponent implements OnInit {
-  sender: any[] = [];
-  receiver: any[] = [];
-  pendingOthers: any[] = [];
-  pendingMyApproval: any[] = [];
-  filteredSender: any[] = [];
-  filteredReceiver: any[] = [];
-  filteredPendingOthers: any[] = [];
-  filteredPendingMyApproval: any[] = [];
+  transactionsArray: { [key: string]: TransactionData } = {
+    sender: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
+    receiver: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
+    pendingOthers: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
+    pendingMyApproval: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
+  };
 
   loading: boolean = false;
   filterOpen: boolean = false;
@@ -67,6 +72,7 @@ export class TransactionsComponent implements OnInit {
   columns: any[] = [];
   hasActiveFilters: boolean = false;
   eventSource!: EventSource;
+  activeTab: "sender" | "receiver" | "pending" = "pending";
 
   constructor(
     private dialog: MatDialog,
@@ -80,18 +86,21 @@ export class TransactionsComponent implements OnInit {
   ngOnInit() {
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
-    this.loadTransactions();
     this.eventSource = new EventSource(
       `http://localhost:3000/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
     );
     this.eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      this.ngZone.run(() => {
-        this.filteredPendingMyApproval = [
-          data,
-          ...this.filteredPendingMyApproval,
-        ];
-      });
+      if (this.activeTab === "pending") {
+        this.ngZone.run(() => {
+          // add to pending transactions
+          this.transactionsArray["pendingMyApproval"].data = [
+            data,
+            ...this.transactionsArray["pendingMyApproval"].data,
+          ];
+          this.transactionsArray["pendingMyApproval"].totalCount += 1;
+        });
+      }
     };
 
     this.eventSource.onerror = (error) => {
@@ -104,55 +113,48 @@ export class TransactionsComponent implements OnInit {
       this.eventSource.close();
     }
   }
-  loadTransactions() {
-    this.transactionsService
-      .getLoading()
-      .pipe(take(1))
-      .subscribe((isLoading) => {
-        this.loading = isLoading;
-      });
+  loadTransactions(activeTab: string, others: boolean, filters: any = {}) {
+    const isPending = activeTab === "pending";
+    const key = isPending
+      ? others
+        ? "pendingOthers"
+        : "pendingMyApproval"
+      : activeTab;
 
-    this.transactionsService
-      .fetch(true)
-      .pipe(take(1))
-      .subscribe(({ receiver, sender }) => {
-        this.receiver = [...receiver];
-        this.sender = [...sender];
+    const state = this.transactionsArray[key];
+    const offset = state.pageIndex * state.pageSize;
+    const params: any = {
+      ...filters,
+      limit: state.pageSize.toString(),
+      offset: offset.toString(),
+    };
+
+    if (activeTab === "sender") {
+      params.type = "send";
+    } else if (activeTab === "receiver") {
+      params.type = "request";
+    }
+    if (isPending) {
+      params.status = "pending";
+      params.pending_type = key;
+    }
+    this.loading = true;
+    this.transactionsService.getTransactions(params).subscribe({
+      next: (res: any) => {
+        state.data = res.results;
+        state.totalCount = res.count;
+      },
+      error: (err) => {
+        console.error(`Error loading transactions: `, err);
+        this.notificationService.showErrorMessage(
+          "Error loading transactions.",
+        );
         this.loading = false;
-        if (!this.sender || !this.receiver) {
-          this.pendingMyApproval = [];
-          this.pendingOthers = [];
-          return;
-        }
-        this.pendingOthers = [
-          ...this.sender.filter(
-            (transaction) =>
-              transaction.status.toLowerCase() === "pending" &&
-              transaction.type === "send",
-          ),
-          ...this.receiver.filter(
-            (transaction) =>
-              transaction.status.toLowerCase() === "pending" &&
-              transaction.type === "request",
-          ),
-        ];
-        this.pendingMyApproval = [
-          ...this.sender.filter(
-            (transaction) =>
-              transaction.status.toLowerCase() === "pending" &&
-              transaction.type === "request",
-          ),
-          ...this.receiver.filter(
-            (transaction) =>
-              transaction.status.toLowerCase() === "pending" &&
-              transaction.type === "send",
-          ),
-        ];
-        setTimeout(() => {
-          this.filtersForm.updateValueAndValidity();
-          this.filterData();
-        }, 0);
-      });
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
   }
 
   ngAfterViewInit() {
@@ -183,11 +185,16 @@ export class TransactionsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              this.sender = [...response.transactions, ...this.sender];
-              this.pendingOthers = [
+              this.transactionsArray["sender"].data = [
                 ...response.transactions,
-                ...this.pendingOthers,
+                ...this.transactionsArray["sender"].data,
               ];
+              this.transactionsArray["sender"].totalCount += response.count;
+              this.transactionsArray["pending"].data = [
+                ...response.transactions,
+                ...this.transactionsArray["pending"].data,
+              ];
+
               this.notificationService.showSuccessMessage(
                 "Transaction sent successfully",
               );
@@ -232,11 +239,16 @@ export class TransactionsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              this.receiver = [...response.transactions, ...this.receiver];
-              this.pendingOthers = [
+              this.transactionsArray["receiver"].data = [
                 ...response.transactions,
-                ...this.pendingOthers,
+                ...this.transactionsArray["receiver"].data,
               ];
+              this.transactionsArray["receiver"].totalCount += response.count;
+              this.transactionsArray["pending"].data = [
+                ...response.transactions,
+                ...this.transactionsArray["pending"].data,
+              ];
+              this.transactionsArray["pending"].totalCount += response.count;
               this.notificationService.showSuccessMessage(
                 "Transaction requested successfully",
               );
@@ -254,24 +266,19 @@ export class TransactionsComponent implements OnInit {
   }
 
   filterTransactionChangeStatus(transaction: any, status: string) {
-    const senderTransaction = this.sender.find((t) => t.id === transaction.id);
-    if (senderTransaction) {
-      senderTransaction.status = status;
+    for (const key in this.transactionsArray) {
+      const index = this.transactionsArray[key].data.findIndex(
+        (item: any) => item.id === transaction.id,
+      );
+      if (index !== -1) {
+        if (status === "approved" || status === "rejected") {
+          this.transactionsArray[key].data.splice(index, 1);
+          this.transactionsArray[key].totalCount -= 1;
+        } else {
+          this.transactionsArray[key].data[index].status = status;
+        }
+      }
     }
-
-    const receiverTransaction = this.receiver.find(
-      (t) => t.id === transaction.id,
-    );
-    if (receiverTransaction) {
-      receiverTransaction.status = status;
-    }
-    this.pendingOthers = this.pendingOthers.filter(
-      (t) => t.id !== transaction.id,
-    );
-
-    this.pendingMyApproval = this.pendingMyApproval.filter(
-      (t) => t.id !== transaction.id,
-    );
   }
 
   approveTransaction(transaction: any) {
@@ -313,7 +320,6 @@ export class TransactionsComponent implements OnInit {
   }
 
   openDetails(transaction: any) {
-    console.log(transaction);
     transaction.formattedDate =
       this.datePipe.transform(
         new Date(transaction.created_at),
@@ -355,6 +361,10 @@ export class TransactionsComponent implements OnInit {
   }
 
   applyFilters() {
+    this.transactionsArray["pendingMyApproval"].pageIndex = 0;
+    this.transactionsArray["pendingOthers"].pageIndex = 0;
+    this.transactionsArray["sender"].pageIndex = 0;
+    this.transactionsArray["receiver"].pageIndex = 0;
     this.filterData();
     this.closeFilters();
   }
@@ -369,16 +379,53 @@ export class TransactionsComponent implements OnInit {
     this.filtersForm.get("amount.max")?.setValue(range.end);
   }
 
-  filterData() {
+  transformFilters() {
     const filters = this.filtersForm.value;
-    const apply = (list: any[]) =>
-      list.filter((item) => applyFilterFn(filters, item));
+    return {
+      min_amount: filters.amount?.min,
+      max_amount: filters.amount?.max,
+      title: filters.title || undefined,
+      user: filters.user || undefined,
+      date_start: filters.dateRange?.start
+        ? this.datePipe.transform(filters.dateRange.start, "dd-MM-yyyy")
+        : undefined,
+      date_end: filters.dateRange?.end
+        ? this.datePipe.transform(filters.dateRange.end, "dd-MM-yyyy")
+        : undefined,
+      status:
+        Object.keys(filters.status || {})
+          .filter((key) => filters.status[key])
+          .join(",") || undefined,
+    };
+  }
 
-    this.filteredSender = apply(this.sender);
-    this.filteredReceiver = apply(this.receiver);
-    this.filteredPendingMyApproval = apply(this.pendingMyApproval);
-    this.filteredPendingOthers = apply(this.pendingOthers);
+  onTabChange(index: number) {
+    const status = ["pending", "sender", "receiver"][index];
+    this.activeTab = status as "sender" | "receiver" | "pending";
+    const filters = this.transformFilters();
+    if (this.activeTab === "pending") {
+      this.loadTransactions(this.activeTab, false, filters);
+      this.loadTransactions(this.activeTab, true, filters);
+    } else {
+      this.loadTransactions(this.activeTab, false, filters);
+    }
+  }
 
+  onPageChange(table: string, event: PageEvent) {
+    const state = this.transactionsArray[table];
+    state.pageIndex = event.pageIndex;
+    state.pageSize = event.pageSize;
+    this.filterData();
+  }
+
+  filterData() {
+    const filters = this.transformFilters();
+    if (this.activeTab === "pending") {
+      this.loadTransactions(this.activeTab, false, filters);
+      this.loadTransactions(this.activeTab, true, filters);
+    } else {
+      this.loadTransactions(this.activeTab, false, filters);
+    }
     this.hasActiveFilters = hasActiveFilters(this.filtersForm);
   }
 }

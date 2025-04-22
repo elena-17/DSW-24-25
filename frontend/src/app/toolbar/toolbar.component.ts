@@ -36,7 +36,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       window.addEventListener("userNameUpdated", this.updateUserName);
       this.counterNotfService.startListening();
       this.counterNotfService.pendingCount$.subscribe((count) => {
-        console.log("Pending count updated:", count);
         this.notifications = count;
       });
     }

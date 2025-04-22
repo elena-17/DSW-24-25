@@ -46,7 +46,7 @@
           placeholder="Search by email"
         />
         <mat-icon matSuffix>person</mat-icon>
-        <mat-hint>Search by name or email</mat-hint>
+        <mat-hint>Search by email</mat-hint>
       </mat-form-field>
 
       <mat-form-field formGroupName="dateRange" class="full-width">
@@ -91,7 +91,10 @@
     </form>
   </div>
 </div>
-<mat-tab-group animationDuration="500ms">
+<mat-tab-group
+  animationDuration="500ms"
+  (selectedIndexChange)="onTabChange($event)"
+>
   <!-- tab 1 - pending transactions -->
   <mat-tab>
     <ng-template mat-tab-label>
@@ -134,8 +137,12 @@
       <!-- table 1 -->
       <app-table
         [columns]="columns"
-        [data]="filteredPendingMyApproval"
-        [enableSelection]="false"
+        [data]="transactionsArray['pendingMyApproval'].data"
+        [totalCount]="transactionsArray['pendingMyApproval'].totalCount"
+        [pageIndex]="transactionsArray['pendingMyApproval'].pageIndex"
+        [pageSize]="transactionsArray['pendingMyApproval'].pageSize"
+        (pageChange)="onPageChange('pendingMyApproval', $event)"
+        [serverSidePagination]="true"
         [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
@@ -156,8 +163,12 @@
       </div>
       <app-table
         [columns]="columns"
-        [data]="filteredPendingOthers"
-        [enableSelection]="false"
+        [data]="transactionsArray['pendingOthers'].data"
+        [totalCount]="transactionsArray['pendingOthers'].totalCount"
+        [pageIndex]="transactionsArray['pendingOthers'].pageIndex"
+        [pageSize]="transactionsArray['pendingOthers'].pageSize"
+        (pageChange)="onPageChange('pendingOthers', $event)"
+        [serverSidePagination]="true"
         [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
@@ -199,8 +210,12 @@
 
       <app-table
         [columns]="columns"
-        [data]="filteredSender"
-        [enableSelection]="false"
+        [data]="transactionsArray['sender'].data"
+        [totalCount]="transactionsArray['sender'].totalCount"
+        [pageIndex]="transactionsArray['sender'].pageIndex"
+        [pageSize]="transactionsArray['sender'].pageSize"
+        (pageChange)="onPageChange('sender', $event)"
+        [serverSidePagination]="true"
         [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
@@ -242,8 +257,12 @@
 
       <app-table
         [columns]="columns"
-        [data]="filteredReceiver"
-        [enableSelection]="false"
+        [data]="transactionsArray['receiver'].data"
+        [totalCount]="transactionsArray['receiver'].totalCount"
+        [pageIndex]="transactionsArray['receiver'].pageIndex"
+        [pageSize]="transactionsArray['receiver'].pageSize"
+        (pageChange)="onPageChange('receiver', $event)"
+        [serverSidePagination]="true"
         [enableActions]="true"
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"

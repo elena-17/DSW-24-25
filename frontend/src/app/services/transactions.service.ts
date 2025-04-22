@@ -22,8 +22,6 @@ export class TransactionsService {
 
   private baseApiUrl = "http://localhost:8000/transactions";
 
-  private urlSender = `${this.baseApiUrl}/sender/`;
-  private urlReceiver = `${this.baseApiUrl}/receiver/`;
   private urlSendMoney = `${this.baseApiUrl}/send-money/`;
   private urlRequestMoney = `${this.baseApiUrl}/request-money/`;
   private urlAdminTransactions = `${this.baseApiUrl}/admin/`;
@@ -32,24 +30,51 @@ export class TransactionsService {
 
   constructor(private http: HttpClient) {}
 
-  fetch(refresh: boolean = true): Observable<any> {
-    this.loading.next(true);
+  // fetch(refresh: boolean = true): Observable<any> {
+  //   this.loading.next(true);
 
-    return forkJoin({
-      receiver: this.http.get<Transaction[]>(this.urlReceiver),
-      sender: this.http.get<Transaction[]>(this.urlSender),
-    }).pipe(
-      tap({
-        next: ({ receiver, sender }) => {
-          this.receiver.next([...receiver]);
-          this.sender.next([...sender]);
-          this.loading.next(false);
-        },
-        complete: () => {
-          this.loading.next(false);
-        },
-      }),
-    );
+  //   return forkJoin({
+  //     receiver: this.http.get<Transaction[]>(this.urlReceiver),
+  //     sender: this.http.get<Transaction[]>(this.urlSender),
+  //   }).pipe(
+  //     tap({
+  //       next: ({ receiver, sender }) => {
+  //         this.receiver.next([...receiver]);
+  //         this.sender.next([...sender]);
+  //         this.loading.next(false);
+  //       },
+  //       complete: () => {
+  //         this.loading.next(false);
+  //       },
+  //     }),
+  //   );
+  // }
+
+  getTransactions(params: {
+    status?: string;
+    type?: string;
+    min_amount?: number;
+    max_amount?: number;
+    title?: string;
+    user?: string;
+    date_start?: string;
+    date_end?: string;
+    limit?: number;
+    offset?: number;
+    pending_type?: any;
+  }): Observable<any> {
+    let httpParams = new HttpParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== null && value !== undefined && value !== "") {
+        httpParams = httpParams.set(key, value);
+      }
+    });
+
+    return this.http.get<any>(this.baseApiUrl, {
+      params: httpParams,
+      withCredentials: true,
+    });
   }
 
   getLoading(): Observable<boolean> {
