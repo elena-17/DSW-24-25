@@ -1,0 +1,59 @@
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from users.models import User
+from ..models import Favorite
+
+
+# Create your views here.
+# Get all favorite pairs
+@api_view(["GET"])
+def get_all_favorite_pairs(request):
+    favorites = Favorite.objects.select_related("user", "favorite_user").all()
+    data = [
+        {
+            "user": fav.user.email,
+            "favorite_user": fav.favorite_user.email,
+            "created_at": fav.created_at,
+        }
+        for fav in favorites
+    ]
+    return Response(data, status=status.HTTP_200_OK)
+
+# Manually add a favorite relation between two users
+@api_view(["POST"])
+def admin_add_favorite_relation(request):
+    user_email = request.data.get("user")
+    favorite_email = request.data.get("favorite_user")
+
+    if not user_email or not favorite_email:
+        return Response({"error": "Both 'user' and 'favorite_user' emails are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    if user_email == favorite_email:
+        return Response({"error": "A user cannot favorite themselves."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(email=user_email)
+        favorite_user = User.objects.get(email=favorite_email)
+        Favorite.objects.get_or_create(user=user, favorite_user=favorite_user)
+        return Response({"message": f"Relation added: {user_email} ➜ {favorite_email}"}, status=status.HTTP_201_CREATED)
+    except User.DoesNotExist:
+        return Response({"error": "One or both users not found."}, status=status.HTTP_404_NOT_FOUND)
+
+# Manually remove a favorite relation between two users
+@api_view(["DELETE"])
+def admin_remove_favorite_relation(request):
+    user_email = request.data.get("user")
+    favorite_email = request.data.get("favorite_user")
+
+    if not user_email or not favorite_email:
+        return Response({"error": "Both 'user' and 'favorite_user' emails are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(email=user_email)
+        favorite_user = User.objects.get(email=favorite_email)
+        fav = Favorite.objects.get(user=user, favorite_user=favorite_user)
+        fav.delete()
+        return Response({"message": f"Relation removed: {user_email} ➜ {favorite_email}"}, status=status.HTTP_200_OK)
+    except (User.DoesNotExist, Favorite.DoesNotExist):
+        return Response({"error": "Favorite relation not found."}, status=status.HTTP_404_NOT_FOUND)

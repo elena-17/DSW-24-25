@@ -1,4 +1,4 @@
-from django.db.models import BooleanField, ExpressionWrapper, Q
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -17,6 +17,7 @@ def get_favorite_users(request):
     serializer = UserProfileSerializer(favorite_users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 # This function retrieves all users who are not marked as favorites by the current user and avoid current user.
 @api_view(["GET"])
 def get_non_favorite_users(request):
@@ -26,6 +27,7 @@ def get_non_favorite_users(request):
     ).order_by("name")
     serializer = UserProfileSerializer(non_favorite_users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 # This function allows the current user to add a user to their favorites.
 @api_view(["POST"])
