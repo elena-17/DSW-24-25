@@ -19,6 +19,7 @@ import {
 import {
   MatNativeDateModule,
   provideNativeDateAdapter,
+  MAT_DATE_LOCALE,
 } from "@angular/material/core";
 import { take } from "rxjs";
 import { SliderComponent } from "../shared/slider/slider.component";
@@ -37,7 +38,11 @@ import { PageEvent } from "@angular/material/paginator";
 
 @Component({
   selector: "app-transactions",
-  providers: [DatePipe, provideNativeDateAdapter()],
+  providers: [
+    DatePipe,
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: "es-ES" },
+  ],
   imports: [
     ToolbarComponent,
     MaterialModule,
