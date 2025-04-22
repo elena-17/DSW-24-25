@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import datetime, time
+from zoneinfo import ZoneInfo
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -51,6 +51,11 @@ def get_all_transactions(request):
     data = filter_serializer.validated_data
     user = request.user
     other_user_email = data.get("user")
+    user_tz_str = request.headers.get("X-Timezone", "UTC")
+    try:
+        user_tz = ZoneInfo(user_tz_str)
+    except KeyError:  # Si la zona horaria no es válida
+        user_tz = ZoneInfo("UTC")
 
     if pending_type == "pendingMyApproval":
         queryset = Transaction.objects.filter(
@@ -83,14 +88,14 @@ def get_all_transactions(request):
             queryset = queryset.filter(**{lookup: data[field]})
 
     if "date_start" in data:
-        queryset = queryset.filter(
-            created_at__gte=timezone.make_aware(datetime.combine(data["date_start"], datetime.min.time()))
-        )
+        start_dt_local = datetime.combine(data["date_start"], time.min).replace(tzinfo=user_tz)
+        start_dt_utc = start_dt_local.astimezone(ZoneInfo("UTC"))
+        queryset = queryset.filter(created_at__gte=start_dt_utc)
 
     if "date_end" in data:
-        queryset = queryset.filter(
-            created_at__lte=timezone.make_aware(datetime.combine(data["date_end"], datetime.max.time()))
-        )
+        end_dt_local = datetime.combine(data["date_end"], time.max).replace(tzinfo=user_tz)
+        end_dt_utc = end_dt_local.astimezone(ZoneInfo("UTC"))
+        queryset = queryset.filter(created_at__lte=end_dt_utc)
 
     paginator = LimitOffsetPagination()
     paginator.default_limit = 30
