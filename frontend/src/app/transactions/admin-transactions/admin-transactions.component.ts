@@ -13,6 +13,7 @@ import { getTransactionColumns } from "../config/transactions-admin-columns.conf
 import {
   MatNativeDateModule,
   provideNativeDateAdapter,
+  MAT_DATE_LOCALE,
 } from "@angular/material/core";
 import {
   createFilters,
@@ -28,7 +29,11 @@ import { CreateTransactionComponent } from "../create-transaction/create-transac
 
 @Component({
   selector: "app-admin-transactions",
-  providers: [DatePipe, provideNativeDateAdapter()],
+  providers: [
+    DatePipe,
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: "es-ES" },
+  ],
   imports: [
     MaterialModule,
     CommonModule,
