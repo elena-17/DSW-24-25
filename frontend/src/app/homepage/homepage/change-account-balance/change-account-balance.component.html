@@ -1,6 +1,10 @@
 <div class="transaction_form">
   <h2 id="title">{{ dialogTitle }}</h2>
-  <mat-horizontal-stepper [linear]="true" #stepper (selectionChange)="onStepChange($event, stepper)">
+  <mat-horizontal-stepper
+    [linear]="true"
+    #stepper
+    (selectionChange)="onStepChange($event, stepper)"
+  >
     <!-- Paso 1: Detalles del Envío -->
     <mat-step [stepControl]="amountForm">
       <form [formGroup]="amountForm">
@@ -48,16 +52,23 @@
       <form [formGroup]="creditForm">
         <ng-template matStepLabel>Payment Details</ng-template>
 
-          <!-- Nuestro banco-->
-          <ng-container
-            *ngIf="amountForm.get('paymentMethod')?.value === 'ourBank'; else stripeBlock"
-          >
-            <ng-container *ngIf="!waitingValidation; else waitingTemplate">
+        <!-- Nuestro banco-->
+        <ng-container
+          *ngIf="
+            amountForm.get('paymentMethod')?.value === 'ourBank';
+            else stripeBlock
+          "
+        >
+          <ng-container *ngIf="!waitingValidation; else waitingTemplate">
             <mat-label>Credit Card</mat-label>
-            <mat-select formControlName="card" placeholder="Select a credit card">
+            <mat-select
+              formControlName="card"
+              placeholder="Select a credit card"
+            >
               <mat-option *ngFor="let card of creditCards" [value]="card">
-                {{ card.card_alias || "Unnamed Card" }} - {{ card.owner_name }} -
-                **** **** **** {{ card.number.slice(-4) }}
+                {{ card.card_alias || "Unnamed Card" }} -
+                {{ card.owner_name }} - **** **** ****
+                {{ card.number.slice(-4) }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="creditForm.get('card')?.hasError('required')">
@@ -99,7 +110,11 @@
               >
                 Request Validation
               </button>
-              <form *ngIf="stripeValidationRequested" id="payment-form" class="stripe-form">
+              <form
+                *ngIf="stripeValidationRequested"
+                id="payment-form"
+                class="stripe-form"
+              >
                 <p class="stripe-title">Enter your Stripe Card details here:</p>
                 <div id="stripe-card-element"><!-- Stripe Card Element --></div>
                 <!--<mat-error *ngIf="!isStripeValidated">Please enter valid card details.</mat-error>-->
@@ -132,8 +147,10 @@
             mat-stroked-button
             matStepperNext
             [disabled]="
-              (amountForm.get('paymentMethod')?.value === 'ourBank' && !isCardValidated) ||
-              (amountForm.get('paymentMethod')?.value === 'stripe' && !isStripeValidated)
+              (amountForm.get('paymentMethod')?.value === 'ourBank' &&
+                !isCardValidated) ||
+              (amountForm.get('paymentMethod')?.value === 'stripe' &&
+                !isStripeValidated)
             "
           >
             Next
@@ -147,7 +164,7 @@
       <ng-template matStepLabel>Confirmation</ng-template>
       <div
         class="confirmation-message"
-        *ngIf="!waitingValidation && isCardValidated || isStripeValidated"
+        *ngIf="(!waitingValidation && isCardValidated) || isStripeValidated"
       >
         <p>You're about to {{ dialogTitle | lowercase }}</p>
         <p class="amount-highlight">{{ amountForm.value.amount }} €</p>
@@ -155,7 +172,10 @@
       </div>
       <div
         class="confirmation-message"
-        *ngIf="(waitingValidation || !isCardValidated) && amountForm.get('paymentMethod')?.value === 'ourBank'"
+        *ngIf="
+          (waitingValidation || !isCardValidated) &&
+          amountForm.get('paymentMethod')?.value === 'ourBank'
+        "
       >
         <p>Credit card is not validated yet!</p>
         <p>
@@ -173,13 +193,13 @@
           type="submit"
           (click)="onSubmit()"
           [disabled]="
-                  amountForm.invalid || creditForm.invalid || !isCardValidated
+            amountForm.invalid || creditForm.invalid || !isCardValidated
           "
         >
           Confirm
         </button>
 
-         <!-- Botón para Stripe -->
+        <!-- Botón para Stripe -->
         <button
           mat-flat-button
           *ngIf="amountForm.get('paymentMethod')?.value === 'stripe'"

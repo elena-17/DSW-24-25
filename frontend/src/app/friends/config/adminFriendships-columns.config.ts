@@ -13,6 +13,5 @@ export const getAdminFriendshipsColumns = () => [
     columnDef: "created_at",
     header: "Created At",
     cell: (element: any) => new Date(element.created_at).toLocaleString(), // formatear la fecha
-  }
-
+  },
 ];
