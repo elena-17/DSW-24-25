@@ -1,57 +1,62 @@
 <app-toolbar></app-toolbar>
 
-<mat-tab-group animationDuration="500ms" (selectedTabChange)="onTabChange($event)">
-<!-- Tab 1 - All Favorite Relations -->
-<mat-tab>
+<mat-tab-group
+  animationDuration="500ms"
+  (selectedTabChange)="onTabChange($event)"
+>
+  <!-- Tab 1 - All Favorite Relations -->
+  <mat-tab>
     <ng-template mat-tab-label>
-    All Favorites
-    <mat-icon class="tab-icon" style="color: #e30000fe">favorite</mat-icon>
+      All Favorites
+      <mat-icon class="tab-icon" style="color: #e30000fe">favorite</mat-icon>
     </ng-template>
     <div class="page-container">
-        <div class="underlined-title">
-            <h2>All Favorite Pairs</h2>
-            <hr />
-        </div>
-    <app-table
+      <div class="underlined-title">
+        <h2>All Favorite Pairs</h2>
+        <hr />
+      </div>
+      <app-table
         [columns]="columns"
         [data]="favoritePairs"
+        [totalCount]="totalCount"
+        [pageIndex]="pageIndex"
+        [pageSize]="pageSize"
+        [serverSidePagination]="true"
         [enableSelection]="false"
         [enableActions]="true"
         (action1)="removeRelation($event)"
+        (pageChange)="onPageChange($event)"
         [action1Icon]="'delete'"
         [action1Color]="'#d32f2f'"
-        [action1Tooltip]="'Remove Relation'">
-    </app-table>
+        [action1Tooltip]="'Remove Relation'"
+      >
+      </app-table>
     </div>
-</mat-tab>
+  </mat-tab>
 
-<!-- Tab 2 - Add Favorite Relation -->
-<mat-tab>
+  <!-- Tab 2 - Add Favorite Relation -->
+  <mat-tab>
     <ng-template mat-tab-label>
       Add Relation
       <mat-icon class="tab-icon" style="color: #04bcc4">link</mat-icon>
     </ng-template>
     <div class="page-container">
-        <div class="underlined-title">
-            <h2>Add Favorite Relation</h2>
-            <hr />
-        </div>
-  
+      <div class="underlined-title">
+        <h2>Add Favorite Relation</h2>
+        <hr />
+      </div>
+
       <form (ngSubmit)="addRelation()" #relationForm="ngForm">
         <!-- Select User -->
         <mat-form-field class="full-width">
           <mat-label>Select User</mat-label>
-          <mat-select
-            name="user"
-            [(ngModel)]="newRelation.user"
-            required
-          >
+          <mat-select name="user" [(ngModel)]="newRelation.user" required>
             <mat-option *ngFor="let user of allUsers" [value]="user.email">
               {{ user.email }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-  
+
         <!-- Select Favorite User -->
         <mat-form-field class="full-width">
           <mat-label>Select Favorite User</mat-label>
@@ -65,7 +70,7 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-  
+
         <!-- Submit Button -->
         <button
           mat-raised-button

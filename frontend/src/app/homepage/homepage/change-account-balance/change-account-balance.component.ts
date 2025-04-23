@@ -15,7 +15,10 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
-import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from "@angular/cdk/stepper";
+import {
+  STEPPER_GLOBAL_OPTIONS,
+  StepperSelectionEvent,
+} from "@angular/cdk/stepper";
 import { NotificationService } from "../../../services/notification.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 
@@ -111,19 +114,28 @@ export class ChangeAccountBalanceComponent {
       },
     });
   }
-  
+
   onStepChange(event: StepperSelectionEvent, stepper: MatStepper): void {
     const fromStep = event.previouslySelectedIndex;
     const toStep = event.selectedIndex;
-    const paymentMethod = this.amountForm.get('paymentMethod')?.value;
+    const paymentMethod = this.amountForm.get("paymentMethod")?.value;
 
     // Bloqueamos si se intenta ir del paso 2 al 3 sin validación
-    if ((fromStep === 0 || fromStep === 1) && toStep === 2 && paymentMethod === 'stripe' && !this.stripeValidationRequested) {
-      this.snackBar.open('Please validate your payment method before proceeding.', 'Close', {
-        duration: 2500,
-        horizontalPosition: 'center',
-        verticalPosition: 'top',
-      });
+    if (
+      (fromStep === 0 || fromStep === 1) &&
+      toStep === 2 &&
+      paymentMethod === "stripe" &&
+      !this.stripeValidationRequested
+    ) {
+      this.snackBar.open(
+        "Please validate your payment method before proceeding.",
+        "Close",
+        {
+          duration: 2500,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+        },
+      );
 
       // Cancelamos el cambio de paso
       setTimeout(() => {
@@ -132,9 +144,9 @@ export class ChangeAccountBalanceComponent {
 
       return;
     }
-    
+
     // Si volvemos al paso 0 y el método de pago es Stripe, reseteamos Stripe
-    if (toStep === 0 && paymentMethod === 'stripe') {
+    if (toStep === 0 && paymentMethod === "stripe") {
       this.stripeValidationRequested = false;
       this.isStripeValidated = false;
 
@@ -272,16 +284,16 @@ export class ChangeAccountBalanceComponent {
       alert("Stripe not initialized properly.");
       return;
     }
-  
+
     const { paymentIntent, error } = await this.stripe.confirmCardPayment(
       this.clientSecretKey,
       {
         payment_method: {
           card: this.cardElement,
         },
-      }
+      },
     );
-  
+
     if (error) {
       console.error("Error confirming Stripe payment:", error);
     } else if (paymentIntent?.status === "succeeded") {

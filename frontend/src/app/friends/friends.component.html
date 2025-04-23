@@ -1,7 +1,10 @@
 <app-toolbar></app-toolbar>
 
 <!-- Tab Group for Favorites and Add Favorites -->
-<mat-tab-group animationDuration="500ms" (selectedTabChange)="onTabChange($event)">
+<mat-tab-group
+  animationDuration="500ms"
+  (selectedTabChange)="onTabChange($event)"
+>
   <!-- Tab 1 - Favorites -->
   <mat-tab>
     <ng-template mat-tab-label>
@@ -19,7 +22,11 @@
             placeholder="Ex: jane@example.com"
             #inputFavorites
           />
-          <button mat-icon-button matSuffix (click)="clearFilterFavorites(inputFavorites)">
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="clearFilterFavorites(inputFavorites)"
+          >
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
@@ -48,7 +55,7 @@
   <mat-tab>
     <ng-template mat-tab-label>
       Add Favorites
-      <mat-icon class="tab-icon" style="color: #04bcc4; " >person_add</mat-icon>
+      <mat-icon class="tab-icon" style="color: #04bcc4">person_add</mat-icon>
     </ng-template>
     <div class="page-container">
       <div class="filters">
@@ -61,7 +68,11 @@
             placeholder="Ex: john@example.com"
             #inputAddFavorites
           />
-          <button mat-icon-button matSuffix (click)="clearFilterAvailable(inputAddFavorites)">
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="clearFilterAvailable(inputAddFavorites)"
+          >
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
