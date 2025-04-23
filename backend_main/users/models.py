@@ -30,6 +30,8 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(self, id_number, email, phone, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("role", "admin")
+        extra_fields.setdefault("is_confirmed", True)  # Asegúrate de que el superusuario esté confirmado
         return self.create_user(id_number, email, phone, password, **extra_fields)
 
 

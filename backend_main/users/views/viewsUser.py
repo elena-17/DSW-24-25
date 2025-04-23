@@ -4,13 +4,13 @@ from email.utils import quote
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.core.signing import TimestampSigner, BadSignature, SignatureExpired
-from django.utils.http import urlsafe_base64_encode
+from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
+
 from users.models import User
 from users.serializers.register import RegisterSerializer
 from users.serializers.token import CustomTokenObtainPairSerializer
@@ -20,7 +20,9 @@ from users.serializers.user import UserProfileSerializer
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+
 signer = TimestampSigner()
+
 
 @api_view(["POST"])
 @permission_classes([AllowAny])
@@ -66,14 +68,16 @@ def send_invitation_email(email: str, invitation_link: str) -> None:
 def confirm_user_registration(request):
     email = request.data.get("email")
     token = request.data.get("token")
-    
+
     if not email or not token:
         return Response({"error": "Missing email or token."}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         signer.unsign(token, max_age=300)  # Token válido por 5 minutos (300 segundos)
     except SignatureExpired:
-        return Response({"error": "Token has expired. You will need to contact with an admin."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Token has expired. You will need to contact with an admin."}, status=status.HTTP_400_BAD_REQUEST
+        )
     except BadSignature:
         return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -132,7 +136,10 @@ def confirm_change_password(request):
     try:
         signer.unsign(token, max_age=300)  # Token válido por 5 minutos (300 segundos)
     except SignatureExpired:
-        return Response({"error": "Token has expired... You will need to request a new password change email to proceed."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Token has expired... You will need to request a new password change email to proceed."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     except BadSignature:
         return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 

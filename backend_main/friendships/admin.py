@@ -1,15 +1,10 @@
 from django.contrib import admin
 
-from .models import FriendRequest, Friendship
+from .models import Favorite
 
 
-@admin.register(Friendship)
-class FriendshipAdmin(admin.ModelAdmin):
-    list_display = ("user1", "user2")
-
-
-@admin.register(FriendRequest)
-class FriendRequestAdmin(admin.ModelAdmin):
-    list_display = ("sender", "receiver", "status")
-    list_filter = ("status",)
-    search_fields = ("sender__name", "receiver__name")
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ("user", "favorite_user", "created_at")
+    search_fields = ("user__email", "favorite_user__email")
+    list_filter = ("created_at",)
