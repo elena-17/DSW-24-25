@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 from ..serializers import FavoriteSerializer
 from users.models import User
 from ..models import Favorite
@@ -10,9 +11,14 @@ from ..models import Favorite
 # Get all favorite pairs
 @api_view(["GET"])
 def get_all_favorite_pairs(request):
-    favorites = Favorite.objects.select_related("user", "favorite_user").all()
-    serializer = FavoriteSerializer(favorites, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    favorites = Favorite.objects.select_related("user", "favorite_user").all().order_by("id")
+    paginator = LimitOffsetPagination()
+    paginated_qs = paginator.paginate_queryset(favorites, request)
+    serializer = FavoriteSerializer(paginated_qs, many=True)
+    return Response({
+        "data": serializer.data,
+        "total": paginator.count
+    }, status=status.HTTP_200_OK)
 
 # Manually add a favorite relation between two users
 @api_view(["POST"])
