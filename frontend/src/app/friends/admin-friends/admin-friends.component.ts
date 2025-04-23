@@ -94,7 +94,6 @@ export class AdminFriendsComponent {
         );
         this.loadAllFavoritePairs();
         this.newRelation = { user: "", favorite_user: "" };
-        this.newRelation = { user: "", favorite_user: "" };
       },
       error: (error) => {
         this.notificationService.showErrorMessage(
