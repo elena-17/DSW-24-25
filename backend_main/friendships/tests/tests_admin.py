@@ -45,16 +45,22 @@ class FavoriteAdminTest(APITestCase):
         """Admin fails if one of the users doesn't exist"""
         response = self.client.post(self.admin_add_url, {"user": "noexist@test.com", "favorite_user": self.user2.email})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
+    
     def test_admin_get_all_favorites(self):
-        """Admin can fetch all favorite pairs"""
+        """Admin can fetch all favorite pairs with pagination"""
         Favorite.objects.create(user=self.user1, favorite_user=self.user2)
-        response = self.client.get(self.admin_all_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["user"], self.user1.email)
-        self.assertEqual(response.data[0]["favorite_user"], self.user2.email)
 
+        # Agrega los parámetros de paginación esperados por el backend
+        response = self.client.get(self.admin_all_url, {"limit": 10, "offset": 0})
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("data", response.data)
+        self.assertIn("total", response.data)
+        self.assertEqual(response.data["total"], 1)
+        self.assertEqual(len(response.data["data"]), 1)
+        self.assertEqual(response.data["data"][0]["user"], self.user1.email)
+        self.assertEqual(response.data["data"][0]["favorite_user"], self.user2.email)
+    
     def test_admin_remove_favorite(self):
         """Admin can remove a favorite relation"""
         Favorite.objects.create(user=self.user1, favorite_user=self.user2)

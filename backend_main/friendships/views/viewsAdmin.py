@@ -17,7 +17,7 @@ def get_all_favorite_pairs(request):
     serializer = FavoriteSerializer(paginated_qs, many=True)
     return Response({
         "data": serializer.data,
-        "total": paginator.count
+        "total": paginator.count,
     }, status=status.HTTP_200_OK)
 
 # Manually add a favorite relation between two users
