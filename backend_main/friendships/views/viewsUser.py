@@ -2,6 +2,7 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from ..serializers import FavoriteSerializer
 from users.models import User
 from users.serializers.user import UserProfileSerializer
 
@@ -43,7 +44,7 @@ def add_to_favorites(request):
 
     try:
         favorite_user = User.objects.get(email=favorite_email)
-        Favorite.objects.get_or_create(user=current_user, favorite_user=favorite_user)
+        FavoriteSerializer(Favorite.objects.get_or_create(user=current_user, favorite_user=favorite_user))
         return Response({"message": "User added to favorites"}, status=status.HTTP_201_CREATED)
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -61,6 +62,7 @@ def remove_from_favorites(request):
     try:
         favorite_user = User.objects.get(email=favorite_email)
         favorite_entry = Favorite.objects.get(user=current_user, favorite_user=favorite_user)
+        FavoriteSerializer(favorite_entry)
         favorite_entry.delete()
         return Response({"message": "User removed from favorites"}, status=status.HTTP_200_OK)
     except (User.DoesNotExist, Favorite.DoesNotExist):

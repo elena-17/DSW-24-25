@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from ..serializers import FavoriteSerializer
 from users.models import User
 from ..models import Favorite
 
@@ -10,15 +11,8 @@ from ..models import Favorite
 @api_view(["GET"])
 def get_all_favorite_pairs(request):
     favorites = Favorite.objects.select_related("user", "favorite_user").all()
-    data = [
-        {
-            "user": fav.user.email,
-            "favorite_user": fav.favorite_user.email,
-            "created_at": fav.created_at,
-        }
-        for fav in favorites
-    ]
-    return Response(data, status=status.HTTP_200_OK)
+    serializer = FavoriteSerializer(favorites, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 # Manually add a favorite relation between two users
 @api_view(["POST"])
@@ -44,11 +38,9 @@ def admin_add_favorite_relation(request):
             )
 
         # Si no existe, se crea
-        Favorite.objects.create(user=user, favorite_user=favorite_user)
-        return Response(
-            {"message": f"Relation added: {user_email} ➜ {favorite_email}"},
-            status=status.HTTP_201_CREATED,
-        )
+        favorite = Favorite.objects.create(user=user, favorite_user=favorite_user)
+        FavoriteSerializer(favorite)
+        return Response({"message": f"Relation added: {user_email} ➜ {favorite_email}"}, status=status.HTTP_201_CREATED)
     except User.DoesNotExist:
         return Response({"error": "One or both users not found."}, status=status.HTTP_404_NOT_FOUND)
 
@@ -65,6 +57,7 @@ def admin_remove_favorite_relation(request):
         user = User.objects.get(email=user_email)
         favorite_user = User.objects.get(email=favorite_email)
         fav = Favorite.objects.get(user=user, favorite_user=favorite_user)
+        FavoriteSerializer(fav)  # Serializamos antes de borrar
         fav.delete()
         return Response({"message": f"Relation removed: {user_email} ➜ {favorite_email}"}, status=status.HTTP_200_OK)
     except (User.DoesNotExist, Favorite.DoesNotExist):
