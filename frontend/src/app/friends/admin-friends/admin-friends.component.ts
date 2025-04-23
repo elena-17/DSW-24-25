@@ -24,17 +24,6 @@ import { PageEvent } from "@angular/material/paginator";
   ],
   templateUrl: "./admin-friends.component.html",
   styleUrls: ["./admin-friends.component.scss"],
-  selector: "app-admin-friends",
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    ToolbarComponent,
-    MaterialModule,
-    TableComponent,
-  ],
-  templateUrl: "./admin-friends.component.html",
-  styleUrls: ["./admin-friends.component.scss"],
 })
 export class AdminFriendsComponent {
   favoritePairs: any[] = [];
