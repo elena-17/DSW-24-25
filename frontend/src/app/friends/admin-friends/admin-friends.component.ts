@@ -3,16 +3,27 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { getAdminFriendshipsColumns } from "../config/adminFriendships-columns.config"; // Define columnas
 import { FriendshipsService } from "../../services/friendships.service";
 import { AdminUsersService } from "../../services/admin-users.service";
-import { MatNativeDateModule } from "@angular/material/core";
 import { MaterialModule } from "../../material.module";
 import { TableComponent } from "../../shared/table/table.component";
 import { ToolbarComponent } from "../../toolbar/toolbar.component";
 import { CommonModule } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
 import { FormsModule } from "@angular/forms";
+import { NotificationService } from "../../services/notification.service";
 import { PageEvent } from "@angular/material/paginator";
 
 @Component({
+  selector: "app-admin-friends",
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ToolbarComponent,
+    MaterialModule,
+    TableComponent,
+  ],
+  templateUrl: "./admin-friends.component.html",
+  styleUrls: ["./admin-friends.component.scss"],
   selector: "app-admin-friends",
   imports: [
     CommonModule,
@@ -37,7 +48,7 @@ export class AdminFriendsComponent {
   constructor(
     private friendsService: FriendshipsService,
     private adminUsersService: AdminUsersService,
-    private snackBar: MatSnackBar,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -58,11 +69,7 @@ export class AdminFriendsComponent {
         this.allUsers = response.filter((user: any) => user.role !== "admin");
       },
       error: () => {
-        this.snackBar.open("Error loading users.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showErrorMessage("Error loading users.");
       },
     });
   }
@@ -76,11 +83,9 @@ export class AdminFriendsComponent {
           this.totalCount = res.total;
         },
         error: () =>
-          this.snackBar.open("Failed to load favorite pairs", "Close", {
-            duration: 3000,
-            verticalPosition: "top",
-            horizontalPosition: "center",
-          }),
+          this.notificationService.showErrorMessage(
+            "Error loading favorite pairs.",
+          ),
       });
   }
 
@@ -95,17 +100,16 @@ export class AdminFriendsComponent {
 
     this.friendsService.addRelation(this.newRelation).subscribe({
       next: () => {
-        this.snackBar.open("Relation added successfully", "Close", {
-          duration: 3000,
-        });
+        this.notificationService.showSuccessMessage(
+          "Relation added successfully.",
+        );
         this.loadAllFavoritePairs();
         this.newRelation = { user: "", favorite_user: "" };
+        this.newRelation = { user: "", favorite_user: "" };
       },
-      error: (err) => {
-        this.snackBar.open(
-          err.error?.error || "Failed to add relation",
-          "Close",
-          { duration: 3000 },
+      error: (error) => {
+        this.notificationService.showErrorMessage(
+          error.error.error || "Failed to add relation.",
         );
       },
     });
@@ -119,13 +123,15 @@ export class AdminFriendsComponent {
       })
       .subscribe({
         next: () => {
-          this.snackBar.open("Relation removed", "Close", { duration: 3000 });
+          this.notificationService.showSuccessMessage(
+            "Relation removed successfully.",
+          );
           this.loadAllFavoritePairs();
         },
-        error: () => {
-          this.snackBar.open("Failed to remove relation", "Close", {
-            duration: 3000,
-          });
+        error: (error) => {
+          this.notificationService.showErrorMessage(
+            error.error.error || "Failed to remove relation.",
+          );
         },
       });
   }

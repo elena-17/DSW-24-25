@@ -7,20 +7,17 @@ import {
 } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { CommonModule } from "@angular/common";
-import { MaterialModule } from "../material.module"; // Asegúrate de tener MaterialModule para los componentes de Angular Material
+import { MaterialModule } from "../material.module";  // Asegúrate de tener MaterialModule para los componentes de Angular Material
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog } from "@angular/material/dialog";
 import { ReactiveFormsModule } from "@angular/forms";
-
 import { getFriendshipsColumns } from "./config/friendships-columns.config"; // Define las columnas de la tabla
 import { FriendshipsService } from "../services/friendships.service"; // Servicio para obtener la lista de amigos/favoritos
 import { MatBadgeModule } from "@angular/material/badge";
-import {
-  MatNativeDateModule,
-  provideNativeDateAdapter,
-} from "@angular/material/core";
+import { MatNativeDateModule } from "@angular/material/core";
 import { TableComponent } from "../shared/table/table.component";
 import { MatTabChangeEvent } from "@angular/material/tabs";
+import { NotificationService } from "../services/notification.service";
 
 @Component({
   selector: "app-friends",
@@ -48,9 +45,8 @@ export class FriendsComponent {
   filteredAvailableUsers: any[] = [];
   constructor(
     private friendshipsService: FriendshipsService,
-    private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
+    private notificationService: NotificationService,
   ) {}
   ngOnInit(): void {
     this.columns = getFriendshipsColumns();
@@ -87,14 +83,8 @@ export class FriendsComponent {
         console.log("Friendships loaded successfully", this.data);
       },
       error: (error) => {
-        this.snackBar.open(
+        this.notificationService.showErrorMessage(
           error.error.error || "Error loading friendships",
-          "Close",
-          {
-            duration: 3000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          },
         );
       },
     });
@@ -108,14 +98,8 @@ export class FriendsComponent {
         console.log("Available users loaded successfully.", this.data);
       },
       error: (error) => {
-        this.snackBar.open(
-          error.error.error || "Error loading available users.",
-          "Close",
-          {
-            duration: 3000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          },
+        this.notificationService.showErrorMessage(
+          error.error.error || "Can't load available users.",
         );
       },
     });
@@ -157,14 +141,8 @@ export class FriendsComponent {
   addFavorite(user: any): void {
     this.friendshipsService.addFavorite(user.email).subscribe({
       next: () => {
-        this.snackBar.open(
+        this.notificationService.showSuccessMessage(
           `${user.email} has been added to favorites.`,
-          "Close",
-          {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          },
         );
         //Quitar de available users and add to favorites
         this.availableUsers = this.availableUsers.filter(
@@ -176,11 +154,9 @@ export class FriendsComponent {
         this.filteredFavoriteUsers = [...this.filteredFavoriteUsers, user];
       },
       error: () => {
-        this.snackBar.open("Error adding user to favorites.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showErrorMessage(
+          "Can't add user to favorites.",
+        );
       },
     });
   }
@@ -188,14 +164,8 @@ export class FriendsComponent {
   removeFavorite(user: any): void {
     this.friendshipsService.removeFavorite(user.email).subscribe({
       next: () => {
-        this.snackBar.open(
+        this.notificationService.showSuccessMessage(
           `${user.email} has been removed from favorites.`,
-          "Close",
-          {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          },
         );
         this.filteredFavoriteUsers = this.filteredFavoriteUsers.filter(
           (u) => u.email !== user.email,
@@ -203,11 +173,9 @@ export class FriendsComponent {
         this.availableUsers = [...this.availableUsers, user];
       },
       error: () => {
-        this.snackBar.open("Error removing user from favorites.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showErrorMessage(
+          "Can't remove user from favorites.",
+        );
       },
     });
   }
