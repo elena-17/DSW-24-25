@@ -17,6 +17,7 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatStepperModule } from "@angular/material/stepper";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 import { MatRadioModule } from "@angular/material/radio";
+import { FriendshipsService } from "../../services/friendships.service";
 
 @Component({
   selector: "app-create-transaction",
@@ -46,12 +47,14 @@ export class CreateTransactionComponent {
   dialogTitle: string;
   emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
+  favorites: string[] = [];
   admin: boolean = false;
   isDivide: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<CreateTransactionComponent>,
     private formBuilder: FormBuilder,
+    private friendsService: FriendshipsService,
     @Inject(MAT_DIALOG_DATA)
     public data: { title: string; admin: boolean; divide: boolean },
   ) {
@@ -92,6 +95,14 @@ export class CreateTransactionComponent {
       title: ["", [Validators.required, Validators.maxLength(100)]],
       description: [""],
     });
+  }
+
+  ngOnInit() {
+    if (!this.admin) {
+      this.friendsService.getAllFriendships().subscribe((res) => {
+        this.favorites = res.map((user: any) => user.email); 
+      });
+    }
   }
 
   onCancel() {
