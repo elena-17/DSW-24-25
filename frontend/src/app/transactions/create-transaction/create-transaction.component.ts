@@ -9,7 +9,6 @@ import {
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
-
 import { MaterialModule } from "../../material.module";
 import { MatSelectModule } from "@angular/material/select";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
@@ -18,7 +17,7 @@ import { MatStepperModule } from "@angular/material/stepper";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 import { MatRadioModule } from "@angular/material/radio";
 import { FriendshipsService } from "../../services/friendships.service";
-import { map, Observable, startWith } from "rxjs";
+import { map, Observable, of, startWith } from "rxjs";
 
 @Component({
   selector: "app-create-transaction",
@@ -50,6 +49,7 @@ export class CreateTransactionComponent {
   emails: string[] = [];
   favorites: any[] = [];
   filteredFavorites!: Observable<any[]>;
+  selectedContacts: string[] = [];
   admin: boolean = false;
   isDivide: boolean = false;
 
@@ -104,18 +104,17 @@ export class CreateTransactionComponent {
       this.friendsService.getAllFriendships().subscribe((res) => {
         this.favorites = res; 
       });
+
+      // Filtrar los favoritos mientras escribimos
+      this.contactForm.get("contact")?.valueChanges.pipe(
+        startWith(""),
+        map(value => this._filterFavorites(value))
+      ).subscribe(filtered => {
+        this.filteredFavorites = of(filtered);
+      });
     }
   }
 
-  ngAfterViewInit() {
-    if (!this.admin) {
-      this.filteredFavorites = this.contactForm.get('contact')!.valueChanges.pipe(
-        startWith(""),
-        map(value => this._filterFavorites(value || ""))
-      );
-    }
-  }
-  
   private _filterFavorites(value: string): any[] {
     const filterValue = value.toLowerCase();
     return this.favorites.filter(user =>
@@ -123,6 +122,45 @@ export class CreateTransactionComponent {
       user.name.toLowerCase().includes(filterValue) ||
       user.phone.toLowerCase().includes(filterValue)
     );
+  }
+
+  // Agregar más usuarios
+  addMoreContacts(selectedEmail: string) {
+    if (selectedEmail && Validators.email(new FormControl(selectedEmail)) === null &&
+    !this.selectedContacts.includes(selectedEmail)) {
+      this.selectedContacts.push(selectedEmail);  // Añadir el contacto completo
+      this.contactForm.reset();  // Limpiar el campo de entrada después de añadir
+    }
+  }
+
+  // Cuando seleccionas un contacto del autocompletado o presionas Enter
+  onAutocompleteSelect(event: any) {
+    this.addMoreContacts(event.option.value);  
+    this.filteredFavorites = (this.contactForm.get("contact")?.valueChanges || of("")).pipe(
+      startWith(""),
+      map(value => this._filterFavorites(value || ""))
+    );
+  }
+  
+  onEnterPressed(event: KeyboardEvent) {
+    event.preventDefault(); // 👈 evita que el Enter dispare un submit
+    const inputValue = this.contactForm.get('contact')?.value;
+    if (inputValue) {
+      this.addMoreContacts(inputValue);
+    }
+  }
+  
+  onBlurInput() {
+    const inputValue = this.contactForm.get('contact')?.value;
+    if (inputValue) {
+      this.addMoreContacts(inputValue);
+    }
+  }
+
+  // Eliminar un contacto de la lista seleccionada
+  removeContact(email: any) {
+    this.selectedContacts = this.selectedContacts.filter(e => e !== email);
+
   }
 
   onCancel() {

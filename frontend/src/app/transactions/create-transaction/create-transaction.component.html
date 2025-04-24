@@ -14,18 +14,37 @@
               formControlName="contact"
               [matAutocomplete]="auto"
               placeholder="Email, Phone or Name"
+              (blur)="onBlurInput()"
             />
-            <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAutocompleteSelect($event)" autoActiveFirstOption>
               <mat-option *ngFor="let user of filteredFavorites | async" [value]="user.email">
-                {{ user.name }} - {{ user.email }}
+                {{ user.email }}
                 <mat-icon class="favorite-icon">favorite</mat-icon>
               </mat-option>
             </mat-autocomplete>
-            <mat-error *ngIf="contactForm.get('contact')?.hasError('required')">
-              This field is required
+            <mat-error *ngIf="selectedContacts.length === 0">
+              At least one user must be selected
             </mat-error>
           </mat-form-field>
+
+          <!-- Botón para agregar más usuarios -->
+          <div *ngIf="selectedContacts.length > 0">
+            <button mat-icon-button matTooltip="Add more" (click)="addMoreContacts(contactForm.get('contact')?.value)">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+          </div>
+
+          <!-- Lista de contactos seleccionados -->
+          <div *ngIf="selectedContacts.length > 0" class="selected-contacts">
+            <div *ngFor="let email of selectedContacts" class="contact-chip">
+              {{ email }}
+              <button mat-icon-button (click)="removeContact(email)">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </div>
+          </div>
         </div>
+
         <ng-template #adminFields>
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Sender</mat-label>
