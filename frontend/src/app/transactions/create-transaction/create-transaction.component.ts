@@ -100,7 +100,7 @@ export class CreateTransactionComponent {
   ngOnInit() {
     if (!this.admin) {
       this.friendsService.getAllFriendships().subscribe((res) => {
-        this.favorites = res.map((user: any) => user.email); 
+        this.favorites = res; 
       });
     }
   }
