@@ -94,18 +94,18 @@ To run the project using Docker, follow these steps:
 2. Run the Docker container:
      ```bash
     docker run -it --rm \
-  -v $(pwd)/backend_bank:/app \
-  -w /app \
-  -e DJANGO_SETTINGS_MODULE=backend_bank.settings \
-  -e POSTGRES_DB=bank_db \
-  -e POSTGRES_USER=bank_user \
-  -e POSTGRES_PASSWORD=bank_pass \
-  -e POSTGRES_HOST=postgres \
-  -e POSTGRES_PORT=5432 \
-  --network bank_network \
-  --name backend_bank_container \
-  backend_bank_image \
-  python manage.py runserver 0.0.0.0:8000
+    -v $(pwd)/backend_bank:/app \
+    -w /app \
+    -e DJANGO_SETTINGS_MODULE=backend_bank.settings \
+    -e POSTGRES_DB=bank_db \
+    -e POSTGRES_USER=bank_user \
+    -e POSTGRES_PASSWORD=bank_pass \
+    -e POSTGRES_HOST=postgres \
+    -e POSTGRES_PORT=5432 \
+    --network bank_network \
+    --name backend_bank_container \
+    backend_bank_image \
+    python manage.py runserver 0.0.0.0:8000
     ```
 3. Access the application at `http://localhost:8080/`.
 4. To stop the container, use:
