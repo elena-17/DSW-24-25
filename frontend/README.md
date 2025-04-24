@@ -1,59 +1,86 @@
-# Frontend
+# ZAP Frontend 🚀
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.0.
+This project is the frontend for the ZAP application, built with Angular. It provides a user interface for managing transactions, user accounts, and administrative features.
 
-## Development server
+## Table of Contents 📋
 
-To start a local development server, run:
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the Project](#running-the-project)
+- [Project Structure](#project-structure)
+- [Available Scripts](#available-scripts)
+- [Technologies Used](#technologies-used)
 
-```bash
-ng serve
-```
+---
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Prerequisites ✅
 
-## Code scaffolding
+Before starting, make sure you have the following installed:
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- [Angular CLI](https://angular.io/cli) (version 19.2)
+- [Node.js](https://nodejs.org/) (version 22)
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Installation 📦
 
-```bash
-ng generate --help
-```
+1. Install the dependencies:
+   ```bash
+   npm install
+   ```
 
-## Building
+## Running the Project ▶️
 
-To build the project run:
+1. Start the development server:
+   ```bash
+   ng serve
+   ```
+2. Open your browser and navigate to `http://localhost:4200/`.
+3. The application should be running and you can start using it.
 
-```bash
-ng build
-```
+## Project Structure 🗂️
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+     ```
+     frontend
+     ├── src
+     │   ├── app
+     │   │   ├── admin-accounts/
+     |   │   ├── admin-users/
+     |   │   ├── error404/             # 404 error page
+     |   │   ├── friends/              # Module for managing favorite relationships
+     |   │   ├── helppage/
+     |   │   ├── homepage/
+     |   │   ├── interceptors/         # HTTP interceptors for setting auth token
+     |   │   ├── login/
+     |   │   ├── profile-page/         # Profile page and manage creditcards
+     |   │   ├── register/
+     |   │   ├── services/             # Services for API calls and data management
+     |   │   ├── shared/               # Shared components: badge, slider, confirm dialog and table
+     |   |   ├── toolbar/              # Toolbar component for navigation
+     |   |   ├── transactions/
+     |   │   ├── app.component.ts      # Main application component
+     |   │   ├── app.routes.ts         # Application routes configuration
+     |   │   ├── material.module.ts    # Angular Material configuration
+     │   └── ...
+     ├── assets/                   # Static assets like images and themes
+     │   └── zap-logo.png          # Application logo
+     ├── styles.scss               # Global application styles
+     └── index.html                # Main HTML file
+     ```
 
-## Running unit tests
+## Available Scripts 📜
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+In the `package.json` file, you can find the following scripts:
 
-```bash
-ng test
-```
+- `ng serve`: Starts the development server.
+- `ng build`: Builds the application for production.
+- `ng test`: Runs unit tests.
+- `ng lint`: Lints the code using TSLint.
+- `ng e2e`: Runs end-to-end tests.
 
-## Running end-to-end tests
+## Technologies Used 💻
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Angular: Frontend framework for building the application.
+- Angular Material: UI component library for Angular.
+- RxJS: Library for reactive programming using observables.
+- TypeScript: Superset of JavaScript for building large applications.
