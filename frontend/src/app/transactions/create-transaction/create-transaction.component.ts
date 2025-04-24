@@ -18,6 +18,7 @@ import { MatStepperModule } from "@angular/material/stepper";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 import { MatRadioModule } from "@angular/material/radio";
 import { FriendshipsService } from "../../services/friendships.service";
+import { map, Observable, startWith } from "rxjs";
 
 @Component({
   selector: "app-create-transaction",
@@ -47,7 +48,8 @@ export class CreateTransactionComponent {
   dialogTitle: string;
   emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
-  favorites: string[] = [];
+  favorites: any[] = [];
+  filteredFavorites!: Observable<any[]>;
   admin: boolean = false;
   isDivide: boolean = false;
 
@@ -103,6 +105,24 @@ export class CreateTransactionComponent {
         this.favorites = res; 
       });
     }
+  }
+
+  ngAfterViewInit() {
+    if (!this.admin) {
+      this.filteredFavorites = this.contactForm.get('contact')!.valueChanges.pipe(
+        startWith(""),
+        map(value => this._filterFavorites(value || ""))
+      );
+    }
+  }
+  
+  private _filterFavorites(value: string): any[] {
+    const filterValue = value.toLowerCase();
+    return this.favorites.filter(user =>
+      user.email.toLowerCase().includes(filterValue) ||
+      user.name.toLowerCase().includes(filterValue) ||
+      user.phone.toLowerCase().includes(filterValue)
+    );
   }
 
   onCancel() {

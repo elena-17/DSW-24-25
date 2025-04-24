@@ -12,8 +12,15 @@
             <input
               matInput
               formControlName="contact"
+              [matAutocomplete]="auto"
               placeholder="Email, Phone or Name"
             />
+            <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption>
+              <mat-option *ngFor="let user of filteredFavorites | async" [value]="user.email">
+                {{ user.name }} - {{ user.email }}
+                <mat-icon class="favorite-icon">favorite</mat-icon>
+              </mat-option>
+            </mat-autocomplete>
             <mat-error *ngIf="contactForm.get('contact')?.hasError('required')">
               This field is required
             </mat-error>
