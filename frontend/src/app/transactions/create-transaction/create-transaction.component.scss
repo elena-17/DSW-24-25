@@ -1,0 +1,69 @@
+.transaction_form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  margin: 0 auto;
+  padding: 0px;
+  border-radius: 8px;
+  gap: 0px;
+}
+
+.transaction_form h2 {
+  width: 100%;
+  text-align: center;
+}
+
+::ng-deep .mat-horizontal-stepper-header-container {
+  padding: 0 10px 10px 10px !important;
+}
+::ng-deep .mat-horizontal-content-container {
+  padding: 0 60px 0px 60px !important;
+}
+
+::ng-deep .mat-step-label {
+  font-size: 14px !important;
+}
+
+.transaction_form_buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.confirmation-message {
+  text-align: center;
+}
+
+.amount-highlight {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--mat-sys-primary);
+}
+
+.contact-highlight {
+  font-weight: bold;
+  color: black;
+}
+
+/* Responsive para pantallas pequeñas */
+@media screen and (max-width: 600px) {
+  .transaction_form {
+    width: 90%;
+    padding: 10px;
+  }
+
+  ::ng-deep .mat-horizontal-content-container {
+    padding: 0 10px !important;
+  }
+
+  ::ng-deep .mat-step-label {
+    display: none !important;
+  }
+}

@@ -1,0 +1,227 @@
+.transaction_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 15px;
+  border-radius: 8px;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+.transaction_form h2 {
+  width: 100%;
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+}
+
+.stripe-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.requestValidation {
+  padding: 0.8rem 1.5rem;
+  font-weight: bold;
+  border-radius: 8px;
+  align-items: center;
+  margin-top: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease;
+}
+
+.stripe-form {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.stripe-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.stripe-card-element {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+}
+
+.waiting-validation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: left;
+  padding: 1rem;
+}
+
+::ng-deep .mat-horizontal-stepper-header-container {
+  padding: 0 8px 8px 8px !important;
+}
+
+::ng-deep .mat-horizontal-stepper-header {
+  padding: 0 15px !important;
+}
+
+::ng-deep .mat-step-label {
+  font-size: 12px !important;
+  font-weight: bold;
+}
+
+.transaction_form_buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.transaction_form_buttons button {
+  margin: 8px 0;
+}
+
+.confirmation-message {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.amount-highlight {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--mat-sys-primary);
+  margin-top: 15px;
+}
+
+.contact-highlight {
+  font-weight: bold;
+  color: black;
+  margin-top: 8px;
+}
+
+::ng-deep .mat-form-field {
+  margin-bottom: 15px;
+}
+
+::ng-deep .mat-select {
+  margin-bottom: 15px;
+}
+
+@media (max-width: 768px) {
+  .transaction_form {
+    width: 95%;
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .transaction_form h2 {
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+  }
+
+  .transaction_form_buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .amount-highlight {
+    font-size: 1.4rem;
+    margin-top: 12px;
+  }
+
+  .contact-highlight {
+    font-size: 1rem;
+    margin-top: 6px;
+  }
+
+  ::ng-deep .mat-horizontal-stepper-header-container {
+    padding: 0 6px 6px 6px !important;
+  }
+
+  ::ng-deep .mat-horizontal-stepper-header {
+    padding: 0 12px !important;
+  }
+
+  ::ng-deep .mat-step-label {
+    font-size: 11px !important;
+  }
+
+  .transaction_form_buttons button {
+    min-width: 80px;
+    font-size: 0.9rem;
+    margin: 6px 0;
+  }
+
+  ::ng-deep .mat-form-field,
+  ::ng-deep .mat-select {
+    margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .transaction_form {
+    width: 100%;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .transaction_form h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .transaction_form_buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+  }
+
+  .amount-highlight {
+    font-size: 1.2rem;
+    margin-top: 8px;
+  }
+
+  .contact-highlight {
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+
+  ::ng-deep .mat-horizontal-stepper-header-container {
+    padding: 0 4px 4px 4px !important;
+  }
+
+  ::ng-deep .mat-horizontal-stepper-header {
+    padding: 0 10px !important;
+  }
+
+  ::ng-deep .mat-step-label {
+    font-size: 10px !important;
+  }
+
+  .transaction_form_buttons button {
+    min-width: 70px;
+    font-size: 0.85rem;
+    margin: 5px 0;
+  }
+
+  ::ng-deep .mat-form-field,
+  ::ng-deep .mat-select {
+    margin-bottom: 10px;
+  }
+}

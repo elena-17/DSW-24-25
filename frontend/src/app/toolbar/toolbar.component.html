@@ -1,0 +1,101 @@
+<div class="top-bar">
+  <!-- Logo -->
+  <div class="logo">
+    <img mat-card-image src="assets/zap-logo.png" alt="logo" />
+  </div>
+
+  <!-- Menu for desktop -->
+  <div class="menu">
+    <button mat-button (click)="goToHome()">
+      <mat-icon>home</mat-icon> Home
+    </button>
+    <button mat-button *ngIf="isAdmin()" (click)="goToUsers()">
+      <mat-icon>person</mat-icon> Users
+    </button>
+    <button mat-button *ngIf="isAdmin()" (click)="goToAccounts()">
+      <mat-icon>account_balance</mat-icon> Accounts
+    </button>
+    <button mat-button (click)="goToTransactions()">
+      <mat-icon>attach_money</mat-icon> Transactions
+    </button>
+    <button mat-button (click)="goToFavorites()">
+      <mat-icon>group</mat-icon> Favorites
+    </button>
+    <button mat-button (click)="goToHelp()">
+      <mat-icon>help_outline</mat-icon> Help
+    </button>
+  </div>
+
+  <!-- Dropdown menu for moviles -->
+  <button
+    mat-icon-button
+    class="menu-toggle"
+    (mouseenter)="toggleMenu()"
+    (mouseleave)="toggleMenu()"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <div
+    class="mobile-menu"
+    [ngClass]="{ open: isMenuOpen }"
+    (mouseenter)="toggleMenu()"
+    (mouseleave)="toggleMenu()"
+  >
+    <button mat-button (click)="goToHome()">
+      <mat-icon>home</mat-icon> Home
+    </button>
+    <button mat-button *ngIf="isAdmin()" (click)="goToUsers()">
+      <mat-icon>person</mat-icon> Users
+    </button>
+    <button mat-button *ngIf="isAdmin()" (click)="goToAccounts()">
+      <mat-icon>account_balance</mat-icon> Accounts
+    </button>
+    <button mat-button (click)="goToTransactions()">
+      <mat-icon>attach_money</mat-icon> Transactions
+    </button>
+    <button mat-button (click)="goToFavorites()">
+      <mat-icon>group</mat-icon> Friends
+    </button>
+    <button mat-button (click)="goToHelp()">
+      <mat-icon>help_outline</mat-icon> Help
+    </button>
+  </div>
+
+  <!-- User Profile -->
+  <button
+    mat-icon-button
+    matTooltip="Number of pending transactions"
+    *ngIf="!isAdmin()"
+  >
+    <mat-icon [matBadge]="notifications" aria-hidden="false">
+      notifications
+    </mat-icon>
+  </button>
+  <button
+    mat-button
+    class="user-profile"
+    (mouseenter)="toggleUserMenu()"
+    (mouseleave)="toggleUserMenu()"
+  >
+    <span class="username">{{ userName }}</span>
+    <mat-icon class="user-icon">person</mat-icon>
+  </button>
+
+  <!-- User Dropdown Menu -->
+  <div
+    class="user-dropdown-menu"
+    [ngClass]="{ open: isUserMenuOpen }"
+    (mouseenter)="toggleUserMenu()"
+    (mouseleave)="toggleUserMenu()"
+  >
+    <button mat-button (click)="goToSettings()">
+      Settings
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button mat-button (click)="logOut()">
+      Log Out
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </div>
+</div>
