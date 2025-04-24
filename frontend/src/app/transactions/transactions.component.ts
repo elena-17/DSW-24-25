@@ -190,10 +190,12 @@ export class TransactionsComponent implements OnInit {
                 ...this.transactionsArray["sender"].data,
               ];
               this.transactionsArray["sender"].totalCount += response.count;
-              this.transactionsArray["pending"].data = [
+              this.transactionsArray["pendingOthers"].data = [
                 ...response.transactions,
-                ...this.transactionsArray["pending"].data,
+                ...this.transactionsArray["pendingOthers"].data,
               ];
+              this.transactionsArray["pendingOthers"].totalCount +=
+                response.count;
 
               this.notificationService.showSuccessMessage(
                 "Transaction sent successfully",
@@ -222,9 +224,9 @@ export class TransactionsComponent implements OnInit {
     });
   }
 
-  requestTransaction() {
+  requestTransaction(divide: boolean) {
     const dialogRef = this.dialog.open(CreateTransactionComponent, {
-      data: { title: "Ask for Money" },
+      data: { title: divide ? "Divide Bill" : "Ask for Money", divide: divide },
       width: "90%",
       height: "60%",
     });
@@ -244,11 +246,12 @@ export class TransactionsComponent implements OnInit {
                 ...this.transactionsArray["receiver"].data,
               ];
               this.transactionsArray["receiver"].totalCount += response.count;
-              this.transactionsArray["pending"].data = [
+              this.transactionsArray["pendingOthers"].data = [
                 ...response.transactions,
-                ...this.transactionsArray["pending"].data,
+                ...this.transactionsArray["pendingOthers"].data,
               ];
-              this.transactionsArray["pending"].totalCount += response.count;
+              this.transactionsArray["pendingOthers"].totalCount +=
+                response.count;
               this.notificationService.showSuccessMessage(
                 "Transaction requested successfully",
               );

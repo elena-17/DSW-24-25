@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import { ToolbarComponent } from "../toolbar/toolbar.component";
 import { CommonModule } from "@angular/common";
-import { MaterialModule } from "../material.module";  // Asegúrate de tener MaterialModule para los componentes de Angular Material
+import { MaterialModule } from "../material.module"; // Asegúrate de tener MaterialModule para los componentes de Angular Material
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog } from "@angular/material/dialog";
 import { ReactiveFormsModule } from "@angular/forms";

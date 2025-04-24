@@ -47,14 +47,17 @@ export class CreateTransactionComponent {
   emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
   admin: boolean = false;
+  isDivide: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<CreateTransactionComponent>,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string; admin: boolean },
+    @Inject(MAT_DIALOG_DATA)
+    public data: { title: string; admin: boolean; divide: boolean },
   ) {
     this.dialogTitle = data.title;
     this.admin = data.admin;
+    this.isDivide = data.divide;
 
     if (this.admin) {
       this.contactForm = this.formBuilder.group({
@@ -101,7 +104,9 @@ export class CreateTransactionComponent {
   onSubmit() {
     if (this.contactForm.valid && this.form.valid) {
       const formData = {
-        amount: this.amountForm.value.amount,
+        amount: this.isDivide
+          ? this.amountPerPerson
+          : this.amountForm.value.amount,
         type: this.admin ? this.amountForm.value.type : "send",
         ...this.form.value,
         ...(this.admin
@@ -113,5 +118,29 @@ export class CreateTransactionComponent {
       };
       this.dialogRef.close(formData);
     }
+  }
+
+  private createEmailControl(): FormControl {
+    return new FormControl("", [Validators.required, Validators.email]);
+  }
+
+  get totalAmount() {
+    return this.amountForm.get("amount")?.value || 0;
+  }
+
+  get splitCount() {
+    if (!this.isDivide) {
+      return 1;
+    }
+    if (this.contactForm.get("contact")?.value) {
+      return 1 + 1;
+    }
+    return 0;
+  }
+
+  get amountPerPerson() {
+    return this.splitCount > 0
+      ? (this.totalAmount / this.splitCount).toFixed(2)
+      : "0.00";
   }
 }

@@ -75,6 +75,14 @@
           </mat-error>
         </mat-form-field>
 
+        <div *ngIf="isDivide && amountForm.valid && contactForm.valid">
+          <p>Total: {{ totalAmount }}€</p>
+          <p>
+            Divided between {{ splitCount }} people: {{ amountPerPerson }}€ per
+            person
+          </p>
+        </div>
+
         <div *ngIf="admin" class="full-width" style="margin-top: 1rem">
           <mat-label>Transaction Type</mat-label>
           <mat-radio-group formControlName="type" class="full-width">
@@ -142,7 +150,10 @@
         class="confirmation-message"
       >
         <p>You're about to {{ dialogTitle | lowercase }}</p>
-        <p class="amount-highlight">{{ amountForm.value.amount }} €</p>
+        <p class="amount-highlight" *ngIf="!isDivide">
+          {{ amountForm.value.amount }} €
+        </p>
+        <p class="amount-highlight" *ngIf="isDivide">{{ amountPerPerson }} €</p>
         <p *ngIf="!admin">
           to
           <span class="contact-highlight">{{ contactForm.value.contact }}</span>
