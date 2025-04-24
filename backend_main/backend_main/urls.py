@@ -1,5 +1,5 @@
 """
-URL configuration for backend_bank project.
+URL configuration for backend_main project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -17,8 +17,22 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("creditcards.urls")),
+    path("user/", include("users.urls")),
+    path("transactions/", include("transactions.urls")),
+    path("creditcards/", include("creditcard.urls")),
+    path("account/", include("account.urls")),
+    path("favorites/", include("friendships.urls")),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    # Swagger UI
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    # Redoc
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
