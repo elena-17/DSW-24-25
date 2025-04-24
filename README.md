@@ -1,11 +1,13 @@
-<picture>
-  <img alt="App logo" src="./frontend/src/assets/zap-logo.png"  width="full">
-</picture>
+<div align="center">
+    <picture>
+        <img alt="App logo" src="./frontend/src/assets/zap-logo.png" width="full">
+    </picture>
+</div>
 
 
 [![Django Tests Backend Main](https://github.com/elena-17/DSW-24-25/actions/workflows/django-tests.yml/badge.svg)](https://github.com/elena-17/DSW-24-25/actions/workflows/django-tests.yml)
 
-#  ZAP
+<h1 align="center">Zap</h1>
 A web application for managing transactions and friendships, built with Django and Angular.
 
 ---
