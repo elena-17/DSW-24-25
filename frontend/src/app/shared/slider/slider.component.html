@@ -1,0 +1,27 @@
+<div class="slider-container">
+  <div class="slider-track" #sliderTrack>
+    <!-- Barra de rango seleccionado -->
+    <div
+      class="slider-range"
+      [style.left.%]="startPercent"
+      [style.width.%]="endPercent - startPercent"
+    ></div>
+    <!-- Thumb izquierdo -->
+    <div
+      class="thumb thumb-start"
+      [style.left.%]="startPercent"
+      (mousedown)="onMouseDown('start', $event)"
+    ></div>
+    <!-- Thumb derecho -->
+    <div
+      class="thumb thumb-end"
+      [style.left.%]="endPercent"
+      (mousedown)="onMouseDown('end', $event)"
+    ></div>
+  </div>
+  <!-- Muestra los valores actuales -->
+  <div class="slider-values">
+    <span>{{ startValue | number }}</span> –
+    <span>{{ endValue | number }}</span>
+  </div>
+</div>

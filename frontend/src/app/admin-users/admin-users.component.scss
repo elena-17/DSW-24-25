@@ -1,0 +1,60 @@
+.action-buttons {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  margin-bottom: 20px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+::ng-deep .badge-admin {
+  background-color: #d894f5;
+  color: #8931af;
+  border: 1px solid #8931af;
+}
+
+::ng-deep .badge-user {
+  background-color: #f6ba82;
+  color: #db6e00;
+  border: 1px solid #db6e00;
+}
+
+::ng-deep .badge-seller {
+  background-color: #f1e895;
+  color: #c7a008;
+  border: 1px solid #c7a008;
+}
+
+::ng-deep .badge-default {
+  background-color: #ffcccc;
+  color: #d33f3f;
+  border: 1px solid #d33f3f;
+}
+
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+}

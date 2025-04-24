@@ -1,0 +1,77 @@
+@import "../../styles.scss";
+
+.error-container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: $background-image;
+  position: relative;
+  overflow: hidden;
+}
+
+.error-content {
+  text-align: center;
+  position: relative;
+}
+
+.error-code {
+  font-size: 15rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.1rem;
+  margin: 0;
+}
+
+.error-banner {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(12deg);
+  background-color: var(--mat-sys-primary);
+  padding: 0.5rem 0.5rem;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.home-button {
+  background-color: var(--mat-sys-primary) !important;
+  border: 2px solid var(--mat-sys-primary);
+  color: #fff !important;
+  box-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .error-code {
+    font-size: 10rem;
+  }
+
+  .error-banner {
+    top: 30%;
+    font-size: 1.2rem;
+  }
+
+  .home-button {
+    font-size: 0.9rem;
+    padding: 0.8rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .error-code {
+    font-size: 8rem;
+  }
+
+  .error-banner {
+    top: 25%;
+    font-size: 1rem;
+    padding: 0.3rem 1rem;
+  }
+
+  .home-button {
+    font-size: 0.8rem;
+    padding: 0.7rem 1.2rem;
+  }
+}

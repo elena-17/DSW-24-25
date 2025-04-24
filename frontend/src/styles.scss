@@ -1,0 +1,103 @@
+/* You can add global styles to this file, and also import other style files */
+
+$hover-color: rgba(255, 255, 255, 0.2);
+$box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+$background-image: linear-gradient(
+  180deg,
+  rgba(0, 184, 196, 1) 25%,
+  rgba(255, 194, 74, 1) 93%
+);
+
+@use "@angular/material" as mat;
+
+html {
+  color-scheme: light;
+  // @include mat.theme(
+  //   (
+  //     color: (
+  //       primary: mat.$azure-palette,
+  //       tertiary: mat.$cyan-palette,
+  //       theme-type: light,
+  //     ),
+  //   )
+  // );
+  --mat-sys-primary: #00b8c4;
+  --mat-sys-primary-darker: #0096a1;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+button {
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: $hover-color;
+  }
+}
+
+:root {
+  --mat-dialog-container-max-width: 600px;
+}
+
+h2 {
+  font-weight: normal;
+}
+
+h3 {
+  font-weight: normal;
+}
+
+h4 {
+  font-weight: normal;
+}
+
+.container {
+  box-shadow: $box-shadow;
+  padding: 20px;
+  border-radius: 8px;
+  background: white;
+}
+
+.page-container {
+  padding-top: 30px;
+  padding-left: 80px;
+  padding-right: 80px;
+  padding-bottom: 50px;
+  margin-bottom: 90px;
+
+  @media (max-width: 768px) {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+
+.underlined-title {
+  h2 {
+    margin-bottom: 0.2rem;
+  }
+
+  h4 {
+    color: #666;
+    margin-top: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  hr {
+    margin: 0.5rem 0 1rem 0;
+    border: none;
+    border-top: 1px solid #ddd;
+  }
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 10px;
+}

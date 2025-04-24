@@ -1,0 +1,177 @@
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+}
+
+.title-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.2rem;
+
+  h2 {
+    margin-bottom: 0px;
+  }
+}
+
+.title-buttons-right {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  align-items: center;
+}
+
+::ng-deep .badge-approved {
+  background-color: #9cff80b4;
+  color: #208e02;
+  border: 1px solid #208e02;
+}
+
+::ng-deep .badge-rejected {
+  background-color: #ff4a4a74;
+  color: #c51313;
+  border: 1px solid #db6e00;
+}
+
+::ng-deep .badge-pending {
+  background-color: #ffbd3aa3;
+  color: #e38100fe;
+  border: 1px solid #847b03;
+}
+
+.filter-fab {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 700;
+  background-color: var(--mat-sys-primary-darker);
+  color: white;
+}
+
+.filter-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 800;
+  animation: fadeIn 0.35s ease;
+  overflow: visible;
+
+  .filter-panel {
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    background-color: #fff;
+    padding-top: 20px;
+    padding-left: 45px;
+    padding-right: 45px;
+    box-shadow: -4px 0 6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: slideIn 0.35s cubic-bezier(0.3, 0.85, 0.5, 1);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+    }
+
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  h4 {
+    padding: 0 !important;
+    margin: 10px 0px !important;
+  }
+
+  section {
+    width: 100%;
+  }
+
+  .full-width-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* Media Queries for responsiveness */
+
+/* For mobile devices */
+@media (max-width: 767px) {
+  .title-buttons {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  .filter-panel {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .filter-overlay {
+    justify-content: center;
+    align-items: center;
+  }
+
+  .filter-fab {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .full-width-form {
+    gap: 12px;
+  }
+}
+
+/* For tablet devices (small tablets or landscape phones) */
+@media (max-width: 1024px) {
+  .filter-panel {
+    max-width: 300px;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .filter-fab {
+    bottom: 30px;
+    right: 30px;
+  }
+
+  .full-width-form {
+    gap: 14px;
+  }
+}
+
+/* For larger screens */
+@media (min-width: 1200px) {
+  .filter-panel {
+    max-width: 450px;
+  }
+}

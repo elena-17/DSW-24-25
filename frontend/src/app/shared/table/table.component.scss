@@ -1,0 +1,52 @@
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.mat-mdc-table {
+  background-color: transparent !important;
+}
+
+.mat-mdc-header-row {
+  font-weight: bold;
+  background-color: var(--mat-sys-surface-container-high);
+  height: 50px;
+}
+
+.mat-mdc-row {
+  font-size: 14px;
+  min-height: 40px;
+  height: 40px;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.mat-mdc-paginator {
+  background-color: transparent !important;
+  margin-top: 20px;
+}
+
+.mat-row-empty {
+  font-size: 16px;
+  text-align: center;
+}
+
+.mat-cell-empty {
+  padding: 50px;
+}
+
+.mat-mdc-cell {
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+@media screen and (max-width: 600px) {
+  .mat-mdc-cell {
+    max-width: 150px;
+  }
+}

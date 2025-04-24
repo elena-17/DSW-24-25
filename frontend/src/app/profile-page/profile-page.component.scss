@@ -1,0 +1,347 @@
+.container {
+  height: 90vh;
+  padding: 0%;
+
+  .mat-sidenav {
+    width: 250px;
+    background-color: var(--mat-sys-surface-container-low);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .mat-toolbar {
+    background-color: transparent;
+    color: black;
+  }
+}
+
+.sidenav {
+  width: 250px;
+  background-color: white;
+  color: white;
+}
+
+.sidenav a.active {
+  background-color: var(--mat-sys-primary);
+  color: white;
+  font-weight: bold;
+}
+
+.sidenav a:hover {
+  background-color: whit;
+  color: white;
+}
+
+.sidenav a.active {
+  border-left: 4px solid #1abc9c;
+  padding-left: 16px;
+}
+
+mat-nav-list {
+  padding: 0;
+  margin: 0;
+}
+
+.delete-button {
+  background-color: var(--mat-sys-error) !important;
+  color: white;
+}
+
+.menu-button {
+  border: none !important;
+  outline: none !important;
+}
+
+.sections {
+  padding-left: 50px;
+  padding-right: 50px;
+  padding-bottom: 50px;
+}
+
+.sections h2 {
+  font-size: 2rem;
+  font-weight: normal;
+  margin-bottom: 0.2rem;
+}
+
+.sections h4 {
+  font-size: 1rem;
+  font-weight: normal;
+  color: #666;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.sections hr {
+  margin: 0.5rem 0 1rem 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+
+.delete-section {
+  margin-bottom: 100px;
+}
+
+/* Form container to center content horizontally */
+.form-container {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+}
+
+/* Grid container for two columns */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  /* Two equal columns */
+  gap: 20px;
+  width: 100%;
+}
+
+/* Full-width fields will span both columns */
+.full-width {
+  grid-column: span 2;
+}
+
+.form-grid-password {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  mat-form-field {
+    width: 50%;
+  }
+}
+
+.active-link {
+  background-color: var(--mat-sys-surface-container-high);
+  border: 1px solid var(--mat-sys-shadow);
+}
+
+@media (min-width: 769px) {
+  .menu-sidebar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid-password {
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+/* Credit Cards Section */
+.profile-section,
+.credit-cards-section {
+  padding: 30px;
+  background-color: #f3f4f8;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  height: auto;
+  min-height: 100vh;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #3c4a9c;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+h4 {
+  font-size: 1.2rem;
+  color: #5c6b82;
+  margin-bottom: 20px;
+}
+
+hr.section-divider {
+  margin: 15px 0;
+  border: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    #5c6b82,
+    var(--mat-sys-primary) !important
+  );
+  border-radius: 2px;
+}
+
+.creditcard-list {
+  margin-bottom: 20px;
+}
+
+.credit-cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.credit-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.credit-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.card-name {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.card-owner {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin-top: 10px;
+}
+
+.card-number {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-top: 10px;
+}
+
+/* Edit Button */
+.edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 50%;
+  background-color: var(--mat-sys-primary) !important;
+  color: white;
+  padding: 8px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.edit-btn:hover {
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  border-radius: 50%;
+  background-color: var(--mat-sys-error) !important;
+  color: white;
+  padding: 8px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
+}
+
+.delete-btn:hover {
+  transform: scale(1.1);
+}
+
+.no-cards-text {
+  color: #888;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.add-card-button {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  background-color: var(--mat-sys-primary) !important;
+  color: white;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 10px;
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease;
+  margin-top: 25px;
+}
+
+.add-card-button:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .credit-cards-section {
+    padding: 20px;
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .credit-card {
+    max-width: 100%;
+    height: auto;
+    padding: 12px;
+  }
+
+  .mat-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-body {
+    margin-top: 10px;
+  }
+
+  .delete-btn {
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .edit-btn {
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .edit-btn mat-icon {
+    font-size: 20px;
+    padding-right: 6px;
+  }
+
+  .delete-btn mat-icon {
+    font-size: 20px;
+    padding-right: 6px;
+  }
+}
