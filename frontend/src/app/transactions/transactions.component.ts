@@ -35,6 +35,7 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { CounterNotificationService } from "../services/counter-notification.service";
 import { TransactionData } from "./config/transaction-state.config";
 import { PageEvent } from "@angular/material/paginator";
+import { FriendshipsService } from "../services/friendships.service";
 
 @Component({
   selector: "app-transactions",
@@ -75,6 +76,7 @@ export class TransactionsComponent implements OnInit {
   activeTab: "sender" | "receiver" | "pending" = "pending";
 
   constructor(
+    private friendshipsService: FriendshipsService,
     private dialog: MatDialog,
     private transactionsService: TransactionsService,
     private datePipe: DatePipe,
@@ -347,7 +349,15 @@ export class TransactionsComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.notificationService.showSuccessMessage("To be done...");
+        this.friendshipsService.blockUser(transaction.sender).subscribe({
+          next: (response) => {
+            this.notificationService.showSuccessMessage("User has been blocked.");
+          },
+          error: (error) => {
+            console.error('Error blocking user:', error);
+            this.notificationService.showErrorMessage('Could not block user.');
+          }
+        });
       }
     });
   }
