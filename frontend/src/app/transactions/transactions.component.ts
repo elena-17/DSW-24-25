@@ -206,7 +206,7 @@ export class TransactionsComponent implements OnInit {
             },
             error: (error) => {
               console.error("Error message:", error.error);
-
+              
               if (
                 error.error?.amount?.includes(
                   "Insufficient balance for this transaction.",
@@ -214,6 +214,10 @@ export class TransactionsComponent implements OnInit {
               ) {
                 this.notificationService.showErrorMessage(
                   "You don't have enough balance to send this amount",
+                );
+              } else if ( typeof error.error.error === "string" && error.error.error.includes("You are blocked by the recipient")) {
+                this.notificationService.showErrorMessage(
+                  error.error.error,
                 );
               } else {
                 this.notificationService.showErrorMessage(
@@ -261,9 +265,15 @@ export class TransactionsComponent implements OnInit {
             },
             error: (error) => {
               console.error("Error message:", error.error);
-              this.notificationService.showErrorMessage(
+              if ( typeof error.error.error === "string" && error.error.error.includes("You are blocked by the recipient")) {
+                this.notificationService.showErrorMessage(
+                  error.error.error,
+                );
+              } else {
+                this.notificationService.showErrorMessage(
                 `Request operation could not be completed`,
-              );
+                );
+              }
             },
           });
       }
