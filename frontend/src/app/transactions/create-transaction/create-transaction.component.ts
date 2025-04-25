@@ -133,9 +133,9 @@ export class CreateTransactionComponent {
     const filterValue = value;
     return this.favorites.filter(
       (user) =>
-        user.email.toLowerCase().includes(filterValue) ||
-        user.name.toLowerCase().includes(filterValue) ||
-        user.phone.toLowerCase().includes(filterValue),
+        user.email.includes(filterValue) ||
+        user.name.includes(filterValue) ||
+        user.phone.includes(filterValue),
     );
   }
 

@@ -265,7 +265,7 @@ export class TransactionsComponent implements OnInit {
             },
             error: (error) => {
               console.error("Error message:", error.error);
-              if ( typeof error.error.error === "string" && error.error.error.includes("You are blocked by the recipient")) {
+              if ( typeof error.error.error === "string" && error.error.error.includes("You are blocked by the sender")) {
                 this.notificationService.showErrorMessage(
                   error.error.error,
                 );
