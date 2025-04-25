@@ -71,7 +71,10 @@ export class CreateTransactionComponent {
       });
     } else {
       this.contactForm = this.formBuilder.group({
-        contact: ["", [Validators.required, Validators.email]],
+        contact: [""],
+      },
+      {
+        validators: this.validateAtLeastOneContact,
       });
     }
     this.amountForm = this.formBuilder.group({
@@ -99,6 +102,12 @@ export class CreateTransactionComponent {
     });
   }
 
+  validateAtLeastOneContact = () => {
+    return this.selectedContacts.length < 1
+      ? { noContactSelected: true }
+      : null;
+  };
+
   ngOnInit() {
     if (!this.admin) {
       this.friendsService.getAllFriendships().subscribe((res) => {
@@ -116,7 +125,7 @@ export class CreateTransactionComponent {
   }
 
   private _filterFavorites(value: string): any[] {
-    const filterValue = value.toLowerCase();
+    const filterValue = value;
     return this.favorites.filter(user =>
       user.email.toLowerCase().includes(filterValue) ||
       user.name.toLowerCase().includes(filterValue) ||
@@ -128,8 +137,8 @@ export class CreateTransactionComponent {
   addMoreContacts(selectedEmail: string) {
     if (selectedEmail && Validators.email(new FormControl(selectedEmail)) === null &&
     !this.selectedContacts.includes(selectedEmail)) {
-      this.selectedContacts.push(selectedEmail);  // Añadir el contacto completo
-      this.contactForm.reset();  // Limpiar el campo de entrada después de añadir
+      this.selectedContacts.push(selectedEmail);  
+      this.contactForm.reset();  
     }
   }
 
@@ -143,7 +152,7 @@ export class CreateTransactionComponent {
   }
   
   onEnterPressed(event: KeyboardEvent) {
-    event.preventDefault(); // 👈 evita que el Enter dispare un submit
+    event.preventDefault(); 
     const inputValue = this.contactForm.get('contact')?.value;
     if (inputValue) {
       this.addMoreContacts(inputValue);
@@ -183,7 +192,7 @@ export class CreateTransactionComponent {
               sender: this.contactForm.value.sender,
               receiver: this.contactForm.value.receiver,
             }
-          : { user: [this.contactForm.value.contact] }),
+          : { user: this.selectedContacts }),
       };
       this.dialogRef.close(formData);
     }
@@ -198,13 +207,7 @@ export class CreateTransactionComponent {
   }
 
   get splitCount() {
-    if (!this.isDivide) {
-      return 1;
-    }
-    if (this.contactForm.get("contact")?.value) {
-      return 1 + 1;
-    }
-    return 0;
+    return this.isDivide ? this.selectedContacts.length + 1 : 1;
   }
 
   get amountPerPerson() {

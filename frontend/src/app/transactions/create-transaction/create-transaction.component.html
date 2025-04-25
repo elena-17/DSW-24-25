@@ -182,7 +182,9 @@
         <p class="amount-highlight" *ngIf="isDivide">{{ amountPerPerson }} €</p>
         <p *ngIf="!admin">
           to
-          <span class="contact-highlight">{{ contactForm.value.contact }}</span>
+          <span class="contact-highlight" *ngFor="let contact of selectedContacts; let i = index">
+            {{ contact }}<span *ngIf="i < selectedContacts.length - 1">, </span>
+          </span>
         </p>
         <p *ngIf="admin">
           from
