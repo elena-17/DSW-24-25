@@ -29,9 +29,9 @@
 
           <!-- Botón para agregar más usuarios -->
           <div class="addButton" *ngIf="selectedContacts.length > 0">
-            <<button mat-icon-button matTooltip="Add more" (click)="addMoreContacts(contactForm.get('contact')?.value)">
+            <button mat-icon-button matTooltip="Add more" (click)="addMoreContacts(contactForm.get('contact')?.value)">
               <mat-icon>add_circle</mat-icon>
-            </button>>
+            </button>
           </div>
 
           <!-- Lista de contactos seleccionados -->
