@@ -1,8 +1,11 @@
 from datetime import datetime, time
+import re
 from zoneinfo import ZoneInfo
 
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from users.models import User
+from blocks.models import Block
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -120,10 +123,45 @@ def number_pending(request):
     return Response({"number_pending": len(serializer.data)}, status=status.HTTP_200_OK)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def is_blocked(blocker_email, blocked_email):
+    blocker = User.objects.filter(email=blocker_email).first()
+    blocked = User.objects.filter(email=blocked_email).first()
+
+    if not blocker or not blocked:
+        return False  
+
+    return Block.objects.filter(user=blocker, blocked_user=blocked).exists()
+
 @api_view(["POST"])
 def send_money(request):
     request_data = request.data.copy()
     request_data["sender"] = request.user
+    receivers = request_data.get("receivers")  
+    print(f"Receivers: {receivers}")
+
+    # Verificar si el usuario está bloqueado por cualquiera de los receptores
+    for receiver_user in receivers:
+        if is_blocked(receiver_user, request.user):
+            print(f"User {request.user} is blocked by {receiver_user}.")
+            return Response(
+                {"error": f"You are blocked by the recipient ({receiver_user}). Transaction cannot be completed."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        print(f"User {request.user} is not blocked by {receiver_user}.")
     serializer = SendTransactionSerializer(data=request_data, context={"request": request})
 
     if serializer.is_valid():
@@ -144,6 +182,17 @@ def send_money(request):
 def request_money(request):
     request_data = request.data.copy()
     request_data["receiver"] = request.user
+
+    senders = request_data.get("senders")
+    for sender_user in senders:
+        if is_blocked(sender_user, request.user):
+            print(f"User {request.user} is blocked by {sender_user}.")
+            return Response(
+                {"error": f"You are blocked by the sender ({sender_user}). Transaction cannot be completed."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        print(f"User {request.user} is not blocked by {sender_user}.")
+
     serializer = RequestTransactionSerializer(data=request_data, context={"request": request})
 
     if serializer.is_valid():
