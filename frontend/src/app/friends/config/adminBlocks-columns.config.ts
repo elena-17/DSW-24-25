@@ -1,13 +1,13 @@
-export const getAdminFriendshipsColumns = () => [
+export const getAdminBlocksColumns = () => [
   {
     columnDef: "user",
     header: "User",
     cell: (element: any) => element.user, // asumiendo que `user` es un string (nombre completo o email)
   },
   {
-    columnDef: "blocked_user",
-    header: "Blocked User",
-    cell: (element: any) => element.blocked_user, // asumiendo que `blocked_user` es un string (nombre completo o email)
+    columnDef: "favorite_user",
+    header: "Favorite User",
+    cell: (element: any) => element.favorite_user, // asumiendo que `favorite_user` es un string (nombre completo o email)
   },
   {
     columnDef: "created_at",

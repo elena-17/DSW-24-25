@@ -129,7 +129,7 @@ export class FriendshipsService {
 
   addBlockRelation(data: {
     user: string;
-    favorite_user: string;
+    blocked_user: string;
   }): Observable<any> {
     return this.http.post<any>(this.urlAddBlockRelation, data, {
       withCredentials: true,
@@ -138,7 +138,7 @@ export class FriendshipsService {
 
   removeAddRelation(data: {
     user: string;
-    favorite_user: string;
+    blocked_user: string;
   }): Observable<any> {
     return this.http.request<any>("delete", this.urlRemoveBlockRelation, {
       body: data,

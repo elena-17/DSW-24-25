@@ -11,7 +11,7 @@ import { MaterialModule } from "../material.module"; // Asegúrate de tener Mate
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog } from "@angular/material/dialog";
 import { ReactiveFormsModule } from "@angular/forms";
-import { getFriendshipsColumns } from "./config/friendships-columns.config"; // Define las columnas de la tabla
+import { getFriendshipsColumns } from "./config/relationships-columns.config"; // Define las columnas de la tabla
 import { FriendshipsService } from "../services/friendships.service"; // Servicio para obtener la lista de amigos/favoritos
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatNativeDateModule } from "@angular/material/core";

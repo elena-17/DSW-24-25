@@ -83,4 +83,83 @@
       </form>
     </div>
   </mat-tab>
+
+  <!-- Tab 3 - Blocked Users -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      Blocked Users
+      <mat-icon class="tab-icon" style="color: #e30000fe">block</mat-icon>
+    </ng-template>
+    <div class="page-container">
+      <div class="underlined-title">
+        <h2>Blocked Users</h2>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="blockedUsers"
+        [totalCount]="totalCountBlocked"
+        [pageIndex]="pageIndexBlocked"
+        [pageSize]="pageSizeBlocked"
+        [serverSidePagination]="true"
+        [enableSelection]="false"
+        [enableActions]="true"
+        (action1)="removeBlockRelation($event)"
+        (pageChange)="onPageChangeBlocked($event)"
+        [action1Icon]="'delete'"
+        [action1Color]="'#d32f2f'"
+        [action1Tooltip]="'Remove Block'"
+      >
+      </app-table>
+    </div>
+  </mat-tab>
+
+  <!-- Tab 4 - Add Blocked Relation -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      Add Blocked User
+      <mat-icon class="tab-icon" style="color: #ff9800">person_off</mat-icon>
+    </ng-template>
+    <div class="page-container">
+      <div class="underlined-title">
+        <h2>Add Blocked User</h2>
+        <hr />
+      </div>
+
+      <form (ngSubmit)="addBlockRelation()" #blockRelationForm="ngForm">
+        <!-- Select User -->
+        <mat-form-field class="full-width">
+          <mat-label>Select User</mat-label>
+          <mat-select name="user" [(ngModel)]="newBlockRelation.user" required>
+            <mat-option *ngFor="let user of allUsers" [value]="user.email">
+              {{ user.email }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Select Blocked User -->
+        <mat-form-field class="full-width">
+          <mat-label>Select Blocked User</mat-label>
+          <mat-select
+            name="blocked_user"
+            [(ngModel)]="newBlockRelation.blocked_user"
+            required
+          >
+            <mat-option *ngFor="let user of allUsers" [value]="user.email">
+              {{ user.email }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Submit Button -->
+        <button
+          mat-raised-button
+          color="primary"
+          [disabled]="!blockRelationForm.form.valid"
+        >
+          Block User
+        </button>
+      </form>
+    </div>
+  </mat-tab>
 </mat-tab-group>
