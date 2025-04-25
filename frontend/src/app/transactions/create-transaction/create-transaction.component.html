@@ -28,17 +28,22 @@
           </mat-form-field>
 
           <!-- Botón para agregar más usuarios -->
-          <div *ngIf="selectedContacts.length > 0">
-            <button mat-icon-button matTooltip="Add more" (click)="addMoreContacts(contactForm.get('contact')?.value)">
+          <div class="addButton" *ngIf="selectedContacts.length > 0">
+            <<button mat-icon-button matTooltip="Add more" (click)="addMoreContacts(contactForm.get('contact')?.value)">
               <mat-icon>add_circle</mat-icon>
-            </button>
+            </button>>
           </div>
 
           <!-- Lista de contactos seleccionados -->
-          <div *ngIf="selectedContacts.length > 0" class="selected-contacts">
-            <div *ngFor="let email of selectedContacts" class="contact-chip">
-              {{ email }}
-              <button mat-icon-button (click)="removeContact(email)">
+          <div *ngIf="selectedContacts.length > 0" class="selected-contacts-container">
+            <div *ngFor="let email of selectedContacts" class="custom-chip">
+              <span class="chip-text">{{ email }}</span>
+              <button
+                mat-icon-button
+                aria-label="Remove contact"
+                (click)="removeContact(email)"
+                class="remove-btn"
+              >
                 <mat-icon>cancel</mat-icon>
               </button>
             </div>
