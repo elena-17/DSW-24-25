@@ -17,6 +17,14 @@
   text-align: center;
 }
 
+.favorite-icon {
+  color: red; 
+}
+
+.addButton {
+  display: none;
+}
+
 ::ng-deep .mat-horizontal-stepper-header-container {
   padding: 0 10px 10px 10px !important;
 }
@@ -26,6 +34,36 @@
 
 ::ng-deep .mat-step-label {
   font-size: 14px !important;
+}
+
+.selected-contacts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.custom-chip {
+  display: flex;
+  align-items: center;
+  background-color: #e0f7fa;
+  color: #006064;
+  padding: 6px 10px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.chip-text {
+  margin-right: 6px;
+}
+
+.remove-btn {
+  padding: 0;
+  height: 20px;
+  width: 20px;
+  color: #006064;
 }
 
 .transaction_form_buttons {
