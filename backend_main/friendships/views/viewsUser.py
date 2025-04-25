@@ -2,11 +2,11 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from ..serializers import FavoriteSerializer
 from users.models import User
 from users.serializers.user import UserProfileSerializer
 
 from ..models import Favorite
+from ..serializers import FavoriteSerializer
 
 
 # Create your views here.

@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from .models import Favorite
+
 
 class FavoriteSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
@@ -7,7 +9,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favorite
-        fields = ['user', 'favorite_user', 'created_at']
+        fields = ["user", "favorite_user", "created_at"]
 
     def get_user(self, obj):
         return obj.user.email

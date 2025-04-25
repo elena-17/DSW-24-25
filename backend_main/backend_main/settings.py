@@ -15,8 +15,8 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-from dotenv import load_dotenv
 from corsheaders.defaults import default_headers
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "transactions",
     "creditcard",
     "friendships",
+    "blocks",
     "drf_spectacular",
 ]
 
@@ -165,7 +166,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
-    'x-timezone',  # Permitir el header X-Timezone
+    "x-timezone",  # Permitir el header X-Timezone
 ]
 
 FIELD_ENCRYPTION_KEY = os.getenv("FIELD_ENCRYPTION_KEY", "")
