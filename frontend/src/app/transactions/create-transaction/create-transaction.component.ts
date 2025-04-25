@@ -70,12 +70,14 @@ export class CreateTransactionComponent {
         receiver: ["", [Validators.required, Validators.email]],
       });
     } else {
-      this.contactForm = this.formBuilder.group({
-        contact: [""],
-      },
-      {
-        validators: this.validateAtLeastOneContact,
-      });
+      this.contactForm = this.formBuilder.group(
+        {
+          contact: [""],
+        },
+        {
+          validators: this.validateAtLeastOneContact,
+        },
+      );
     }
     this.amountForm = this.formBuilder.group({
       amount: [
@@ -111,56 +113,65 @@ export class CreateTransactionComponent {
   ngOnInit() {
     if (!this.admin) {
       this.friendsService.getAllFriendships().subscribe((res) => {
-        this.favorites = res; 
+        this.favorites = res;
       });
 
       // Filtrar los favoritos mientras escribimos
-      this.contactForm.get("contact")?.valueChanges.pipe(
-        startWith(""),
-        map(value => this._filterFavorites(value))
-      ).subscribe(filtered => {
-        this.filteredFavorites = of(filtered);
-      });
+      this.contactForm
+        .get("contact")
+        ?.valueChanges.pipe(
+          startWith(""),
+          map((value) => this._filterFavorites(value)),
+        )
+        .subscribe((filtered) => {
+          this.filteredFavorites = of(filtered);
+        });
     }
   }
 
   private _filterFavorites(value: string): any[] {
     const filterValue = value;
-    return this.favorites.filter(user =>
-      user.email.toLowerCase().includes(filterValue) ||
-      user.name.toLowerCase().includes(filterValue) ||
-      user.phone.toLowerCase().includes(filterValue)
+    return this.favorites.filter(
+      (user) =>
+        user.email.toLowerCase().includes(filterValue) ||
+        user.name.toLowerCase().includes(filterValue) ||
+        user.phone.toLowerCase().includes(filterValue),
     );
   }
 
   // Agregar más usuarios
   addMoreContacts(selectedEmail: string) {
-    if (selectedEmail && Validators.email(new FormControl(selectedEmail)) === null &&
-    !this.selectedContacts.includes(selectedEmail)) {
-      this.selectedContacts.push(selectedEmail);  
-      this.contactForm.reset();  
+    if (
+      selectedEmail &&
+      Validators.email(new FormControl(selectedEmail)) === null &&
+      !this.selectedContacts.includes(selectedEmail)
+    ) {
+      this.selectedContacts.push(selectedEmail);
+      this.contactForm.reset();
     }
   }
 
   // Cuando seleccionas un contacto del autocompletado o presionas Enter
   onAutocompleteSelect(event: any) {
-    this.addMoreContacts(event.option.value);  
-    this.filteredFavorites = (this.contactForm.get("contact")?.valueChanges || of("")).pipe(
+    this.addMoreContacts(event.option.value);
+    this.filteredFavorites = (
+      this.contactForm.get("contact")?.valueChanges || of("")
+    ).pipe(
       startWith(""),
-      map(value => this._filterFavorites(value || ""))
+      map((value) => this._filterFavorites(value || "")),
     );
   }
-  
+
   onEnterPressed(event: KeyboardEvent) {
-    event.preventDefault(); 
-    const inputValue = this.contactForm.get('contact')?.value;
+    event.preventDefault();
+    const inputValue = this.contactForm.get("contact")?.value;
     if (inputValue) {
       this.addMoreContacts(inputValue);
     }
   }
-  
+
   onBlurInput() {
-    const inputValue = this.contactForm.get('contact')?.value;
+    const inputValue = this.contactForm.get("contact")?.value;
     if (inputValue) {
       this.addMoreContacts(inputValue);
     }
@@ -168,8 +179,7 @@ export class CreateTransactionComponent {
 
   // Eliminar un contacto de la lista seleccionada
   removeContact(email: any) {
-    this.selectedContacts = this.selectedContacts.filter(e => e !== email);
-
+    this.selectedContacts = this.selectedContacts.filter((e) => e !== email);
   }
 
   onCancel() {

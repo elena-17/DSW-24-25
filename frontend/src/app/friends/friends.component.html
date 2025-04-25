@@ -1,6 +1,6 @@
 <app-toolbar></app-toolbar>
 
-<!-- Tab Group for Favorites and Add Favorites -->
+<!-- Tab Group for Favorites, Add Favorites, Blocks and Add Blocks -->
 <mat-tab-group
   animationDuration="500ms"
   (selectedTabChange)="onTabChange($event)"
@@ -93,6 +93,95 @@
         [action1Icon]="'favorite_border'"
         [action1Color]="'#e30000fe'"
         [action1Tooltip]="'Add to Favorites'"
+      ></app-table>
+    </div>
+  </mat-tab>
+
+  <!-- Tab 3 - Blocks -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      Blocked
+      <mat-icon class="tab-icon" style="color: #ff5722">block</mat-icon>
+    </ng-template>
+    <div class="page-container">
+      <div class="filters">
+        <mat-form-field class="full-width">
+          <mat-label>Search by Email</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            (keyup)="updateSearchFilterBlocked($event)"
+            placeholder="Ex: blocked@example.com"
+            #inputBlocked
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="clearFilterBlocked(inputBlocked)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div class="underlined-title">
+        <div class="title-buttons">
+          <h2>Blocked Users</h2>
+        </div>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="filteredBlockedUsers"
+        [enableSelection]="false"
+        [enableActions]="true"
+        (action1)="unblockUser($event)"
+        [action1Icon]="'lock_open'"
+        [action1Color]="'#ff5722'"
+        [action1Tooltip]="'Unblock User'"
+      ></app-table>
+    </div>
+  </mat-tab>
+
+  <!-- Tab 4 - Add Blocks -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      Add Blocked
+      <mat-icon class="tab-icon" style="color: #ff9800">person_off</mat-icon>
+    </ng-template>
+    <div class="page-container">
+      <div class="filters">
+        <mat-form-field class="full-width">
+          <mat-label>Search by Email</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input
+            matInput
+            (keyup)="updateSearchFilterUnblocked($event)"
+            placeholder="Ex: user@example.com"
+            #inputAddBlocked
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="clearFilterUnblocked(inputAddBlocked)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+      <div class="underlined-title">
+        <div class="title-buttons">
+          <h2>Block a User</h2>
+        </div>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="filteredUnblockedUsers"
+        [enableActions]="true"
+        (action1)="blockUser($event)"
+        [action1Icon]="'block'"
+        [action1Color]="'#ff5722'"
+        [action1Tooltip]="'Block User'"
       ></app-table>
     </div>
   </mat-tab>

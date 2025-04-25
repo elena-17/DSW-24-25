@@ -37,12 +37,20 @@ export class FriendsComponent {
   @ViewChild("inputFavorites") inputFavorites!: ElementRef<HTMLInputElement>;
   @ViewChild("inputAddFavorites")
   inputAddFavorites!: ElementRef<HTMLInputElement>;
+  @ViewChild("inputBlocked") inputBlocked!: ElementRef<HTMLInputElement>;
+  @ViewChild("inputAddBlocked") inputAddBlocked!: ElementRef<HTMLInputElement>;
 
   columns: any[] = [];
   data: any[] = [];
   availableUsers: any[] = [];
   filteredFavoriteUsers: any[] = [];
   filteredAvailableUsers: any[] = [];
+
+  blockedUsers: any[] = [];
+  filteredBlockedUsers: any[] = [];
+  unblockedUsers: any[] = [];
+  filteredUnblockedUsers: any[] = [];
+
   constructor(
     private friendshipsService: FriendshipsService,
     private cdr: ChangeDetectorRef,
@@ -52,6 +60,8 @@ export class FriendsComponent {
     this.columns = getFriendshipsColumns();
     this.loadFriendships(); // Charge the data of the friends (favorites)
     this.loadNonFriendships(); // Charge the data of the available users (non-favorites)
+    this.loadBlockedUsers(); // Charge the data of the blocked users
+    this.loadUnblockedUsers(); // Charge the data of the unblocked users
   }
 
   // Clear the filter when the user changes the tab
@@ -72,6 +82,23 @@ export class FriendsComponent {
       );
       console.log("Available users loaded successfully", this.availableUsers);
       this.updateSearchFilterAvailable({ target: { value: "" } }); // Restablecer la búsqueda de disponibles
+    } else if (event.index === 2) {
+      // Blocked tab
+      this.inputBlocked.nativeElement.value = ""; // Clear the input field for blocked users
+      this.filteredUnblockedUsers = []; // Clear the filtered unblocked users
+      console.log(
+        "Blocked users list filtered loaded successfully",
+        this.filteredBlockedUsers,
+      );
+    } else if (event.index === 3) {
+      // Add Blocked tab
+      this.inputAddBlocked.nativeElement.value = ""; // Clear the input field for add blocked users
+      console.log(
+        "Unblocked users list filtered loaded successfully",
+        this.filteredUnblockedUsers,
+      );
+      console.log("Unblocked users loaded successfully", this.unblockedUsers);
+      this.updateSearchFilterBlocked({ target: { value: "" } }); // Reset search filter for unblocked users
     }
   }
 
@@ -100,6 +127,34 @@ export class FriendsComponent {
       error: (error) => {
         this.notificationService.showErrorMessage(
           error.error.error || "Can't load available users.",
+        );
+      },
+    });
+  }
+
+  loadBlockedUsers(): void {
+    this.friendshipsService.getBlockedUsers().subscribe({
+      next: (response) => {
+        this.blockedUsers = response;
+        this.filteredBlockedUsers = [...this.blockedUsers];
+      },
+      error: (error) => {
+        this.notificationService.showErrorMessage(
+          error.error.error || "Error loading blocked users",
+        );
+      },
+    });
+  }
+
+  loadUnblockedUsers(): void {
+    this.friendshipsService.getUnblockedUsers().subscribe({
+      next: (response) => {
+        this.unblockedUsers = response;
+        this.filteredUnblockedUsers = [];
+      },
+      error: (error) => {
+        this.notificationService.showErrorMessage(
+          error.error.error || "Error loading unblocked users",
         );
       },
     });
@@ -135,6 +190,36 @@ export class FriendsComponent {
   clearFilterAvailable(input: HTMLInputElement): void {
     input.value = "";
     this.filteredAvailableUsers = [];
+  }
+
+  updateSearchFilterBlocked(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+    this.filteredBlockedUsers = this.blockedUsers.filter((user) =>
+      user.email.toLowerCase().includes(searchTerm),
+    );
+    this.cdr.detectChanges();
+  }
+
+  clearFilterBlocked(input: HTMLInputElement): void {
+    input.value = "";
+    this.filteredBlockedUsers = [...this.blockedUsers];
+  }
+
+  updateSearchFilterUnblocked(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+    if (searchTerm === "") {
+      this.filteredUnblockedUsers = [];
+    } else {
+      this.filteredUnblockedUsers = this.unblockedUsers.filter((user) =>
+        user.email.toLowerCase().includes(searchTerm),
+      );
+    }
+    this.cdr.detectChanges();
+  }
+
+  clearFilterUnblocked(input: HTMLInputElement): void {
+    input.value = "";
+    this.filteredUnblockedUsers = [];
   }
 
   // Add an user to favorites
@@ -176,6 +261,43 @@ export class FriendsComponent {
         this.notificationService.showErrorMessage(
           "Can't remove user from favorites.",
         );
+      },
+    });
+  }
+
+  blockUser(user: any): void {
+    this.friendshipsService.blockUser(user.email).subscribe({
+      next: () => {
+        this.notificationService.showSuccessMessage(
+          `${user.email} has been blocked.`,
+        );
+        this.unblockedUsers = this.unblockedUsers.filter(
+          (u) => u.email !== user.email,
+        );
+        this.filteredUnblockedUsers = this.filteredUnblockedUsers.filter(
+          (u) => u.email !== user.email,
+        );
+        this.filteredBlockedUsers = [...this.filteredBlockedUsers, user];
+      },
+      error: () => {
+        this.notificationService.showErrorMessage("Can't block user.");
+      },
+    });
+  }
+
+  unblockUser(user: any): void {
+    this.friendshipsService.unblockUser(user.email).subscribe({
+      next: () => {
+        this.notificationService.showSuccessMessage(
+          `${user.email} has been unblocked.`,
+        );
+        this.filteredBlockedUsers = this.filteredBlockedUsers.filter(
+          (u) => u.email !== user.email,
+        );
+        this.unblockedUsers = [...this.unblockedUsers, user];
+      },
+      error: () => {
+        this.notificationService.showErrorMessage("Can't unblock user.");
       },
     });
   }

@@ -16,8 +16,15 @@
               placeholder="Email, Phone or Name"
               (blur)="onBlurInput()"
             />
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAutocompleteSelect($event)" autoActiveFirstOption>
-              <mat-option *ngFor="let user of filteredFavorites | async" [value]="user.email">
+            <mat-autocomplete
+              #auto="matAutocomplete"
+              (optionSelected)="onAutocompleteSelect($event)"
+              autoActiveFirstOption
+            >
+              <mat-option
+                *ngFor="let user of filteredFavorites | async"
+                [value]="user.email"
+              >
                 {{ user.email }}
                 <mat-icon class="favorite-icon">favorite</mat-icon>
               </mat-option>
@@ -29,13 +36,20 @@
 
           <!-- Botón para agregar más usuarios -->
           <div class="addButton" *ngIf="selectedContacts.length > 0">
-            <button mat-icon-button matTooltip="Add more" (click)="addMoreContacts(contactForm.get('contact')?.value)">
+            <button
+              mat-icon-button
+              matTooltip="Add more"
+              (click)="addMoreContacts(contactForm.get('contact')?.value)"
+            >
               <mat-icon>add_circle</mat-icon>
             </button>
           </div>
 
           <!-- Lista de contactos seleccionados -->
-          <div *ngIf="selectedContacts.length > 0" class="selected-contacts-container">
+          <div
+            *ngIf="selectedContacts.length > 0"
+            class="selected-contacts-container"
+          >
             <div *ngFor="let email of selectedContacts" class="custom-chip">
               <span class="chip-text">{{ email }}</span>
               <button
@@ -187,7 +201,10 @@
         <p class="amount-highlight" *ngIf="isDivide">{{ amountPerPerson }} €</p>
         <p *ngIf="!admin">
           to
-          <span class="contact-highlight" *ngFor="let contact of selectedContacts; let i = index">
+          <span
+            class="contact-highlight"
+            *ngFor="let contact of selectedContacts; let i = index"
+          >
             {{ contact }}<span *ngIf="i < selectedContacts.length - 1">, </span>
           </span>
         </p>

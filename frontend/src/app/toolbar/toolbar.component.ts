@@ -68,7 +68,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     this.router.navigate(["/help"]);
   }
 
-  goToFavorites(): void {
+  goToRelationships(): void {
     if (this.role === "admin") {
       this.router.navigate(["/admin/friends"]);
       return;
