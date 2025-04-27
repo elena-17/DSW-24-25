@@ -1,25 +1,162 @@
 <app-toolbar></app-toolbar>
+
 <div class="page-container">
-  <h1>HELP</h1>
+  <!-- Hero Section -->
+  <div class="underlined-title">
+    <h2>Help Center</h2>
+    <h4>Your guide to navigating the app</h4>
+    <hr />
+  </div>
   <p>
-    Welcome to the help page! Here you can find information about how to use the
-    application.
+    Welcome to the Help Center. Here you'll find guidance to get the most out of
+    your experience with our application. Whether you're a new user or not,
+    we've got you covered with tips, FAQs, and detailed instructions.
   </p>
-  <h2>Getting Started</h2>
-  <p>
-    To get started, you can create an account or log in if you already have one.
-    Once logged in, you can access the main features of the application.
-  </p>
-  <h2>Features</h2>
-  <span style="display: block; height: 50px"></span>
+  <h3>Categories:</h3>
+
+  <div class="grid-cards">
+    <mat-card class="card-category">
+      <mat-icon>help_outline</mat-icon>
+      <h3>FAQ</h3>
+    </mat-card>
+    <mat-card class="card-category">
+      <mat-icon>account_balance_wallet</mat-icon>
+      <h3>Transactions</h3>
+    </mat-card>
+    <mat-card class="card-category">
+      <mat-icon>settings</mat-icon>
+      <h3>Account Management</h3>
+    </mat-card>
+    <mat-card class="card-category">
+      <mat-icon>favorite</mat-icon>
+      <h3>Favorites</h3>
+    </mat-card>
+    <mat-card class="card-category">
+      <mat-icon>groups_2</mat-icon>
+      <h3>Team</h3>
+    </mat-card>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="faq-section">
+    <div class="underlined-title">
+      <h2>Frequently Asked Questions</h2>
+      <hr />
+    </div>
+    <mat-accordion class="faq-accordion" multi="true">
+      <mat-expansion-panel
+        *ngFor="let faq of faqs"
+        (opened)="faq.panelOpenState.set(true)"
+        (closed)="faq.panelOpenState.set(false)"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ faq.question }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p>{{ faq.answer }}</p>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+
+  <div class="underlined-title">
+    <h2>Transactions</h2>
+    <hr />
+  </div>
+  <div class="text-photo-container">
+    <img
+      src="assets/undraw_mobile.png"
+      alt="Transactions"
+      class="img-responsive"
+      height="300"
+    />
+    <section>
+      <p>
+        Transactions are the core of our application. You can send and receive
+        transactions with ease.
+      </p>
+      <p>
+        To send a transaction, simply navigate to the "Send" section, enter the
+        recipient's address and the amount, and hit "Send".
+      </p>
+      <p>To receive a transaction, share your email with the sender.</p>
+    </section>
+  </div>
+
+  <div class="underlined-title">
+    <h2>Account management</h2>
+    <hr />
+  </div>
+  <div class="text-photo-container">
+    <section>
+      <p>
+        Account management is essential for maintaining your profile and
+        settings.
+      </p>
+      <p>
+        You can update your profile information, change your password, and
+        delete your account.
+      </p>
+      <p>
+        You can also save your credit cards info so it's easier and faster
+        adding money to your account.
+      </p>
+      <p>
+        To access account management, click on your name on the toolbar and
+        choose "Settings".
+      </p>
+    </section>
+    <img
+      src="assets/profile.svg"
+      alt="Account Management"
+      class="img-responsive"
+      height="300"
+    />
+  </div>
+
+  <div class="underlined-title">
+    <h2>Favorites</h2>
+    <hr />
+  </div>
+  <div class="text-photo-container">
+    <img
+      src="assets/undraw_like.svg"
+      alt="Favorites"
+      class="img-responsive"
+      height="300"
+    />
+    <section>
+      <p>Favorites allow you to quickly access your most frequent contacts.</p>
+      <p>
+        To add a contact to your favorites, navigate to the "Favorite" section,
+        then "Add favorite" and select the email of your contact.
+      </p>
+      <p>
+        To remove a contact from your favorites, simply click the heart icon
+        from the list of favorites.
+      </p>
+    </section>
+  </div>
+
+  <!-- Contact -->
+  <mat-card class="contact-card">
+    <h2><mat-icon>support_agent</mat-icon> Still Need Help?</h2>
+    <p>
+      Contact us at
+      <a href="mailto:donotcontact&#64;zap.com">"donotcontact&#64;zap.com"</a>
+      and we'll be happy to assist you.
+    </p>
+  </mat-card>
+
+  <!-- Team -->
   <div class="underlined-title">
     <h2>Meet the team</h2>
+    <h4>Authors from Universidad de Castilla-La Mancha</h4>
     <hr />
-    <h3>Authors</h3>
-    <p>Feel free to reach out to us if you have any questions or feedback!</p>
-    <div class="authors-container">
-      <app-author username="elena-17"></app-author>
-      <app-author username="antoniocg73"></app-author>
-    </div>
+  </div>
+  <p>Feel free to reach out to us if you have any questions or feedback!</p>
+  <div class="authors-container">
+    <app-author username="elena-17"></app-author>
+    <app-author username="antoniocg73"></app-author>
   </div>
 </div>

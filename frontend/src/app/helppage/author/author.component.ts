@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-author",
+  standalone: true,
   imports: [CommonModule, MaterialModule],
   templateUrl: "./author.component.html",
   styleUrl: "./author.component.scss",
@@ -13,6 +14,7 @@ export class AuthorComponent implements OnInit {
   @Input() username!: string;
   author: any = null;
   loading = true;
+  private static cache: Map<string, any> = new Map();
 
   constructor(private http: HttpClient) {}
 
@@ -22,7 +24,16 @@ export class AuthorComponent implements OnInit {
       this.loading = false;
       return;
     }
-    this.fetchAuthor();
+    const cachedAuthor = AuthorComponent.cache.get(this.username);
+
+    if (cachedAuthor !== undefined) {
+      this.author = cachedAuthor;
+      this.loading = false;
+    } else {
+      this.fetchAuthor();
+    }
+    console.log("AuthorComponent initialized with username:", this.username);
+    console.log("Cached author data:", cachedAuthor);
   }
 
   fetchAuthor(): void {
@@ -30,14 +41,13 @@ export class AuthorComponent implements OnInit {
     this.http.get(url).subscribe({
       next: (data) => {
         this.author = data;
+        AuthorComponent.cache.set(this.username, data);
+        this.loading = false;
       },
       error: (error) => {
         console.error("Error fetching user:", error);
         this.loading = false;
         this.author = null;
-      },
-      complete: () => {
-        this.loading = false;
       },
     });
   }
