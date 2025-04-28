@@ -10,7 +10,7 @@
 .grid-cards {
   display: grid;
   gap: 16px;
-  margin: 40px auto;
+  margin: 40px 0;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   justify-content: center;
 }
