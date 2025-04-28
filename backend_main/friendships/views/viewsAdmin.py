@@ -1,10 +1,11 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
-from ..serializers import FavoriteSerializer
+from rest_framework.response import Response
 from users.models import User
+
 from ..models import Favorite
+from ..serializers import FavoriteSerializer
 
 
 # Create your views here.
@@ -15,10 +16,14 @@ def get_all_favorite_pairs(request):
     paginator = LimitOffsetPagination()
     paginated_qs = paginator.paginate_queryset(favorites, request)
     serializer = FavoriteSerializer(paginated_qs, many=True)
-    return Response({
-        "data": serializer.data,
-        "total": paginator.count,
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {
+            "data": serializer.data,
+            "total": paginator.count,
+        },
+        status=status.HTTP_200_OK,
+    )
+
 
 # Manually add a favorite relation between two users
 @api_view(["POST"])
@@ -27,7 +32,9 @@ def admin_add_favorite_relation(request):
     favorite_email = request.data.get("favorite_user")
 
     if not user_email or not favorite_email:
-        return Response({"error": "Both 'user' and 'favorite_user' emails are required."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Both 'user' and 'favorite_user' emails are required."}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     if user_email == favorite_email:
         return Response({"error": "A user cannot favorite themselves."}, status=status.HTTP_400_BAD_REQUEST)
@@ -50,6 +57,7 @@ def admin_add_favorite_relation(request):
     except User.DoesNotExist:
         return Response({"error": "One or both users not found."}, status=status.HTTP_404_NOT_FOUND)
 
+
 # Manually remove a favorite relation between two users
 @api_view(["DELETE"])
 def admin_remove_favorite_relation(request):
@@ -57,7 +65,9 @@ def admin_remove_favorite_relation(request):
     favorite_email = request.data.get("favorite_user")
 
     if not user_email or not favorite_email:
-        return Response({"error": "Both 'user' and 'favorite_user' emails are required."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"error": "Both 'user' and 'favorite_user' emails are required."}, status=status.HTTP_400_BAD_REQUEST
+        )
 
     try:
         user = User.objects.get(email=user_email)

@@ -41,6 +41,7 @@ django-admin startproject backend_main
     ├── backend_main/          # Main Django project directory
     ├── creditcard/            # Handles credit card-related logic
     ├── friendships/           # Handles friendships and favorite users
+    ├── blocks/                # Handles blocked users
     ├── mercure/               # Handles Mercure real-time notifications
     ├── transactions/          # Handles transactions logic
     ├── manage.py              # Django's command-line utility
