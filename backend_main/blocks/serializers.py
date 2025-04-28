@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from .models import Block
 
 
@@ -8,7 +9,7 @@ class BlockSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Block
-        fields = ['user', 'blocked_user', 'created_at']
+        fields = ["user", "blocked_user", "created_at"]
 
     def get_user(self, obj):
         return obj.user.email

@@ -2,18 +2,35 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from users.models import User
+
 from ..models import Block
+
 
 class BlockAdminTest(APITestCase):
     def setUp(self):
         self.admin = User.objects.create_superuser(
-            email="admin@test.com", phone="111222333", name="Admin User", id_number="000000000", password="adminpass", is_confirmed=True
+            email="admin@test.com",
+            phone="111222333",
+            name="Admin User",
+            id_number="000000000",
+            password="adminpass",
+            is_confirmed=True,
         )
         self.user1 = User.objects.create_user(
-            email="user1@test.com", phone="444555666", name="Normal User1", id_number="111111111", password="userpass", is_confirmed=True
+            email="user1@test.com",
+            phone="444555666",
+            name="Normal User1",
+            id_number="111111111",
+            password="userpass",
+            is_confirmed=True,
         )
         self.user2 = User.objects.create_user(
-            email="user2@test.com", phone="777888999", name="Normal User2", id_number="222222222", password="userpass", is_confirmed=True
+            email="user2@test.com",
+            phone="777888999",
+            name="Normal User2",
+            id_number="222222222",
+            password="userpass",
+            is_confirmed=True,
         )
 
         self.token = self.get_token(self.admin.email, "adminpass")
@@ -61,11 +78,15 @@ class BlockAdminTest(APITestCase):
     def test_admin_remove_block(self):
         """Admin can remove a block relation"""
         Block.objects.create(user=self.user1, blocked_user=self.user2)
-        response = self.client.delete(self.admin_remove_url, {"user": self.user1.email, "blocked_user": self.user2.email})
+        response = self.client.delete(
+            self.admin_remove_url, {"user": self.user1.email, "blocked_user": self.user2.email}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(Block.objects.filter(user=self.user1, blocked_user=self.user2).exists())
 
     def test_admin_remove_nonexistent_block(self):
         """Admin attempts to remove a non-existent block relation"""
-        response = self.client.delete(self.admin_remove_url, {"user": self.user1.email, "blocked_user": self.user2.email})
+        response = self.client.delete(
+            self.admin_remove_url, {"user": self.user1.email, "blocked_user": self.user2.email}
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

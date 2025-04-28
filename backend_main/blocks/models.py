@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import User
 
+
 class Block(models.Model):
     class Meta:
         db_table = "blocks"

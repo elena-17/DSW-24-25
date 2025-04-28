@@ -2,21 +2,20 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from users.models import User
+from users.serializers.user import UserProfileSerializer
 
 from ..models import Block
 from ..serializers import BlockSerializer
-from users.models import User
-from users.serializers.user import UserProfileSerializer
 
 
 # GET: Returns users blocked by the current user
 @api_view(["GET"])
 def get_blocked_users(request):
     current_user = request.user
-    blocked_users = User.objects.filter(blocked_by__user=current_user).order_by("name")
+    blocked_users = User.objects.filter(blocked_by__user=current_user).order_by("email")
     serializer = UserProfileSerializer(blocked_users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 # GET: Returns users not blocked by current user (excluding self/admins)
 @api_view(["GET"])

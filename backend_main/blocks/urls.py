@@ -7,9 +7,9 @@ from .views.viewsAdmin import (
 )
 from .views.viewsUser import (
     block_user,
-    unblock_user,
     get_blocked_users,
     get_non_blocked_users,
+    unblock_user,
 )
 
 app_name = "blocks"

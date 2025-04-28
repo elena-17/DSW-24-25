@@ -1,16 +1,16 @@
+
 from datetime import datetime, time
-import re
 from zoneinfo import ZoneInfo
 
+from blocks.models import Block
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
-from users.models import User
-from blocks.models import Block
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
+from users.models import User
 
 from transactions.models import Transaction
 from transactions.serializers.filter import TransactionFilterSerializer
@@ -123,34 +123,21 @@ def number_pending(request):
     return Response({"number_pending": len(serializer.data)}, status=status.HTTP_200_OK)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def is_blocked(blocker_email, blocked_email):
     blocker = User.objects.filter(email=blocker_email).first()
     blocked = User.objects.filter(email=blocked_email).first()
 
     if not blocker or not blocked:
-        return False  
+        return False
 
     return Block.objects.filter(user=blocker, blocked_user=blocked).exists()
+
 
 @api_view(["POST"])
 def send_money(request):
     request_data = request.data.copy()
     request_data["sender"] = request.user
-    receivers = request_data.get("receivers")  
+    receivers = request_data.get("receivers")
     print(f"Receivers: {receivers}")
 
     # Verificar si el usuario está bloqueado por cualquiera de los receptores
@@ -159,7 +146,7 @@ def send_money(request):
             print(f"User {request.user} is blocked by {receiver_user}.")
             return Response(
                 {"error": f"You are blocked by the recipient ({receiver_user}). Transaction cannot be completed."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         print(f"User {request.user} is not blocked by {receiver_user}.")
     serializer = SendTransactionSerializer(data=request_data, context={"request": request})
@@ -189,7 +176,7 @@ def request_money(request):
             print(f"User {request.user} is blocked by {sender_user}.")
             return Response(
                 {"error": f"You are blocked by the sender ({sender_user}). Transaction cannot be completed."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         print(f"User {request.user} is not blocked by {sender_user}.")
 
