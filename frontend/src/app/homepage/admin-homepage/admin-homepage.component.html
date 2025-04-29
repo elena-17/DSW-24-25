@@ -23,8 +23,15 @@
       <mat-card class="stat-card">
         <mat-icon class="stat-icon accent">favorite</mat-icon>
         <div class="stat-text">
-          <div class="stat-value">{{ dashboardData?.friendships }}</div>
-          <div class="stat-label">Friendships</div>
+          <div class="stat-value">{{ dashboardData?.favorite }}</div>
+          <div class="stat-label">Favorite relationships</div>
+        </div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon accent">block</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">{{ dashboardData?.blocks }}</div>
+          <div class="stat-label">Blocked relationships</div>
         </div>
       </mat-card>
     </div>
@@ -54,6 +61,15 @@
             {{ dashboardData?.pending_transactions }}
           </div>
           <div class="stat-label">Pending Transactions</div>
+        </div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon warn">task_alt</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">
+            {{ dashboardData?.approved_transactions }}
+          </div>
+          <div class="stat-label">Approved Transactions</div>
         </div>
       </mat-card>
     </div>
@@ -96,6 +112,20 @@
         </div>
       </mat-card>
     </div>
+  </section>
+
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Insights & Recent Activity</h2>
+      <p>This section will hold charts and user movements</p>
+    </div>
+
+    <mat-card class="dashboard-card mat-elevation-z3">
+      <mat-card-title>Transactions per Day</mat-card-title>
+      <!-- <apx-chart *ngIf="chartOptions?.chart" [series]="chartSeries" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
+        [title]="chartOptions.title" [stroke]="chartOptions.stroke" [dataLabels]="chartOptions.dataLabels"
+        [tooltip]="chartOptions.tooltip"></apx-chart> -->
+    </mat-card>
   </section>
 
   <!-- FUTURE GRAPH + RECENT MOVEMENTS -->
