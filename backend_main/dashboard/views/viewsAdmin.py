@@ -31,11 +31,7 @@ def admin_dashboard(request):
         .annotate(count=models.Count("id"))
         .order_by("day")
     )
-    money_moved_per_user = (
-        Transaction.objects.values("user_id")
-        .annotate(total_money_moved=models.Sum("amount"))
-        .order_by("-total_money_moved")
-    )
+
 
     return Response(
         {
@@ -50,7 +46,6 @@ def admin_dashboard(request):
             "average_account_balance": average_account_balance,
             "num_credit_cards": num_credit_cards,
             "transactions_per_day": transactions_per_day,
-            "money_moved_per_user": money_moved_per_user,
         },
         status=status.HTTP_200_OK,
     )
