@@ -1,6 +1,7 @@
 from account.models import Account
 from creditcard.models import CreditCard
 from django.db import models
+from django.db.models.functions import TruncDay
 from friendships.models import Favorite
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -13,30 +14,43 @@ from users.models import User
 def admin_dashboard(request):
 
     total_users = User.objects.count()
-    friendships = Favorite.objects.count()
+    favorites = Favorite.objects.count()
+    blocks = 0
+    admins = User.objects.filter(role="admin").count()
     total_transactions = Transaction.objects.count()
     pending_transactions = Transaction.objects.filter(status="pending").count()
+    approved_transactions = Transaction.objects.filter(status="approved").count()
+
     total_money_in_accounts = Account.objects.aggregate(total_money=models.Sum("balance"))["total_money"] or 0
     average_account_balance = Account.objects.aggregate(average_balance=models.Avg("balance"))["average_balance"] or 0
     num_credit_cards = CreditCard.objects.count()
-    recent_transactions = Transaction.objects.select_related("sender", "receiver").order_by("-updated_at")[:5]
 
-    recent_activity_data = []
-    for t in recent_transactions:
-        user_email = t.updated_by.email if hasattr(t, "updated_by") else "Unknown user"
-        action = f"Transaction {t.id} {t.status}"
-        recent_activity_data.append({"user": user_email, "action": action, "timestamp": t.updated_at})
+    transactions_per_day = (
+        Transaction.objects.annotate(day=TruncDay("created_at"))
+        .values("day")
+        .annotate(count=models.Count("id"))
+        .order_by("day")
+    )
+    money_moved_per_user = (
+        Transaction.objects.values("user_id")
+        .annotate(total_money_moved=models.Sum("amount"))
+        .order_by("-total_money_moved")
+    )
 
     return Response(
         {
             "total_users": total_users,
-            "friendships": friendships,
+            "favorites": favorites,
+            "blocks": blocks,
+            "admins": admins,
             "total_transactions": total_transactions,
             "pending_transactions": pending_transactions,
+            "approved_transactions": approved_transactions,
             "total_money_in_accounts": total_money_in_accounts,
             "average_account_balance": average_account_balance,
             "num_credit_cards": num_credit_cards,
-            "recent_activity": recent_activity_data,
+            "transactions_per_day": transactions_per_day,
+            "money_moved_per_user": money_moved_per_user,
         },
         status=status.HTTP_200_OK,
     )
