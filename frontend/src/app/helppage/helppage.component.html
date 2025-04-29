@@ -62,19 +62,20 @@
       </mat-expansion-panel>
     </mat-accordion>
   </div>
-
   <div class="underlined-title">
     <h2>Transactions</h2>
     <hr />
   </div>
   <div class="text-photo-container">
-    <img
-      src="assets/undraw_mobile.png"
-      alt="Transactions"
-      class="img-responsive"
-      height="250"
-    />
-    <section>
+    <div class="img-container">
+      <img
+        src="assets/undraw_mobile.png"
+        alt="Transactions"
+        class="img-responsive"
+        height="250"
+      />
+    </div>
+    <section class="text-section">
       <p>
         Transactions are the core of our application. You can send and receive
         transactions with ease.
@@ -86,13 +87,13 @@
       <p>To receive a transaction, share your email with the sender.</p>
     </section>
   </div>
-
+  
   <div class="underlined-title">
     <h2>Account management</h2>
     <hr />
   </div>
   <div class="text-photo-container">
-    <section>
+    <section class="text-section">
       <p>
         Account management is essential for maintaining your profile and
         settings.
@@ -110,51 +111,58 @@
         choose "Settings".
       </p>
     </section>
-    <img
-      src="assets/profile.svg"
-      alt="Account Management"
-      class="img-responsive"
-      height="250"
-    />
+    <div class="img-container">
+      <img
+        src="assets/profile.svg"
+        alt="Account Management"
+        class="img-responsive"
+        height="250"
+      />
+    </div>
   </div>
-
+  
   <div class="underlined-title">
     <h2>Credit Cards</h2>
     <hr />
   </div>
   <div class="text-photo-container">
-    <section>
+    <section class="text-section">
       <p>
         Credit cards are a convenient way to add money to your account. You can
         save your credit card information for faster transactions.
       </p>
       <p>
+        When managing your balance account, you can choose whether to use "Stripe" or "Zap" bank. This last option uses the previous mentioned credit card system. So make sure to follow this instructions before using this system.
+      </p>
+      <p>
         To add a credit card, navigate to the "Credit Cards" section on "Settings" and
         click "Add Credit Card". Enter your card details and save.
       </p>
-
     </section>
-    <img
-      src="assets/profile.svg"
-      alt="Account Management"
-      class="img-responsive"
-      height="250"
-    />
+    <div class="img-container">
+      <img
+        src="assets/undraw_credit-card.svg"
+        alt="Credit Cards"
+        class="img-responsive"
+        height="250"
+      />
+    </div>
   </div>
-
-
+  
   <div class="underlined-title">
     <h2>Favorites</h2>
     <hr />
   </div>
   <div class="text-photo-container">
-    <img
-      src="assets/undraw_like.svg"
-      alt="Favorites"
-      class="img-responsive"
-      height="250"
-    />
-    <section>
+    <div class="img-container">
+      <img
+        src="assets/undraw_like.svg"
+        alt="Favorites"
+        class="img-responsive"
+        height="250"
+      />
+    </div>
+    <section class="text-section">
       <p>Favorites allow you to quickly access your most frequent contacts.</p>
       <p>
         To add a contact to your favorites, navigate to the "Favorite" section,
@@ -166,7 +174,6 @@
       </p>
     </section>
   </div>
-
   <!-- Contact -->
   <mat-card class="contact-card">
     <h2><mat-icon>support_agent</mat-icon> Still Need Help?</h2>
