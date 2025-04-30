@@ -14,11 +14,7 @@ export class Error404Component implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    sessionStorage.removeItem("userName");
-    sessionStorage.removeItem("userRole");
-    sessionStorage.removeItem("userEmail");
-    sessionStorage.removeItem("access_token");
-    sessionStorage.removeItem("refresh_token");
+    sessionStorage.clear();
   }
 
   goHome() {
