@@ -49,7 +49,7 @@ def admin_dashboard(request):
             "total_money_in_accounts": total_money_in_accounts,
             "average_account_balance": average_account_balance,
             "num_credit_cards": num_credit_cards,
-            "transactions_per_day": get_transactions_per_day(),
+            "transactions_chart": get_transactions_per_day(),
         },
         status=status.HTTP_200_OK,
     )
@@ -68,11 +68,14 @@ def get_transactions_per_day():
         .filter(created_at__gte=start_datetime, created_at__lt=end_datetime)
         .annotate(day=TruncDay("created_at"))
         .values("day")
-        .annotate(count=Count("id"))
+        .annotate(
+            count=Count("id"),
+            total_amount=models.Sum("amount")
+        )
         .order_by("day")
     )
     # Convert to dict {day: count}
-    data_by_day = {item["day"]: item["count"] for item in raw_data}
+    data_by_day = {item["day"]: {"count": item["count"], "total_amount": item["total_amount"] or 0} for item in raw_data}
     # Fill missing days with 0
     result = []
     for i in range(30):
@@ -80,8 +83,9 @@ def get_transactions_per_day():
         aware_day = make_aware(datetime.combine(day, datetime.min.time()), timezone=tz)
         result.append(
             {
-            "day": day.strftime("%d-%m"),
-            "count": data_by_day.get(aware_day, 0),
+                "day": day.strftime("%d-%m"),
+                "count": data_by_day.get(aware_day, {}).get("count", 0),
+                "total_amount": data_by_day.get(aware_day, {}).get("total_amount", 0),
             }
         )
     return result
