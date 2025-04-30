@@ -13,7 +13,13 @@ import { Router } from "@angular/router";
 export class Error404Component implements OnInit {
   constructor(private router: Router) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    sessionStorage.removeItem("userName");
+    sessionStorage.removeItem("userRole");
+    sessionStorage.removeItem("userEmail");
+    sessionStorage.removeItem("access_token");
+    sessionStorage.removeItem("refresh_token");
+  }
 
   goHome() {
     this.router.navigate(["/"]);
