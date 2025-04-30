@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from transactions.models import Transaction
 from users.models import User
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from django.db.models import Count
 from django.utils.timezone import make_aware, get_current_timezone
 
@@ -58,7 +58,7 @@ def admin_dashboard(request):
 def get_transactions_per_day():
     end_date = datetime.now().date() + timedelta(days=1)
     start_date = end_date - timedelta(days=30)
-    
+
     start_datetime = make_aware(datetime.combine(start_date, datetime.min.time()), timezone=tz)
     end_datetime = make_aware(datetime.combine(end_date, datetime.min.time()), timezone=tz)
 
@@ -71,18 +71,17 @@ def get_transactions_per_day():
         .annotate(count=Count("id"))
         .order_by("day")
     )
-
     # Convert to dict {day: count}
     data_by_day = {item["day"]: item["count"] for item in raw_data}
-
     # Fill missing days with 0
     result = []
     for i in range(30):
         day = start_date + timedelta(days=i)
+        aware_day = make_aware(datetime.combine(day, datetime.min.time()), timezone=tz)
         result.append(
             {
-                "day": day.isoformat(),
-                "count": data_by_day.get(day, 0),
+            "day": day.strftime("%d-%m"),
+            "count": data_by_day.get(aware_day, 0),
             }
         )
     return result
