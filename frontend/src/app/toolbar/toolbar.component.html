@@ -18,7 +18,7 @@
     <button mat-button (click)="goToTransactions()">
       <mat-icon>attach_money</mat-icon> Transactions
     </button>
-    <button mat-button (click)="goToRelationships()">
+    <button mat-button *ngIf="!isSeller()" (click)="goToRelationships()">
       <mat-icon>group</mat-icon> Relationships
     </button>
     <button mat-button (click)="goToHelp()">
@@ -54,7 +54,7 @@
     <button mat-button (click)="goToTransactions()">
       <mat-icon>attach_money</mat-icon> Transactions
     </button>
-    <button mat-button (click)="goToRelationships()">
+    <button mat-button *ngIf="!isSeller()" (click)="goToRelationships()">
       <mat-icon>group</mat-icon> Relationships
     </button>
     <button mat-button (click)="goToHelp()">
