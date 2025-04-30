@@ -14,7 +14,6 @@ import {
   ApexDataLabels,
   ApexTooltip,
   NgApexchartsModule,
-  ApexPlotOptions,
 } from "ng-apexcharts";
 
 export type ChartOptions = {
@@ -44,18 +43,26 @@ export class AdminHomepageComponent implements OnInit {
   dashboardData: any = null;
   isLoading = true;
   error: string | null = null;
-  chartOptions: ChartOptions = {
+  chartOptions_count: ChartOptions = {
     series: [],
     chart: { type: 'line' },
     xaxis: { categories: [] },
-    title: { text: '' },
+    title: { text: 'Last 30 days transactions', },
     stroke: { curve: 'smooth' },
     dataLabels: { enabled: false },
     tooltip: { enabled: true },
   };
-  chartSeries: ApexAxisChartSeries = [];
+  chartOptions_money: ChartOptions = {
+    series: [],
+    chart: { type: 'line' },
+    xaxis: { categories: [] },
+    title: { text: 'Last 30 days total amount', },
+    stroke: { curve: 'smooth' },
+    dataLabels: { enabled: false },
+    tooltip: { enabled: true },
+  };
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(private dashboardService: DashboardService) { }
 
   ngOnInit() {
     this.fetchAdminDashboardData();
@@ -78,9 +85,9 @@ export class AdminHomepageComponent implements OnInit {
   }
 
   loadChartData() {
-    const data = this.dashboardData.transactions_per_day;
-  
-    this.chartOptions = {
+    const data = this.dashboardData.transactions_chart;
+
+    this.chartOptions_count = {
       series: [
         {
           name: 'Transactions',
@@ -88,16 +95,19 @@ export class AdminHomepageComponent implements OnInit {
         },
       ],
       chart: {
-        type: 'bar', // Cambiar de 'line' a 'bar'
+        type: 'bar',
         height: 300,
-        toolbar: { show: false },
+        toolbar: { show: true, tools: {download: true }, },
+        zoom: {
+          enabled: false,
+        }
       },
       title: {
         text: 'Last 30 days transactions',
         align: 'center',
         margin: 10,
         style: {
-          fontSize:  '16px',
+          fontSize: '16px',
         },
       },
       xaxis: {
@@ -126,8 +136,57 @@ export class AdminHomepageComponent implements OnInit {
         },
       },
     };
+    this.chartOptions_money = {
+      series: [
+        {
+          name: 'Total Amount',
+          data: data.map((t: any) => t.total_amount),
+        },
+      ],
+      chart: {
+        type: 'line',
+        height: 300,
+        toolbar: { show: true, tools: {download: true }, },
+        zoom: {
+          enabled: false,
+        }
+      },
+      title: {
+        text: 'Last 30 days total amount',
+        align: 'center',
+        margin: 10,
+        style: { fontSize: '16px' },
+      },
+      xaxis: {
+        categories: data.map((t: any) => t.day),
+        labels: {
+          show: true,
+          rotateAlways: true,
+          rotate: -45, // rotación etiquetas
+          style: {
+            fontSize: '12px',
+          },
+        },
+        tickPlacement: 'on',
+      },
+      stroke: {
+        show: true,
+        width: 2,
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      tooltip: {
+        enabled: true,
+        x: {
+          format: 'dd MMM',
+        },
+      },
+    };
     setTimeout(() => {
-      this.chartOptions = { ...this.chartOptions };
+      this.chartOptions_count = { ...this.chartOptions_count };
+      this.chartOptions_money = { ...this.chartOptions_money };
     }, 0);
   }
+  
 }

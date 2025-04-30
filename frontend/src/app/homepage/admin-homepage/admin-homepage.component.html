@@ -105,7 +105,7 @@
       </mat-card>
 
       <mat-card class="stat-card">
-        <mat-icon class="stat-icon warn">credit_card</mat-icon>
+        <mat-icon class="stat-icon primary">credit_card</mat-icon>
         <div class="stat-text">
           <div class="stat-value">{{ dashboardData?.num_credit_cards }}</div>
           <div class="stat-label">Num. Credit Cards</div>
@@ -123,37 +123,27 @@
 
     <mat-card>
       <apx-chart
-    [series]="chartOptions.series"
-    [chart]="chartOptions.chart"
-    [xaxis]="chartOptions.xaxis"
-    [title]="chartOptions.title"
-    [stroke]="chartOptions.stroke"
-    [dataLabels]="chartOptions.dataLabels"
-    [tooltip]="chartOptions.tooltip"
+    [series]="chartOptions_count.series"
+    [chart]="chartOptions_count.chart"
+    [xaxis]="chartOptions_count.xaxis"
+    [title]="chartOptions_count.title"
+    [stroke]="chartOptions_count.stroke"
+    [dataLabels]="chartOptions_count.dataLabels"
+    [tooltip]="chartOptions_count.tooltip"
   ></apx-chart>
     </mat-card>
-  </section>
 
-  <!-- FUTURE GRAPH + RECENT MOVEMENTS -->
-  <section class="dashboard-section">
-    <div class="section-header">
-      <h2>Insights & Recent Activity</h2>
-      <p>This section will hold charts and user movements</p>
-    </div>
-
-    <div class="insight-placeholder">
-      <p class="placeholder-text">
-        📊 Placeholder for charts like:<br />
-        - Transactions per day<br />
-        - Money moved per user<br />
-        - Most active users
-      </p>
-    </div>
-
-    <div class="activity-placeholder">
-      <p class="placeholder-text">
-        🕒 Placeholder for: Last 5 user actions / movements
-      </p>
-    </div>
+    <mat-card style="margin-top: 35px;">
+      
+      <apx-chart
+    [series]="chartOptions_money.series"
+    [chart]="chartOptions_money.chart"
+    [xaxis]="chartOptions_money.xaxis"
+    [title]="chartOptions_money.title"
+    [stroke]="chartOptions_money.stroke"
+    [dataLabels]="chartOptions_money.dataLabels"
+    [tooltip]="chartOptions_money.tooltip"
+  ></apx-chart>
+    </mat-card>
   </section>
 </div>
