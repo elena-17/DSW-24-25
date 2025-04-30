@@ -8,9 +8,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from transactions.models import Transaction
 from users.models import User
-from datetime import timedelta, date
+from datetime import datetime, timedelta, date
 from django.db.models import Count
-from collections import defaultdict
+from django.utils.timezone import make_aware
 
 
 @api_view(["GET"])
@@ -35,7 +35,6 @@ def admin_dashboard(request):
     )
     num_credit_cards = CreditCard.objects.count()
 
-
     return Response(
         {
             "total_users": total_users,
@@ -55,10 +54,17 @@ def admin_dashboard(request):
 
 
 def get_transactions_per_day():
-    today = date.today()
+    today = datetime.now().date()
     start_date = today - timedelta(days=29)
+    start_datetime = make_aware(datetime.combine(start_date, datetime.min.time()))
+    end_datetime = make_aware(
+        datetime.combine(today + timedelta(days=1), datetime.min.time())
+    )
+
     raw_data = (
-        Transaction.objects.filter(created_at__date__gte=start_date)
+        Transaction.objects.filter(
+            created_at__gte=start_datetime, created_at__lt=end_datetime
+        )
         .annotate(day=TruncDay("created_at"))
         .values("day")
         .annotate(count=Count("id"))
