@@ -1,7 +1,7 @@
 <app-toolbar></app-toolbar>
 
 <div class="page-container">
-  <h1 class="welcome-title">Welcome, Admin 👋</h1>
+  <h1 class="welcome-title">Welcome, Admin</h1>
 
   <!-- USER STATS -->
   <section class="dashboard-section">
@@ -23,7 +23,7 @@
       <mat-card class="stat-card">
         <mat-icon class="stat-icon accent">favorite</mat-icon>
         <div class="stat-text">
-          <div class="stat-value">{{ dashboardData?.favorite }}</div>
+          <div class="stat-value">{{ dashboardData?.favorites }}</div>
           <div class="stat-label">Favorite relationships</div>
         </div>
       </mat-card>
@@ -88,7 +88,7 @@
         <mat-icon class="stat-icon accent">savings</mat-icon>
         <div class="stat-text">
           <div class="stat-value">
-            {{ dashboardData?.total_money_in_accounts }}€
+            {{ dashboardData?.total_money_in_accounts | number:'1.0-2'}}€
           </div>
           <div class="stat-label">Total Money</div>
         </div>
@@ -98,7 +98,7 @@
         <mat-icon class="stat-icon accent">show_chart</mat-icon>
         <div class="stat-text">
           <div class="stat-value">
-            {{ dashboardData?.average_account_balance }}€
+            {{ dashboardData?.average_account_balance | number:'1.0-2' }}€
           </div>
           <div class="stat-label">Avg. Balance</div>
         </div>
@@ -107,7 +107,7 @@
       <mat-card class="stat-card">
         <mat-icon class="stat-icon warn">credit_card</mat-icon>
         <div class="stat-text">
-          <div class="stat-value">{{ dashboardData?.num_credit_cards }}€</div>
+          <div class="stat-value">{{ dashboardData?.num_credit_cards }}</div>
           <div class="stat-label">Num. Credit Cards</div>
         </div>
       </mat-card>
@@ -118,13 +118,19 @@
     <div class="section-header">
       <h2>Insights & Recent Activity</h2>
       <p>This section will hold charts and user movements</p>
+      <hr />
     </div>
 
-    <mat-card class="dashboard-card mat-elevation-z3">
-      <mat-card-title>Transactions per Day</mat-card-title>
-      <!-- <apx-chart *ngIf="chartOptions?.chart" [series]="chartSeries" [chart]="chartOptions.chart" [xaxis]="chartOptions.xaxis"
-        [title]="chartOptions.title" [stroke]="chartOptions.stroke" [dataLabels]="chartOptions.dataLabels"
-        [tooltip]="chartOptions.tooltip"></apx-chart> -->
+    <mat-card>
+      <apx-chart
+    [series]="chartOptions.series"
+    [chart]="chartOptions.chart"
+    [xaxis]="chartOptions.xaxis"
+    [title]="chartOptions.title"
+    [stroke]="chartOptions.stroke"
+    [dataLabels]="chartOptions.dataLabels"
+    [tooltip]="chartOptions.tooltip"
+  ></apx-chart>
     </mat-card>
   </section>
 

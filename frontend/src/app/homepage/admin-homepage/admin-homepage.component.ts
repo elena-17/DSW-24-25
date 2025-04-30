@@ -4,6 +4,7 @@ import { ToolbarComponent } from "../../toolbar/toolbar.component";
 import { MatListModule } from "@angular/material/list";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { DashboardService } from "../../services/dashboard.service";
+import { CommonModule } from "@angular/common";
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -13,6 +14,7 @@ import {
   ApexDataLabels,
   ApexTooltip,
   NgApexchartsModule,
+  ApexPlotOptions,
 } from "ng-apexcharts";
 
 export type ChartOptions = {
@@ -33,6 +35,7 @@ export type ChartOptions = {
     MatListModule,
     MatGridListModule,
     NgApexchartsModule,
+    CommonModule,
   ],
   templateUrl: "./admin-homepage.component.html",
   styleUrl: "./admin-homepage.component.scss",
@@ -41,7 +44,15 @@ export class AdminHomepageComponent implements OnInit {
   dashboardData: any = null;
   isLoading = true;
   error: string | null = null;
-  chartOptions: Partial<ChartOptions> = {};
+  chartOptions: ChartOptions = {
+    series: [],
+    chart: { type: 'line' },
+    xaxis: { categories: [] },
+    title: { text: '' },
+    stroke: { curve: 'smooth' },
+    dataLabels: { enabled: false },
+    tooltip: { enabled: true },
+  };
   chartSeries: ApexAxisChartSeries = [];
 
   constructor(private dashboardService: DashboardService) {}
@@ -67,45 +78,56 @@ export class AdminHomepageComponent implements OnInit {
   }
 
   loadChartData() {
-    //   this.chartSeries = [
-    //     {
-    //       name: 'Transactions',
-    //       data: this.dashboardData.transactions_per_day.map(t => t.count)
-    //     }
-    //   ];
-    //   this.chartOptions = {
-    //     chart: {
-    //       type: 'line',
-    //       height: 300,
-    //       toolbar: { show: false }
-    //     },
-    //     title: {
-    //       text: 'Daily Transactions',
-    //       align: 'left'
-    //     },
-    //     xaxis: {
-    //       categories: this.dashboardData.transactions_per_day.map(t =>
-    //         new Date(t.day).toLocaleDateString('en-GB', {
-    //           day: '2-digit',
-    //           month: 'short'
-    //         })
-    //       ),
-    //       labels: {
-    //         rotate: -45
-    //       }
-    //     },
-    //     stroke: {
-    //       curve: 'smooth',
-    //       width: 2
-    //     },
-    //     dataLabels: {
-    //       enabled: false
-    //     },
-    //     tooltip: {
-    //       x: {
-    //         format: 'dd MMM'
-    //       }
-    //     }
-    //   };
+    const data = this.dashboardData.transactions_per_day;
+  
+    this.chartOptions = {
+      series: [
+        {
+          name: 'Transactions',
+          data: data.map((t: any) => t.count),
+        },
+      ],
+      chart: {
+        type: 'bar', // Cambiar de 'line' a 'bar'
+        height: 300,
+        toolbar: { show: false },
+      },
+      title: {
+        text: 'Last 30 days transactions',
+        align: 'center',
+        margin: 10,
+        style: {
+          fontSize:  '16px',
+        },
+      },
+      xaxis: {
+        categories: data.map((t: any) => t.day),
+        labels: {
+          show: true,
+          rotateAlways: true,
+          rotate: -45,     // rotación etiquetas
+          style: {
+            fontSize: '12px',
+          }
+        },
+        tickPlacement: 'on'
+      },
+      stroke: {
+        show: true,
+        width: 2,
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      tooltip: {
+        enabled: true,
+        x: {
+          format: 'dd MMM',
+        },
+      },
+    };
+    setTimeout(() => {
+      this.chartOptions = { ...this.chartOptions };
+    }, 0);
   }
 }
