@@ -40,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, unique=True)
     name = models.CharField(max_length=100)
-    role = models.CharField(max_length=10, choices=USER_ROLES, default="user")
+    role = models.CharField(max_length=10, choices=USER_ROLES)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_confirmed = models.BooleanField(default=False)  # Nuevo campo
