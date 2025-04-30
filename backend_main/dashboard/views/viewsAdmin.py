@@ -8,6 +8,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from transactions.models import Transaction
 from users.models import User
+from datetime import timedelta, date
+from django.db.models import Count
+from collections import defaultdict
 
 
 @api_view(["GET"])
@@ -21,16 +24,16 @@ def admin_dashboard(request):
     pending_transactions = Transaction.objects.filter(status="pending").count()
     approved_transactions = Transaction.objects.filter(status="approved").count()
 
-    total_money_in_accounts = Account.objects.aggregate(total_money=models.Sum("balance"))["total_money"] or 0
-    average_account_balance = Account.objects.aggregate(average_balance=models.Avg("balance"))["average_balance"] or 0
-    num_credit_cards = CreditCard.objects.count()
-
-    transactions_per_day = (
-        Transaction.objects.annotate(day=TruncDay("created_at"))
-        .values("day")
-        .annotate(count=models.Count("id"))
-        .order_by("day")
+    total_money_in_accounts = (
+        Account.objects.aggregate(total_money=models.Sum("balance"))["total_money"] or 0
     )
+    average_account_balance = (
+        Account.objects.aggregate(average_balance=models.Avg("balance"))[
+            "average_balance"
+        ]
+        or 0
+    )
+    num_credit_cards = CreditCard.objects.count()
 
 
     return Response(
@@ -45,7 +48,34 @@ def admin_dashboard(request):
             "total_money_in_accounts": total_money_in_accounts,
             "average_account_balance": average_account_balance,
             "num_credit_cards": num_credit_cards,
-            "transactions_per_day": transactions_per_day,
+            "transactions_per_day": get_transactions_per_day(),
         },
         status=status.HTTP_200_OK,
     )
+
+
+def get_transactions_per_day():
+    today = date.today()
+    start_date = today - timedelta(days=29)
+    raw_data = (
+        Transaction.objects.filter(created_at__date__gte=start_date)
+        .annotate(day=TruncDay("created_at"))
+        .values("day")
+        .annotate(count=Count("id"))
+        .order_by("day")
+    )
+
+    # Convert to dict {day: count}
+    data_by_day = {item["day"]: item["count"] for item in raw_data}
+
+    # Fill missing days with 0
+    result = []
+    for i in range(30):
+        day = start_date + timedelta(days=i)
+        result.append(
+            {
+                "day": day.isoformat(),
+                "count": data_by_day.get(day, 0),
+            }
+        )
+    return result
