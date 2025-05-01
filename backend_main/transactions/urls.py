@@ -12,9 +12,10 @@ from transactions.views.viewsUser import (
     request_money,
     send_money,
     update_transaction_status,
+    send_confirmation_code,
 )
 
-# url pattern = /transaction/....
+# url pattern = /transactions/....
 urlpatterns = [
     path("admin/", transaction_list, name="transaction_list"),
     path("admin/<int:id>/", transaction_update, name="transaction_update"),
@@ -25,4 +26,5 @@ urlpatterns = [
     path("pending/", number_pending, name="number_pending"),
     path("<int:id>/", get_transaction, name="get_transaction"),
     path("<int:id>/update-status/", update_transaction_status, name="update_transaction_status"),
+    path("send-confirmation-code/", send_confirmation_code, name="send_confirmation_code"),
 ]
