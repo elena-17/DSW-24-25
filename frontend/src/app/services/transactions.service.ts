@@ -27,6 +27,7 @@ export class TransactionsService {
   private urlAdminTransactions = `${this.baseApiUrl}/admin/`;
   private urlPendingTransactions = `${this.baseApiUrl}/pending/`;
   private urlAdminCreateTransaction = `${this.baseApiUrl}/admin/create/`;
+  private urlReceiveCode = `${this.baseApiUrl}/send-confirmation-code/`;
 
   constructor(private http: HttpClient) {}
 
@@ -190,6 +191,12 @@ export class TransactionsService {
     };
     return this.http.post<any>(this.urlAdminCreateTransaction, transaction, {
       withCredentials: true,
+    });
+  }
+
+  sendConfirmationCode(email: string) {
+    return this.http.post<any>(this.urlReceiveCode, {
+      email,
     });
   }
 }

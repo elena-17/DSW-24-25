@@ -14,6 +14,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "../services/auth.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { MaterialModule } from "../material.module";
+import { TransactionsService } from "../services/transactions.service";
 
 @Component({
   selector: "app-login",
@@ -37,6 +38,7 @@ export class LoginPaymentComponent {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
+    private transactionService: TransactionsService
   ) {
     this.loginForm = this.formBuilder.group({
       email_id: ["", [Validators.required, this.emailIdValidator()]],
@@ -72,9 +74,9 @@ export class LoginPaymentComponent {
           sessionStorage.setItem("userName", payload.name);
           sessionStorage.setItem("userEmail", payload.email);
           sessionStorage.setItem("userRole", payload.role);
-
           // Route with parameters
           const query = { ...this.queryParams };
+          this.sendConfirmationEmail(query.email);
           this.router.navigate(["/confirm-payment"], { queryParams: query });
         },
         error: (error) => {
@@ -85,6 +87,24 @@ export class LoginPaymentComponent {
           });
         },
       });
+  }
+
+  sendConfirmationEmail(senderEmail: string) {
+    this.transactionService.sendConfirmationCode(senderEmail).subscribe({
+      next: () => {
+        this.snackBar.open("Confirmation code sent to your email.", "Close", {
+          duration: 3000,
+          panelClass: ["success-snackbar"],
+        });
+      },
+      error: (error) => {
+        console.error("Error sending confirmation code:", error);
+        this.snackBar.open("Failed to send confirmation code. Try again later.", "Close", {
+          duration: 3000,
+          panelClass: ["error-snackbar"],
+        });
+      },
+    });
   }
 
   togglePasswordVisibility() {
