@@ -232,7 +232,7 @@ def handle_seller_request(transactions):
         receiver_email = transaction.receiver.email
 
         # Token firmado que solo el backend puede desencriptar
-        signed_token = signer.sign(f"{transaction.confirmation_token}")
+        signed_token = signer.sign(f"{sender_email}:{transaction.confirmation_token}")
 
         threading.Thread(
             target=send_seller_transaction_email,
@@ -287,7 +287,8 @@ def send_confirmation_code(request):
         )
     
     try:
-        confirmation_token = signer.unsign(confirmation_token)
+        raw = signer.unsign(confirmation_token)
+        email, confirmation_token = raw.split(":")
     except BadSignature:
         return Response({"error": "Invalid or tampered token."}, status=status.HTTP_400_BAD_REQUEST)
     
