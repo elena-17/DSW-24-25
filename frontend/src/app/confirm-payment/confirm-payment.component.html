@@ -7,11 +7,25 @@
         You are about to confirm a payment request associated with:
         <strong>{{ receiver }}</strong>
       </p>
+
+      <div class="code-inputs">
+        <input
+          *ngFor="let digit of codeDigits; let i = index"
+          type="text"
+          maxlength="1"
+          pattern="[0-9]*"
+          inputmode="numeric"
+          [(ngModel)]="codeDigits[i]"
+          (input)="autoFocusNext($event, i)"
+          class="code-box"
+        />
+      </div>
   
       <button
         mat-flat-button
         color="primary"
         class="full-width"
+        [disabled]="!isCodeComplete()"
         (click)="confirmPayment()"
       >
         Confirm Payment
