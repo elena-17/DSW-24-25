@@ -1,14 +1,12 @@
 from unittest.mock import patch
-from django.urls import reverse
-from users.models import User
-from creditcard.models import CreditCard
 
-from account.models import Account
+from creditcard.models import CreditCard
+from django.urls import reverse
 from friendships.models import Favorite
-from transactions.models import Transaction
-from blocks.models import Block
 from rest_framework import status
 from rest_framework.test import APITestCase
+from transactions.models import Transaction
+from users.models import User
 
 
 class AdminDashboardViewTests(APITestCase):
@@ -40,9 +38,7 @@ class AdminDashboardViewTests(APITestCase):
 
         # Create test credit cards
         CreditCard.objects.create(user=self.admin_user, number="1234567890123456")
-        CreditCard.objects.create(
-            user=self.regular_user, number="9876543210987654"
-        )
+        CreditCard.objects.create(user=self.regular_user, number="9876543210987654")
 
         # Create test favorites
         Favorite.objects.create(user=self.admin_user, favorite_user=self.regular_user)
@@ -75,7 +71,6 @@ class AdminDashboardViewTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         return response.data["access"]
 
-
     @patch("dashboard.views.viewsAdmin.get_transactions_per_day")
     def test_admin_dashboard_success(self, mock_get_transactions_per_day):
         mock_get_transactions_per_day.return_value = [
@@ -97,9 +92,7 @@ class AdminDashboardViewTests(APITestCase):
         self.assertEqual(data["total_money_in_accounts"], 15000)
         self.assertEqual(data["average_account_balance"], 7500)
         self.assertEqual(data["num_credit_cards"], 2)
-        self.assertEqual(
-            data["transactions_chart"], mock_get_transactions_per_day.return_value
-        )
+        self.assertEqual(data["transactions_chart"], mock_get_transactions_per_day.return_value)
 
     def test_admin_dashboard_no_transactions(self):
         Transaction.objects.all().delete()

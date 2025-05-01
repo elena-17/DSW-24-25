@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from account.models import Account
+from blocks.models import Block
 from creditcard.models import CreditCard
 from django.db import models
 from django.db.models import Count
@@ -12,7 +13,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from transactions.models import Transaction
 from users.models import User
-from blocks.models import Block
 
 tz = get_current_timezone()
 
