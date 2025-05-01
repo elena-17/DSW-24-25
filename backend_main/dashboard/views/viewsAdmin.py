@@ -30,7 +30,6 @@ def admin_dashboard(request):
     total_money_in_accounts = Account.objects.aggregate(total_money=models.Sum("balance"))["total_money"] or 0
     average_account_balance = Account.objects.aggregate(average_balance=models.Avg("balance"))["average_balance"] or 0
     num_credit_cards = CreditCard.objects.count()
-    print(get_transactions_per_day())
     return Response(
         {
             "total_users": total_users,
