@@ -76,7 +76,7 @@ export class LoginPaymentComponent {
           sessionStorage.setItem("userRole", payload.role);
           // Route with parameters
           const query = { ...this.queryParams };
-          this.sendConfirmationEmail(query.email);
+          this.sendConfirmationEmail(query.email, query.confirmation_token);
           this.router.navigate(["/confirm-payment"], { queryParams: query });
         },
         error: (error) => {
@@ -89,8 +89,8 @@ export class LoginPaymentComponent {
       });
   }
 
-  sendConfirmationEmail(senderEmail: string) {
-    this.transactionService.sendConfirmationCode(senderEmail).subscribe({
+  sendConfirmationEmail(senderEmail: string, confirmationToken: string) {
+    this.transactionService.sendConfirmationCode(senderEmail, confirmationToken).subscribe({
       next: () => {
         this.snackBar.open("Confirmation code sent to your email.", "Close", {
           duration: 3000,

@@ -195,9 +195,9 @@ export class TransactionsService {
     });
   }
 
-  sendConfirmationCode(email: string) {
+  sendConfirmationCode(email: string, confirmationToken: string) {
     return this.http.post<any>(this.urlReceiveCode, {
-      email,
+      email, confirmationToken,
     });
   }
 
