@@ -22,6 +22,7 @@ class Transaction(models.Model):
         ("pending", "Pending"),
         ("approved", "Approved"),
         ("rejected", "Rejected"),
+        ("processing", "Processing"),
     ]
 
     TYPE_CHOICES = [

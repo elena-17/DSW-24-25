@@ -184,6 +184,7 @@ def request_money(request):
     if serializer.is_valid():
         transactions = serializer.save()
         tr_serialized = TransactionSerializer(transactions, many=True)
+        ############################################
         for transaction in tr_serialized.data:
             topic = f"user/{transaction['sender']}"
             publish_to_mercure(topic, transaction)
