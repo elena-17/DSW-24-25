@@ -1,4 +1,5 @@
-from math import e
+import random
+import string
 import threading
 
 from datetime import datetime, time
@@ -28,6 +29,7 @@ from transactions.serializers.status import TransactionStatusUpdateSerializer
 from transactions.serializers.transactions import TransactionSerializer
 
 signer = TimestampSigner()
+confirmation_codes = {}
 
 
 @api_view(["GET"])
@@ -202,7 +204,8 @@ def request_money(request):
             handle_seller_request(transactions)
             return Response(
                 {"message": "Payment request sent to user or users.", "transactions": tr_serialized.data},
-                status=status.HTTP_201_CREATED)
+                status=status.HTTP_201_CREATED,
+            )
 
         else:
             for transaction in tr_serialized.data:
@@ -234,7 +237,9 @@ def generate_payment_link(receiver_email: str, sender_email: str) -> str:
     encoded_email = quote(sender_email)
     encoded_receiver_email = quote(receiver_email)
     token = signer.sign(sender_email)  # signed token with timestamp
-    payment_link = f"http://localhost:4200/loginPayment/?email={encoded_email}&token={token}&receiver={encoded_receiver_email}"
+    payment_link = (
+        f"http://localhost:4200/loginPayment/?email={encoded_email}&token={token}&receiver={encoded_receiver_email}"
+    )
     return payment_link
 
 
@@ -253,6 +258,47 @@ def send_seller_transaction_email(sender_email: str, receiver_email: str, amount
         </html>
     """
     send_mail(subject, "", settings.DEFAULT_FROM_EMAIL, [sender_email], html_message=message)
+
+
+def generate_code(length=6):
+    return "".join(random.choices(string.digits, k=length))
+
+
+def store_code(email: str, code: str) -> None:
+    confirmation_codes[email] = code
+
+
+@api_view(["POST"])
+def send_confirmation_code(request):
+    email = request.data.get("email")
+
+    if not email:
+        return Response({"error": "An email is required to send the code."}, status=status.HTTP_400_BAD_REQUEST)
+
+    code = generate_code()
+    store_code(email, code)
+
+    threading.Thread(
+        target=send_confirmation_code_email,
+        args=(email, code),
+    ).start()
+
+    return Response({"message": "Confirmation code sent successfully."}, status=status.HTTP_200_OK)
+
+
+def send_confirmation_code_email(email: str, code: str) -> None:
+    subject = "ZAP Payment Confirmation Code"
+    html_message = f"""
+    <html>
+    <body>
+        <p>You are about to confirm a payment.</p>
+        <p>Your confirmation code is:</p>
+        <h2 style="color:#00b8c4;">{code}</h2>
+        <p>Enter this code to complete your transaction.</p>
+    </body>
+    </html>
+    """
+    send_mail(subject, "", settings.DEFAULT_FROM_EMAIL, [email], html_message=html_message)
 
 
 @api_view(["PUT"])
