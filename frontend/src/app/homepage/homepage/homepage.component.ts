@@ -32,19 +32,20 @@ export class HomepageComponent implements OnInit {
     series: [],
     chart: { type: "line" },
     xaxis: { categories: [] },
-    title: { text: "Last 30 days transactions" },
-    stroke: { curve: "smooth" },
+    title: { text: "Last 30 days balance", align: "center", margin: 10 },
+    stroke: { curve: "smooth", width: 2 },
     dataLabels: { enabled: false },
     tooltip: { enabled: true },
   };
   chart_monthly: any = {
     series: [],
-    chart: { type: "line" },
+    chart: { type: "bar" },
     xaxis: { categories: [] },
-    title: { text: "Last 30 days total amount" },
-    stroke: { curve: "smooth" },
+    title: { text: "Monthly balance", align: "center", margin: 10 },
+    stroke: { curve: "smooth", width: 2 },
     dataLabels: { enabled: false },
     tooltip: { enabled: true },
+    plotOptions: {},
   };
   constructor(
     private userService: UserService,
@@ -105,6 +106,7 @@ export class HomepageComponent implements OnInit {
         this.dashboardData = data;
         this.isLoading = false;
         this.loadChartData();
+        console.log(this.dashboardData);
       },
       error: (error) => {
         console.error("Error fetching user dashboard data:", error);
@@ -131,5 +133,30 @@ export class HomepageComponent implements OnInit {
       },
     ];
     this.chart_balance.xaxis.categories = data.map((t: any) => t.day);
+    this.chart_balance.chart = {
+      type: "line",
+      height: 350,
+      toolbar: { show: true, tools: { download: true } },
+      zoom: {
+        enabled: false,
+      },
+    };
+    const monthly = this.dashboardData.monthly_chart;
+    console.log(monthly);
+    this.chart_monthly.series = [
+      {
+        name: "Total Amount",
+        data: monthly.map((t: any) => t.balance),
+      },
+    ];
+    this.chart_monthly.xaxis.categories = monthly.map((t: any) => t.month);
+    this.chart_monthly.chart = {
+      type: "line",
+      height: 350,
+      toolbar: { show: true, tools: { download: true } },
+      zoom: {
+        enabled: false,
+      },
+    };
   }
 }

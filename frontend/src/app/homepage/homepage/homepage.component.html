@@ -1,5 +1,7 @@
 <app-toolbar></app-toolbar>
 <div class="page-container">
+  <h1 class="welcome-title">Welcome</h1>
+  <p>Last login {{ dashboardData?.last_login }}</p>
   <mat-card class="account-balance">
     <mat-card-header>
       <mat-card-title>
@@ -10,7 +12,7 @@
 
     <mat-card-content class="balance-content">
       <div class="balance-info">
-        <h2>{{ balance | currency: "EUR" }}</h2>
+        <h2>{{ balance | number: "1.0-2" }} €</h2>
       </div>
 
       <div class="account-actions">
@@ -35,7 +37,7 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card>
+  <mat-card style="margin-top: 30px">
     <apx-chart
       [series]="chart_balance.series"
       [chart]="chart_balance.chart"
@@ -46,6 +48,20 @@
       [tooltip]="chart_balance.tooltip"
       [colors]="chart_balance.colors"
       [legend]="chart_balance.legend"
+    ></apx-chart>
+  </mat-card>
+
+  <mat-card style="margin-top: 20px">
+    <apx-chart
+      [series]="chart_monthly.series"
+      [chart]="chart_monthly.chart"
+      [xaxis]="chart_monthly.xaxis"
+      [title]="chart_monthly.title"
+      [stroke]="chart_monthly.stroke"
+      [dataLabels]="chart_monthly.dataLabels"
+      [tooltip]="chart_monthly.tooltip"
+      [colors]="chart_monthly.colors"
+      [legend]="chart_monthly.legend"
     ></apx-chart>
   </mat-card>
 </div>
