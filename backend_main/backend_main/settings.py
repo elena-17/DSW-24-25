@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "friendships",
     "blocks",
     "drf_spectacular",
+    "dashboard",
 ]
 
 MIDDLEWARE = [
