@@ -88,7 +88,7 @@
         <mat-icon class="stat-icon accent">savings</mat-icon>
         <div class="stat-text">
           <div class="stat-value">
-            {{ dashboardData?.total_money_in_accounts | number:'1.0-2'}}€
+            {{ dashboardData?.total_money_in_accounts | number: "1.0-2" }}€
           </div>
           <div class="stat-label">Total Money</div>
         </div>
@@ -98,7 +98,7 @@
         <mat-icon class="stat-icon accent">show_chart</mat-icon>
         <div class="stat-text">
           <div class="stat-value">
-            {{ dashboardData?.average_account_balance | number:'1.0-2' }}€
+            {{ dashboardData?.average_account_balance | number: "1.0-2" }}€
           </div>
           <div class="stat-label">Avg. Balance</div>
         </div>
@@ -123,27 +123,26 @@
 
     <mat-card>
       <apx-chart
-    [series]="chartOptions_count.series"
-    [chart]="chartOptions_count.chart"
-    [xaxis]="chartOptions_count.xaxis"
-    [title]="chartOptions_count.title"
-    [stroke]="chartOptions_count.stroke"
-    [dataLabels]="chartOptions_count.dataLabels"
-    [tooltip]="chartOptions_count.tooltip"
-  ></apx-chart>
+        [series]="chartOptions_count.series"
+        [chart]="chartOptions_count.chart"
+        [xaxis]="chartOptions_count.xaxis"
+        [title]="chartOptions_count.title"
+        [stroke]="chartOptions_count.stroke"
+        [dataLabels]="chartOptions_count.dataLabels"
+        [tooltip]="chartOptions_count.tooltip"
+      ></apx-chart>
     </mat-card>
 
-    <mat-card style="margin-top: 35px;">
-      
+    <mat-card style="margin-top: 35px">
       <apx-chart
-    [series]="chartOptions_money.series"
-    [chart]="chartOptions_money.chart"
-    [xaxis]="chartOptions_money.xaxis"
-    [title]="chartOptions_money.title"
-    [stroke]="chartOptions_money.stroke"
-    [dataLabels]="chartOptions_money.dataLabels"
-    [tooltip]="chartOptions_money.tooltip"
-  ></apx-chart>
+        [series]="chartOptions_money.series"
+        [chart]="chartOptions_money.chart"
+        [xaxis]="chartOptions_money.xaxis"
+        [title]="chartOptions_money.title"
+        [stroke]="chartOptions_money.stroke"
+        [dataLabels]="chartOptions_money.dataLabels"
+        [tooltip]="chartOptions_money.tooltip"
+      ></apx-chart>
     </mat-card>
   </section>
 </div>

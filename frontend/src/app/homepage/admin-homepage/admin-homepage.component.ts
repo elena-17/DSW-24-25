@@ -45,24 +45,24 @@ export class AdminHomepageComponent implements OnInit {
   error: string | null = null;
   chartOptions_count: ChartOptions = {
     series: [],
-    chart: { type: 'line' },
+    chart: { type: "line" },
     xaxis: { categories: [] },
-    title: { text: 'Last 30 days transactions', },
-    stroke: { curve: 'smooth' },
+    title: { text: "Last 30 days transactions" },
+    stroke: { curve: "smooth" },
     dataLabels: { enabled: false },
     tooltip: { enabled: true },
   };
   chartOptions_money: ChartOptions = {
     series: [],
-    chart: { type: 'line' },
+    chart: { type: "line" },
     xaxis: { categories: [] },
-    title: { text: 'Last 30 days total amount', },
-    stroke: { curve: 'smooth' },
+    title: { text: "Last 30 days total amount" },
+    stroke: { curve: "smooth" },
     dataLabels: { enabled: false },
     tooltip: { enabled: true },
   };
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(private dashboardService: DashboardService) {}
 
   ngOnInit() {
     this.fetchAdminDashboardData();
@@ -74,7 +74,6 @@ export class AdminHomepageComponent implements OnInit {
         this.dashboardData = data;
         this.isLoading = false;
         this.loadChartData();
-        console.log("Admin dashboard data:", this.dashboardData);
       },
       error: (err) => {
         console.error("Error fetching admin dashboard data:", err);
@@ -90,24 +89,24 @@ export class AdminHomepageComponent implements OnInit {
     this.chartOptions_count = {
       series: [
         {
-          name: 'Transactions',
+          name: "Transactions",
           data: data.map((t: any) => t.count),
         },
       ],
       chart: {
-        type: 'bar',
+        type: "bar",
         height: 300,
-        toolbar: { show: true, tools: {download: true }, },
+        toolbar: { show: true, tools: { download: true } },
         zoom: {
           enabled: false,
-        }
+        },
       },
       title: {
-        text: 'Last 30 days transactions',
-        align: 'center',
+        text: "Last 30 days transactions",
+        align: "center",
         margin: 10,
         style: {
-          fontSize: '16px',
+          fontSize: "16px",
         },
       },
       xaxis: {
@@ -115,12 +114,12 @@ export class AdminHomepageComponent implements OnInit {
         labels: {
           show: true,
           rotateAlways: true,
-          rotate: -45,     // rotación etiquetas
+          rotate: -45,
           style: {
-            fontSize: '12px',
-          }
+            fontSize: "12px",
+          },
         },
-        tickPlacement: 'on'
+        tickPlacement: "on",
       },
       stroke: {
         show: true,
@@ -132,30 +131,30 @@ export class AdminHomepageComponent implements OnInit {
       tooltip: {
         enabled: true,
         x: {
-          format: 'dd MMM',
+          format: "dd MMM",
         },
       },
     };
     this.chartOptions_money = {
       series: [
         {
-          name: 'Total Amount',
+          name: "Total Amount",
           data: data.map((t: any) => t.total_amount),
         },
       ],
       chart: {
-        type: 'line',
+        type: "line",
         height: 300,
-        toolbar: { show: true, tools: {download: true }, },
+        toolbar: { show: true, tools: { download: true } },
         zoom: {
           enabled: false,
-        }
+        },
       },
       title: {
-        text: 'Last 30 days total amount',
-        align: 'center',
+        text: "Last 30 days total amount",
+        align: "center",
         margin: 10,
-        style: { fontSize: '16px' },
+        style: { fontSize: "16px" },
       },
       xaxis: {
         categories: data.map((t: any) => t.day),
@@ -164,10 +163,10 @@ export class AdminHomepageComponent implements OnInit {
           rotateAlways: true,
           rotate: -45, // rotación etiquetas
           style: {
-            fontSize: '12px',
+            fontSize: "12px",
           },
         },
-        tickPlacement: 'on',
+        tickPlacement: "on",
       },
       stroke: {
         show: true,
@@ -179,7 +178,7 @@ export class AdminHomepageComponent implements OnInit {
       tooltip: {
         enabled: true,
         x: {
-          format: 'dd MMM',
+          format: "dd MMM",
         },
       },
     };
@@ -188,5 +187,4 @@ export class AdminHomepageComponent implements OnInit {
       this.chartOptions_money = { ...this.chartOptions_money };
     }, 0);
   }
-  
 }
