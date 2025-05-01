@@ -199,6 +199,10 @@ def request_money(request):
         tr_serialized = TransactionSerializer(transactions, many=True)
         if is_seller(request.user):
             handle_seller_request(transactions)
+            return Response(
+                {"message": "Payment request sent to user or users.", "transactions": tr_serialized.data},
+                status=status.HTTP_201_CREATED)
+
         else:
             for transaction in tr_serialized.data:
                 topic = f"user/{transaction['sender']}"
@@ -223,9 +227,6 @@ def handle_seller_request(transactions):
             target=send_seller_transaction_email,
             args=(sender_email, receiver_name, transaction.amount),
         ).start()
-        return Response(
-            {"message": "Payment request sent to user or users."}, status=status.HTTP_201_CREATED
-        )
 
 
 def generate_payment_link(sender_email: str) -> str:
