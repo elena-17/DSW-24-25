@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, QueryList, ViewChildren, ElementRef } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { MaterialModule } from "../material.module";
@@ -15,7 +15,8 @@ export class ConfirmPaymentComponent {
   email: string = "";
   token: string = "";
   receiver: string = "";
-  codeDigits: string[] = Array(6).fill("");
+  confirmationCode = "";
+  @ViewChildren("digitInput") digitInputs!: QueryList<ElementRef>;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,24 +30,43 @@ export class ConfirmPaymentComponent {
     });
   }
 
-  autoFocusNext(event: Event, index: number): void {
-    const input = event.target as HTMLInputElement;
-    if (input.value && index < 5) {
-      const nextInput = input.parentElement?.children[index + 1] as HTMLInputElement;
-      nextInput?.focus();
+  onDigitChange(value: string, index: number) {
+    value = value.replace(/\D/g, ""); // Only digits
+
+    if (!value) return;
+
+    // Replace or append digit at correct index
+    this.confirmationCode =
+      this.confirmationCode.substring(0, index) +
+      value +
+      this.confirmationCode.substring(index + 1);
+
+    // Move focus to next
+    if (value && index < 5) {
+      this.digitInputs.get(index + 1)?.nativeElement.focus();
     }
   }
 
-  isCodeComplete(): boolean {
-    return this.codeDigits.every(d => d !== "");
+  onKeyDown(event: KeyboardEvent, index: number) {
+    const input = this.digitInputs.get(index)?.nativeElement;
+    if (event.key === "Backspace") {
+      event.preventDefault();
+      this.confirmationCode =
+        this.confirmationCode.substring(0, index) +
+        "" +
+        this.confirmationCode.substring(index + 1);
+      input.value = "";
+      if (index > 0) {
+        this.digitInputs.get(index - 1)?.nativeElement.focus();
+      }
+    }
   }
 
   confirmPayment() {
-    const fullCode = this.codeDigits.join("");
-
-    // Aquí puedes hacer una llamada HTTP al backend para verificar el código
-    this.snackBar.open(`Code ${fullCode} confirmed!`, "Close", {
+    this.snackBar.open("Payment confirmed!", "Close", {
       duration: 3000,
+      horizontalPosition: "center",
+      verticalPosition: "top",
       panelClass: ["success-snackbar"],
     });
 

@@ -94,6 +94,8 @@ export class LoginPaymentComponent {
       next: () => {
         this.snackBar.open("Confirmation code sent to your email.", "Close", {
           duration: 3000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
           panelClass: ["success-snackbar"],
         });
       },
@@ -101,6 +103,8 @@ export class LoginPaymentComponent {
         console.error("Error sending confirmation code:", error);
         this.snackBar.open("Failed to send confirmation code. Try again later.", "Close", {
           duration: 3000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
           panelClass: ["error-snackbar"],
         });
       },

@@ -10,22 +10,25 @@
 
       <div class="code-inputs">
         <input
-          *ngFor="let digit of codeDigits; let i = index"
+          *ngFor="let i of [0, 1, 2, 3, 4, 5]; let idx = index"
           type="text"
           maxlength="1"
-          pattern="[0-9]*"
           inputmode="numeric"
-          [(ngModel)]="codeDigits[i]"
-          (input)="autoFocusNext($event, i)"
+          pattern="[0-9]*"
           class="code-box"
+          [ngModel]="confirmationCode[idx] || ''"
+          (ngModelChange)="onDigitChange($event, idx)"
+          (keydown)="onKeyDown($event, idx)"
+          #digitInput
         />
       </div>
   
       <button
+        id="confirm-button"
         mat-flat-button
         color="primary"
         class="full-width"
-        [disabled]="!isCodeComplete()"
+        [disabled]="confirmationCode.length !== 6"
         (click)="confirmPayment()"
       >
         Confirm Payment
