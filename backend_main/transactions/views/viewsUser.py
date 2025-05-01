@@ -222,11 +222,11 @@ def handle_seller_request(transactions):
         transaction.save()
 
         sender_email = transaction.sender.email
-        receiver_name = transaction.receiver
+        receiver_email = transaction.receiver.email
 
         threading.Thread(
             target=send_seller_transaction_email,
-            args=(sender_email, receiver_name, transaction.amount),
+            args=(sender_email, receiver_email, transaction.amount),
         ).start()
 
 
@@ -239,7 +239,7 @@ def generate_payment_link(receiver_email: str, sender_email: str) -> str:
 
 
 def send_seller_transaction_email(sender_email: str, receiver_email: str, amount: float) -> None:
-    payment_link = generate_payment_link(sender_email, receiver_email)
+    payment_link = generate_payment_link(receiver_email, sender_email)
 
     subject = "You have a new payment request on ZAP"
     message = f"""
