@@ -78,7 +78,9 @@ export class ConfirmPaymentComponent {
           verticalPosition: "top",
           panelClass: ["success-snackbar"],
         });
-        this.router.navigate(["homepage"]);
+        setTimeout(() => {
+          window.close();
+        }, 3000);
       },
       error: (err) => {
         this.snackBar.open("Invalid code or expired link.", "Close", {
