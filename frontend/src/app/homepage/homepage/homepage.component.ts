@@ -1,13 +1,15 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ToolbarComponent } from "../../toolbar/toolbar.component";
 import { UserService } from "../../services/user.service";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { CommonModule } from "@angular/common";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCardModule } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
 import { ChangeAccountBalanceComponent } from "./change-account-balance/change-account-balance.component";
+import { DashboardService } from "../../services/dashboard.service";
+import { NotificationService } from "../../services/notification.service";
+import { NgApexchartsModule } from "ng-apexcharts";
 @Component({
   selector: "app-homepage",
   standalone: true,
@@ -17,20 +19,43 @@ import { ChangeAccountBalanceComponent } from "./change-account-balance/change-a
     MatIconModule,
     MatButtonModule,
     MatCardModule,
+    NgApexchartsModule,
   ],
   templateUrl: "./homepage.component.html",
   styleUrl: "./homepage.component.scss",
 })
-export class HomepageComponent {
+export class HomepageComponent implements OnInit {
   balance: number = 0; //Default balance
+  dashboardData: any = null;
+  isLoading = true;
+  chart_balance: any = {
+    series: [],
+    chart: { type: "line" },
+    xaxis: { categories: [] },
+    title: { text: "Last 30 days transactions" },
+    stroke: { curve: "smooth" },
+    dataLabels: { enabled: false },
+    tooltip: { enabled: true },
+  };
+  chart_monthly: any = {
+    series: [],
+    chart: { type: "line" },
+    xaxis: { categories: [] },
+    title: { text: "Last 30 days total amount" },
+    stroke: { curve: "smooth" },
+    dataLabels: { enabled: false },
+    tooltip: { enabled: true },
+  };
   constructor(
     private userService: UserService,
-    private snackBar: MatSnackBar,
     private dialog: MatDialog,
+    private dashboardService: DashboardService,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit() {
     this.loadBalance();
+    this.fetchUserDashboardData();
   }
 
   loadBalance(): void {
@@ -39,11 +64,9 @@ export class HomepageComponent {
         this.balance = response.balance;
       },
       error: () => {
-        this.snackBar.open("Failed to load balance.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showErrorMessage(
+          "Failed to load account balance. Please try again later.",
+        );
       },
     });
   }
@@ -74,5 +97,39 @@ export class HomepageComponent {
         this.balance = result.balance;
       }
     });
+  }
+
+  fetchUserDashboardData(): void {
+    this.dashboardService.getUserDashboard().subscribe({
+      next: (data) => {
+        this.dashboardData = data;
+        this.isLoading = false;
+        this.loadChartData();
+      },
+      error: (error) => {
+        console.error("Error fetching user dashboard data:", error);
+        this.notificationService.showErrorMessage(
+          "Failed to load user dashboard data. Please try again later.",
+        );
+      },
+    });
+  }
+
+  loadChartData(): void {
+    const data = this.dashboardData.balance_chart;
+
+    this.chart_balance.series = [
+      {
+        name: "Money Sent",
+        data: data.map((t: any) => t.money_sender),
+        color: "red",
+      },
+      {
+        name: "Money Received",
+        data: data.map((t: any) => t.money_receiver),
+        color: "green",
+      },
+    ];
+    this.chart_balance.xaxis.categories = data.map((t: any) => t.day);
   }
 }

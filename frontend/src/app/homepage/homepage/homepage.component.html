@@ -34,4 +34,18 @@
       </div>
     </mat-card-content>
   </mat-card>
+
+  <mat-card>
+    <apx-chart
+      [series]="chart_balance.series"
+      [chart]="chart_balance.chart"
+      [xaxis]="chart_balance.xaxis"
+      [title]="chart_balance.title"
+      [stroke]="chart_balance.stroke"
+      [dataLabels]="chart_balance.dataLabels"
+      [tooltip]="chart_balance.tooltip"
+      [colors]="chart_balance.colors"
+      [legend]="chart_balance.legend"
+    ></apx-chart>
+  </mat-card>
 </div>
