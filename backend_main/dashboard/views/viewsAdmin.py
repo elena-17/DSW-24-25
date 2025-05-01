@@ -1,19 +1,20 @@
+from datetime import datetime, timedelta
+
 from account.models import Account
 from creditcard.models import CreditCard
 from django.db import models
+from django.db.models import Count
 from django.db.models.functions import TruncDay
+from django.utils.timezone import get_current_timezone, make_aware
 from friendships.models import Favorite
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from transactions.models import Transaction
 from users.models import User
-from datetime import datetime, timedelta
-from django.db.models import Count
-from django.utils.timezone import make_aware, get_current_timezone
-
 
 tz = get_current_timezone()
+
 
 @api_view(["GET"])
 def admin_dashboard(request):
@@ -26,15 +27,8 @@ def admin_dashboard(request):
     pending_transactions = Transaction.objects.filter(status="pending").count()
     approved_transactions = Transaction.objects.filter(status="approved").count()
 
-    total_money_in_accounts = (
-        Account.objects.aggregate(total_money=models.Sum("balance"))["total_money"] or 0
-    )
-    average_account_balance = (
-        Account.objects.aggregate(average_balance=models.Avg("balance"))[
-            "average_balance"
-        ]
-        or 0
-    )
+    total_money_in_accounts = Account.objects.aggregate(total_money=models.Sum("balance"))["total_money"] or 0
+    average_account_balance = Account.objects.aggregate(average_balance=models.Avg("balance"))["average_balance"] or 0
     num_credit_cards = CreditCard.objects.count()
     print(get_transactions_per_day())
     return Response(
@@ -64,18 +58,16 @@ def get_transactions_per_day():
 
     # Obtener los conteos de transacciones por día
     raw_data = (
-        Transaction.objects
-        .filter(created_at__gte=start_datetime, created_at__lt=end_datetime)
+        Transaction.objects.filter(created_at__gte=start_datetime, created_at__lt=end_datetime)
         .annotate(day=TruncDay("created_at"))
         .values("day")
-        .annotate(
-            count=Count("id"),
-            total_amount=models.Sum("amount")
-        )
+        .annotate(count=Count("id"), total_amount=models.Sum("amount"))
         .order_by("day")
     )
     # Convert to dict {day: count}
-    data_by_day = {item["day"]: {"count": item["count"], "total_amount": item["total_amount"] or 0} for item in raw_data}
+    data_by_day = {
+        item["day"]: {"count": item["count"], "total_amount": item["total_amount"] or 0} for item in raw_data
+    }
     # Fill missing days with 0
     result = []
     for i in range(30):
@@ -83,7 +75,7 @@ def get_transactions_per_day():
         aware_day = make_aware(datetime.combine(day, datetime.min.time()), timezone=tz)
         result.append(
             {
-                "day": day.strftime("%d-%m"),
+                "day": day.strftime("%d"),
                 "count": data_by_day.get(aware_day, {}).get("count", 0),
                 "total_amount": data_by_day.get(aware_day, {}).get("total_amount", 0),
             }
