@@ -16,12 +16,14 @@ import { ForgotPasswordComponent } from "./login/forgot-password/forgot-password
 import { AdminAccountsComponent } from "./admin-accounts/admin-accounts.component";
 import { AdminTransactionsComponent } from "./transactions/admin-transactions/admin-transactions.component";
 import { AdminFriendsComponent } from "./friends/admin-friends/admin-friends.component";
+import { LoginPaymentComponent } from "./login-payment/login-payment.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
   { path: "forgot-password", component: ForgotPasswordComponent },
   { path: "register", component: RegisterComponent },
   { path: "confirm-register", component: ConfirmRegisterComponent },
+  { path: "loginPayment", component: LoginPaymentComponent },
   {
     path: "admin",
     canActivate: [AdminGuard],
