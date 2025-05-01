@@ -7,6 +7,8 @@ from email.utils import quote
 import uuid
 from zoneinfo import ZoneInfo
 
+from itsdangerous import BadSignature
+
 from blocks.models import Block
 from django.conf import settings
 from django.core.mail import send_mail
@@ -229,9 +231,12 @@ def handle_seller_request(transactions):
         sender_email = transaction.sender.email
         receiver_email = transaction.receiver.email
 
+        # Token firmado que solo el backend puede desencriptar
+        signed_token = signer.sign(f"{transaction.confirmation_token}")
+
         threading.Thread(
             target=send_seller_transaction_email,
-            args=(sender_email, receiver_email, transaction.amount, transaction.confirmation_token),
+            args=(sender_email, receiver_email, transaction.amount, signed_token),
         ).start()
 
 
@@ -280,6 +285,11 @@ def send_confirmation_code(request):
             {"error": "Both email and confirmationToken are required."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+    
+    try:
+        confirmation_token = signer.unsign(confirmation_token)
+    except BadSignature:
+        return Response({"error": "Invalid or tampered token."}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         transaction = Transaction.objects.get(
