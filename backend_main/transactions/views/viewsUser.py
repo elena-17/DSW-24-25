@@ -1,3 +1,4 @@
+from math import e
 import threading
 
 from datetime import datetime, time
@@ -229,21 +230,22 @@ def handle_seller_request(transactions):
         ).start()
 
 
-def generate_payment_link(sender_email: str) -> str:
+def generate_payment_link(receiver_email: str, sender_email: str) -> str:
     encoded_email = quote(sender_email)
+    encoded_receiver_email = quote(receiver_email)
     token = signer.sign(sender_email)  # signed token with timestamp
-    payment_link = f"http://localhost:4200/loginPayment/?email={encoded_email}&token={token}"
+    payment_link = f"http://localhost:4200/loginPayment/?email={encoded_email}&token={token}&receiver={encoded_receiver_email}"
     return payment_link
 
 
-def send_seller_transaction_email(sender_email: str, receiver_name: str, amount: float) -> None:
-    payment_link = generate_payment_link(sender_email)
+def send_seller_transaction_email(sender_email: str, receiver_email: str, amount: float) -> None:
+    payment_link = generate_payment_link(sender_email, receiver_email)
 
     subject = "You have a new payment request on ZAP"
     message = f"""
         <html>
         <body>
-            <p><strong>{receiver_name}</strong> has requested a payment of <strong>${amount}</strong>.</p>
+            <p><strong>{receiver_email}</strong> has requested a payment of <strong>${amount}</strong>.</p>
             <p>Please log in to the platform to review and approve the request:</p>
             <a href="{payment_link}" style="background-color:#00b8c4;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Review Request</a>
             <p>If you were not expecting this, please contact support or ignore this email.</p>
