@@ -144,7 +144,7 @@ def is_seller(email):
     user = User.objects.filter(email=email).first()
     if not user:
         return False
-    return user.is_seller
+    return User.objects.filter(email=email, role="seller").exists()
 
 
 @api_view(["POST"])
@@ -217,12 +217,15 @@ def handle_seller_request(transactions):
         transaction.save()
 
         sender_email = transaction.sender.email
-        receiver_name = transaction.receiver.get_full_name() or transaction.receiver.email
+        receiver_name = transaction.receiver
 
         threading.Thread(
             target=send_seller_transaction_email,
             args=(sender_email, receiver_name, transaction.amount),
         ).start()
+        return Response(
+            {"message": "Payment request sent to user or users."}, status=status.HTTP_201_CREATED
+        )
 
 
 def generate_payment_link(sender_email: str) -> str:
