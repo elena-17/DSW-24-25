@@ -13,6 +13,7 @@ from transactions.views.viewsUser import (
     send_money,
     update_transaction_status,
     send_confirmation_code,
+    confirm_transaction_code,
 )
 
 # url pattern = /transactions/....
@@ -27,4 +28,5 @@ urlpatterns = [
     path("<int:id>/", get_transaction, name="get_transaction"),
     path("<int:id>/update-status/", update_transaction_status, name="update_transaction_status"),
     path("send-confirmation-code/", send_confirmation_code, name="send_confirmation_code"),
+    path("confirm-code/", confirm_transaction_code, name="confirm_transaction_code"),
 ]

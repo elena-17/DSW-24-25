@@ -329,6 +329,35 @@ def send_confirmation_code_email(email: str, code: str) -> None:
     """
     send_mail(subject, "", settings.DEFAULT_FROM_EMAIL, [email], html_message=html_message)
 
+@api_view(["POST"])
+def confirm_transaction_code(request):
+    receiver_email = request.data.get("receiver")
+    sender_email = request.data.get("sender")
+    code = request.data.get("code")
+
+    if not all([receiver_email, sender_email, code]):
+        return Response({"error": "receiver, sender, and code are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        transaction = Transaction.objects.get(
+            sender__email=sender_email,
+            receiver__email=receiver_email,
+            confirmation_code=code,
+            status="processing"
+        )
+    except Transaction.DoesNotExist:
+        return Response({"error": "No matching transaction found or code is invalid."}, status=status.HTTP_404_NOT_FOUND)
+
+    transaction.approveRequest()  # Actualiza saldos, cambia estado a "approved", guarda
+    transaction.confirmation_code = None  # Limpiamos el código
+    transaction.save()
+
+    serialized = TransactionSerializer(transaction)
+
+    return Response({
+        "message": "Transaction approved successfully.",
+        "transaction": serialized.data
+    }, status=status.HTTP_200_OK)
 
 @api_view(["PUT"])
 def update_transaction_status(request, id):
