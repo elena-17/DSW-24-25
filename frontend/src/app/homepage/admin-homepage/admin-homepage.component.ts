@@ -15,6 +15,7 @@ import {
   ApexTooltip,
   NgApexchartsModule,
 } from "ng-apexcharts";
+import { ChangeDetectorRef } from "@angular/core";
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -61,8 +62,10 @@ export class AdminHomepageComponent implements OnInit {
     dataLabels: { enabled: false },
     tooltip: { enabled: true },
   };
-
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit() {
     this.fetchAdminDashboardData();
@@ -182,9 +185,8 @@ export class AdminHomepageComponent implements OnInit {
         },
       },
     };
-    setTimeout(() => {
-      this.chartOptions_count = { ...this.chartOptions_count };
-      this.chartOptions_money = { ...this.chartOptions_money };
-    }, 0);
+    this.chartOptions_count = { ...this.chartOptions_count };
+    this.chartOptions_money = { ...this.chartOptions_money };
+    this.cdr.markForCheck();
   }
 }
