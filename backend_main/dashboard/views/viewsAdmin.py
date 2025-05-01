@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from transactions.models import Transaction
 from users.models import User
+from blocks.models import Block
 
 tz = get_current_timezone()
 
@@ -21,7 +22,7 @@ def admin_dashboard(request):
 
     total_users = User.objects.count()
     favorites = Favorite.objects.count()
-    blocks = 0
+    blocks = Block.objects.count()
     admins = User.objects.filter(role="admin").count()
     total_transactions = Transaction.objects.count()
     pending_transactions = Transaction.objects.filter(status="pending").count()
