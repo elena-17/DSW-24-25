@@ -20,6 +20,7 @@
               formControlName="email_id"
               placeholder="Enter email"
               required
+              readonly
             />
             <mat-error *ngIf="loginForm.get('email_id')?.hasError('required')">
               Email is required.

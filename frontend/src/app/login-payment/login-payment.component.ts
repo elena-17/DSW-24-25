@@ -44,19 +44,25 @@ export class LoginPaymentComponent {
     });
     this.route.queryParams.subscribe(params => {
       this.queryParams = params;
+    
+      if (params['email']) {
+        this.loginForm.get('email_id')?.setValue(params['email']);
+        this.loginForm.get('email_id')?.disable(); // <- impedir edición
+      }
     });
   }
 
   onLogin() {
-    if (this.loginForm.invalid) {
-      this.snackBar.open("Please fill all required fields.", "Close", {
+    const formEmail = this.loginForm.getRawValue().email_id; 
+    if (formEmail !== this.queryParams.email) {
+      this.snackBar.open("Email does not match the expected login user.", "Close", {
         duration: 3000,
         panelClass: ["error-snackbar"],
       });
       return;
     }
     this.authService
-      .login(this.loginForm.value.email_id, this.loginForm.value.password)
+      .login(this.loginForm.getRawValue().email_id, this.loginForm.value.password)
       .subscribe({
         next: (response) => {
           sessionStorage.setItem("access_token", response.access);
