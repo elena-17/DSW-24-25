@@ -1,7 +1,13 @@
+import threading
+
 from datetime import datetime, time
+from email.utils import quote
 from zoneinfo import ZoneInfo
 
 from blocks.models import Block
+from django.conf import settings
+from django.core.mail import send_mail
+from django.core.signing import TimestampSigner
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from mercure.mercure import publish_to_mercure
@@ -19,6 +25,8 @@ from transactions.serializers.send_request import (
 )
 from transactions.serializers.status import TransactionStatusUpdateSerializer
 from transactions.serializers.transactions import TransactionSerializer
+
+signer = TimestampSigner()
 
 
 @api_view(["GET"])
@@ -132,6 +140,13 @@ def is_blocked(blocker_email, blocked_email):
     return Block.objects.filter(user=blocker, blocked_user=blocked).exists()
 
 
+def is_seller(email):
+    user = User.objects.filter(email=email).first()
+    if not user:
+        return False
+    return user.is_seller
+
+
 @api_view(["POST"])
 def send_money(request):
     request_data = request.data.copy()
@@ -172,28 +187,66 @@ def request_money(request):
     senders = request_data.get("senders")
     for sender_user in senders:
         if is_blocked(sender_user, request.user):
-            print(f"User {request.user} is blocked by {sender_user}.")
             return Response(
                 {"error": f"You are blocked by the sender ({sender_user}). Transaction cannot be completed."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        print(f"User {request.user} is not blocked by {sender_user}.")
 
     serializer = RequestTransactionSerializer(data=request_data, context={"request": request})
 
     if serializer.is_valid():
         transactions = serializer.save()
         tr_serialized = TransactionSerializer(transactions, many=True)
-        ############################################
-        for transaction in tr_serialized.data:
-            topic = f"user/{transaction['sender']}"
-            publish_to_mercure(topic, transaction)
-        return Response(
-            {"message": "Transaction successful", "transactions": tr_serialized.data},
-            status=status.HTTP_201_CREATED,
-        )
+        if is_seller(request.user):
+            handle_seller_request(transactions)
+        else:
+            for transaction in tr_serialized.data:
+                topic = f"user/{transaction['sender']}"
+                publish_to_mercure(topic, transaction)
+            return Response(
+                {"message": "Transaction successful", "transactions": tr_serialized.data},
+                status=status.HTTP_201_CREATED,
+            )
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def handle_seller_request(transactions):
+    for transaction in transactions:
+        transaction.status = "processing"
+        transaction.save()
+
+        sender_email = transaction.sender.email
+        receiver_name = transaction.receiver.get_full_name() or transaction.receiver.email
+
+        threading.Thread(
+            target=send_seller_transaction_email,
+            args=(sender_email, receiver_name, transaction.amount),
+        ).start()
+
+
+def generate_payment_link(sender_email: str) -> str:
+    encoded_email = quote(sender_email)
+    token = signer.sign(sender_email)  # signed token with timestamp
+    payment_link = f"http://localhost:4200/loginPayment/?email={encoded_email}&token={token}"
+    return payment_link
+
+
+def send_seller_transaction_email(sender_email: str, receiver_name: str, amount: float) -> None:
+    payment_link = generate_payment_link(sender_email)
+
+    subject = "You have a new payment request on ZAP"
+    message = f"""
+        <html>
+        <body>
+            <p><strong>{receiver_name}</strong> has requested a payment of <strong>${amount}</strong>.</p>
+            <p>Please log in to the platform to review and approve the request:</p>
+            <a href="{payment_link}" style="background-color:#00b8c4;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Review Request</a>
+            <p>If you were not expecting this, please contact support or ignore this email.</p>
+        </body>
+        </html>
+    """
+    send_mail(subject, "", settings.DEFAULT_FROM_EMAIL, [sender_email], html_message=message)
 
 
 @api_view(["PUT"])
