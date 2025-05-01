@@ -4,6 +4,7 @@ import threading
 
 from datetime import datetime, time
 from email.utils import quote
+import uuid
 from zoneinfo import ZoneInfo
 
 from blocks.models import Block
@@ -222,6 +223,7 @@ def request_money(request):
 def handle_seller_request(transactions):
     for transaction in transactions:
         transaction.status = "processing"
+        transaction.confirmation_token = str(uuid.uuid4())
         transaction.save()
 
         sender_email = transaction.sender.email
@@ -229,22 +231,22 @@ def handle_seller_request(transactions):
 
         threading.Thread(
             target=send_seller_transaction_email,
-            args=(sender_email, receiver_email, transaction.amount),
+            args=(sender_email, receiver_email, transaction.amount, transaction.confirmation_token),
         ).start()
 
 
-def generate_payment_link(receiver_email: str, sender_email: str) -> str:
+def generate_payment_link(receiver_email: str, sender_email: str, confirmation_token: str) -> str:
     encoded_email = quote(sender_email)
     encoded_receiver_email = quote(receiver_email)
     token = signer.sign(sender_email)  # signed token with timestamp
     payment_link = (
-        f"http://localhost:4200/loginPayment/?email={encoded_email}&token={token}&receiver={encoded_receiver_email}"
+        f"http://localhost:4200/loginPayment/?email={encoded_email}&token={token}&receiver={encoded_receiver_email}&confirmation_token={confirmation_token}"
     )
     return payment_link
 
 
-def send_seller_transaction_email(sender_email: str, receiver_email: str, amount: float) -> None:
-    payment_link = generate_payment_link(receiver_email, sender_email)
+def send_seller_transaction_email(sender_email: str, receiver_email: str, amount: float, confirmation_token: str) -> None:
+    payment_link = generate_payment_link(receiver_email, sender_email, confirmation_token)
 
     subject = "You have a new payment request on ZAP"
     message = f"""
