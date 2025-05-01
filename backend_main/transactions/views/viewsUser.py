@@ -273,12 +273,28 @@ def store_code(email: str, code: str) -> None:
 @api_view(["POST"])
 def send_confirmation_code(request):
     email = request.data.get("email")
+    confirmation_token = request.data.get("confirmationToken")
 
-    if not email:
-        return Response({"error": "An email is required to send the code."}, status=status.HTTP_400_BAD_REQUEST)
-
+    if not email or not confirmation_token:
+        return Response(
+            {"error": "Both email and confirmationToken are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    
+    try:
+        transaction = Transaction.objects.get(
+            sender__email=email,
+            confirmation_token=confirmation_token,
+            status="processing"
+        )
+    except Transaction.DoesNotExist:
+        return Response(
+            {"error": "Transaction not found or already confirmed."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
     code = generate_code()
-    store_code(email, code)
+    transaction.confirmation_code = code
+    transaction.save()
 
     threading.Thread(
         target=send_confirmation_code_email,
