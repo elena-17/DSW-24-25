@@ -12,7 +12,7 @@ import { CommonModule } from "@angular/common";
 
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AuthService } from "../services/auth.service";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { MaterialModule } from "../material.module";
 
 @Component({
@@ -27,7 +27,8 @@ export class LoginPaymentComponent {
   email_id: string = "";
   password: string = "";
   hidePassword = true;
- 
+  queryParams: any = {};
+
 
   constructor(
     private formBuilder: FormBuilder,
@@ -35,10 +36,14 @@ export class LoginPaymentComponent {
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private route: ActivatedRoute,
   ) {
     this.loginForm = this.formBuilder.group({
       email_id: ["", [Validators.required, this.emailIdValidator()]],
       password: ["", [Validators.required]],
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = params;
     });
   }
 
@@ -61,16 +66,10 @@ export class LoginPaymentComponent {
           sessionStorage.setItem("userName", payload.name);
           sessionStorage.setItem("userEmail", payload.email);
           sessionStorage.setItem("userRole", payload.role);
-          if (payload.role === "admin") {
-            this.router.navigate(["admin/home"]);
-          } else {
-            // this.snackBar.open("Login successful!", "Close", {
-            //   duration: 2000,
-            //   horizontalPosition: "center",
-            //   verticalPosition: "top",
-            // });
-            this.router.navigate(["homepage"]);
-          }
+
+          // Route with parameters
+          const query = { ...this.queryParams };
+          this.router.navigate(["/confirm-payment"], { queryParams: query });
         },
         error: (error) => {
           this.snackBar.open(error.error?.detail, "Close", {

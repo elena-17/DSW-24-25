@@ -17,6 +17,7 @@ import { AdminAccountsComponent } from "./admin-accounts/admin-accounts.componen
 import { AdminTransactionsComponent } from "./transactions/admin-transactions/admin-transactions.component";
 import { AdminFriendsComponent } from "./friends/admin-friends/admin-friends.component";
 import { LoginPaymentComponent } from "./login-payment/login-payment.component";
+import { ConfirmPaymentComponent } from "./confirm-payment/confirm-payment.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
@@ -65,6 +66,7 @@ export const routes: Routes = [
       { path: "profile", component: ProfilePageComponent },
       { path: "help", component: HelppageComponent },
       { path: "transactions", component: TransactionsComponent },
+      { path: "confirm-payment", component: ConfirmPaymentComponent },
     ],
   },
   { path: "**", component: Error404Component },

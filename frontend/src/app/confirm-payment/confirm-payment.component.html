@@ -1,0 +1,20 @@
+<div class="payment_form">
+    <div class="payment-card">
+      <img src="assets/zap-logo.png" alt="Logo" class="logo-image" />
+  
+      <h2>Confirm Payment</h2>
+      <p>
+        You are about to confirm a payment request associated with:
+        <strong>{{ receiver }}</strong>
+      </p>
+  
+      <button
+        mat-flat-button
+        color="primary"
+        class="full-width"
+        (click)="confirmPayment()"
+      >
+        Confirm Payment
+      </button>
+    </div>
+  </div>
