@@ -4,12 +4,14 @@ from django.db import models
 from django.db.models.functions import TruncDay, TruncMonth
 from django.utils.timezone import get_current_timezone, make_aware
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from transactions.models import Transaction
 
 tz = get_current_timezone()
 
 
+@api_view(["GET"])
 def user_dashboard(request):
     last_transaction = (
         Transaction.objects.filter(models.Q(sender=request.user) | models.Q(receiver=request.user))
@@ -23,6 +25,7 @@ def user_dashboard(request):
             "balance_chart": generate_data_chart(request.user),
             "last_transaction": last_transaction,
             "last_login": last_login,
+            "monthly_chart": get_monthly_chart(request.user),
         },
         status=status.HTTP_200_OK,
     )
