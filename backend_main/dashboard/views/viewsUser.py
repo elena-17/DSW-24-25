@@ -113,7 +113,7 @@ def get_monthly_chart(user):
     result = []
     for i in range(5, -1, -1):
         month = (end_date - timedelta(days=30 * i)).replace(day=1)
-        key = make_aware(datetime.combine(month.date(), datetime.min.time()), timezone=tz)
+        key = make_aware(datetime.combine(month, datetime.min.time()), timezone=tz)
         result.append({"month": key.strftime("%b"), "balance": round(balances_by_month.get(key, 0), 2)})
 
     return result
