@@ -4,6 +4,7 @@ import { CommonModule } from "@angular/common";
 import { MaterialModule } from "../material.module";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FormsModule } from "@angular/forms";
+import { TransactionsService } from "../services/transactions.service";
 
 @Component({
   selector: 'app-confirm-payment',
@@ -21,7 +22,8 @@ export class ConfirmPaymentComponent {
   constructor(
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private transactionService: TransactionsService
   ) {
     this.route.queryParams.subscribe(params => {
       this.email = params['email'] || "";
@@ -63,13 +65,30 @@ export class ConfirmPaymentComponent {
   }
 
   confirmPayment() {
-    this.snackBar.open("Payment confirmed!", "Close", {
-      duration: 3000,
-      horizontalPosition: "center",
-      verticalPosition: "top",
-      panelClass: ["success-snackbar"],
+    const payload = {
+      receiver: this.receiver,
+      sender: this.email,
+      code: this.confirmationCode
+    };
+    this.transactionService.confirmTransactionCode(payload).subscribe({
+      next: () => {
+        this.snackBar.open("Payment confirmed!", "Close", {
+          duration: 3000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          panelClass: ["success-snackbar"],
+        });
+        this.router.navigate(["homepage"]);
+      },
+      error: (err) => {
+        this.snackBar.open("Invalid code or expired link.", "Close", {
+          duration: 3000,
+          horizontalPosition: "center",
+          verticalPosition: "top",
+          panelClass: ["error-snackbar"],
+        });
+        console.error(err);
+      }
     });
-
-    this.router.navigate(["homepage"]);
   }
 }

@@ -28,6 +28,7 @@ export class TransactionsService {
   private urlPendingTransactions = `${this.baseApiUrl}/pending/`;
   private urlAdminCreateTransaction = `${this.baseApiUrl}/admin/create/`;
   private urlReceiveCode = `${this.baseApiUrl}/send-confirmation-code/`;
+  private urlConfirmCode = `${this.baseApiUrl}/confirm-code/`;
 
   constructor(private http: HttpClient) {}
 
@@ -198,5 +199,9 @@ export class TransactionsService {
     return this.http.post<any>(this.urlReceiveCode, {
       email,
     });
+  }
+
+  confirmTransactionCode(data: { receiver: string; sender: string; code: string }) {
+    return this.http.post(this.urlConfirmCode, data);
   }
 }
