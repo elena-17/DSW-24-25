@@ -47,6 +47,18 @@ def admin_add_block_relation(request):
                 {"error": "This block relation already exists."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        
+        if user.role == "admin" or blocked_user.role == "admin":
+            return Response(
+                {"error": "An admin cannot be blocked."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        if user.role == "seller" or blocked_user.role == "seller":
+            return Response(
+                {"error": "A seller cannot be blocked."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         block = Block.objects.create(user=user, blocked_user=blocked_user)
         BlockSerializer(block)
