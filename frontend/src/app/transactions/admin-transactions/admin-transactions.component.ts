@@ -154,7 +154,6 @@ export class AdminTransactionsComponent implements OnInit {
       .updateAdminTransaction(transaction.id, status)
       .subscribe({
         next: (response) => {
-          console.log(`Transaction ${status}`, response);
           this.notificationService.showSuccessMessage(`Transaction ${status}`);
           this.filterData();
         },
@@ -282,7 +281,6 @@ export class AdminTransactionsComponent implements OnInit {
     this.currentTab = index;
     sessionStorage.setItem("currentTab", index.toString());
     const status = ["pending", "approved", "rejected", "seller"][index];
-    console.log("change tab status", status);
     this.filterData(status);
   }
 

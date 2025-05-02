@@ -332,14 +332,10 @@
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
         [action1Tooltip]="'View details'"
-        (action2)="pendTransaction($event)"
-        [action2Icon]="'hourglass_empty'"
-        [action2Tooltip]="'Change to pending state'"
-        [action2Color]="'orange'"
-        (action3)="approveTransaction($event)"
-        [action3Icon]="'task_alt'"
-        [action3Tooltip]="'Approve transaction'"
-        [action3Color]="'green'"
+        (action2)="rejectTransaction($event)"
+        [action2Icon]="'block'"
+        [action2Tooltip]="'Reject transaction'"
+        [action2Color]="'red'"
       >
       </app-table>
       <div class="underlined-title" style="margin-top: 20px">
@@ -367,14 +363,10 @@
         (action1)="openDetails($event)"
         [action1Icon]="'visibility'"
         [action1Tooltip]="'View details'"
-        (action2)="pendTransaction($event)"
-        [action2Icon]="'hourglass_empty'"
-        [action2Tooltip]="'Change to pending state'"
-        [action2Color]="'orange'"
-        (action3)="approveTransaction($event)"
-        [action3Icon]="'task_alt'"
-        [action3Tooltip]="'Approve transaction'"
-        [action3Color]="'green'"
+        (action2)="approveTransaction($event)"
+        [action2Icon]="'task_alt'"
+        [action2Tooltip]="'Approve transaction'"
+        [action2Color]="'green'"
       >
       </app-table>
     </div>

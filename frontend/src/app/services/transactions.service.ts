@@ -129,7 +129,6 @@ export class TransactionsService {
         httpParams = httpParams.set(key, value);
       }
     });
-    console.log("httpParams", httpParams.toString());
 
     return this.http.get<any>(this.urlAdminTransactions, {
       params: httpParams,
