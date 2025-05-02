@@ -193,11 +193,19 @@ export class AdminTransactionsComponent implements OnInit {
               this.notificationService.showSuccessMessage(
                 "Transaction created",
               );
-              this.transactionStates["pending"].data = [
-                response,
-                ...this.transactionStates["pending"].data,
-              ];
-              this.transactionStates["pending"].totalCount++;
+              if (response.status == "pending") {
+                this.transactionStates["pending"].data = [
+                  response,
+                  ...this.transactionStates["pending"].data,
+                ];
+                this.transactionStates["pending"].totalCount++;
+              } else if (response.status == "processing") {
+                this.transactionStates["seller_processing"].data = [
+                  response,
+                  ...this.transactionStates["seller_processing"].data,
+                ];
+                this.transactionStates["seller_processing"].totalCount++;
+              }
             },
             error: (error) => {
               console.error("Error creating transaction:", error);
@@ -279,7 +287,6 @@ export class AdminTransactionsComponent implements OnInit {
 
   onChangeTab(index: number) {
     this.currentTab = index;
-    sessionStorage.setItem("currentTab", index.toString());
     const status = ["pending", "approved", "rejected", "seller"][index];
     this.filterData(status);
   }
