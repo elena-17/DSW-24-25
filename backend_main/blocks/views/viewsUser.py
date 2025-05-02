@@ -17,6 +17,7 @@ def get_blocked_users(request):
     serializer = UserProfileSerializer(blocked_users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 # GET: Returns users not blocked by current user (excluding self/admins)
 @api_view(["GET"])
 def get_non_blocked_users(request):
