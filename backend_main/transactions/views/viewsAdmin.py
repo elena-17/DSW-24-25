@@ -24,6 +24,12 @@ def transaction_list(request):
         return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     data = filter_serializer.validated_data
     queryset = Transaction.objects.select_related("sender", "receiver").all()
+
+    if isinstance(data, dict) and "seller" in data:
+        if data["seller"]:
+            queryset = queryset.filter(sender__role="seller")
+        else:
+            queryset = queryset.exclude(sender__role="seller")
     user_tz_str = request.headers.get("X-Timezone", "UTC")
 
     try:
