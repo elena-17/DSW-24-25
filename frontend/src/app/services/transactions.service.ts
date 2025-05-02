@@ -32,26 +32,6 @@ export class TransactionsService {
 
   constructor(private http: HttpClient) {}
 
-  // fetch(refresh: boolean = true): Observable<any> {
-  //   this.loading.next(true);
-
-  //   return forkJoin({
-  //     receiver: this.http.get<Transaction[]>(this.urlReceiver),
-  //     sender: this.http.get<Transaction[]>(this.urlSender),
-  //   }).pipe(
-  //     tap({
-  //       next: ({ receiver, sender }) => {
-  //         this.receiver.next([...receiver]);
-  //         this.sender.next([...sender]);
-  //         this.loading.next(false);
-  //       },
-  //       complete: () => {
-  //         this.loading.next(false);
-  //       },
-  //     }),
-  //   );
-  // }
-
   getTransactions(params: {
     status?: string;
     type?: string;
@@ -72,7 +52,6 @@ export class TransactionsService {
         httpParams = httpParams.set(key, value);
       }
     });
-
     return this.http.get<any>(this.baseApiUrl, {
       params: httpParams,
       withCredentials: true,
@@ -131,6 +110,7 @@ export class TransactionsService {
   }
 
   getAdminTransactions(params: {
+    seller?: boolean;
     status?: string;
     type?: string;
     min_amount?: number;
@@ -149,6 +129,7 @@ export class TransactionsService {
         httpParams = httpParams.set(key, value);
       }
     });
+    console.log("httpParams", httpParams.toString());
 
     return this.http.get<any>(this.urlAdminTransactions, {
       params: httpParams,
@@ -197,11 +178,16 @@ export class TransactionsService {
 
   sendConfirmationCode(email: string, confirmationToken: string) {
     return this.http.post<any>(this.urlReceiveCode, {
-      email, confirmationToken,
+      email,
+      confirmationToken,
     });
   }
 
-  confirmTransactionCode(data: { receiver: string; sender: string; code: string }) {
+  confirmTransactionCode(data: {
+    receiver: string;
+    sender: string;
+    code: string;
+  }) {
     return this.http.post(this.urlConfirmCode, data);
   }
 }

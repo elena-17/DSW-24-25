@@ -255,4 +255,128 @@
       </app-table>
     </div>
   </mat-tab>
+
+  <!-- tab 4 - seller transactions -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="example-tab-icon">sell</mat-icon>
+      About sellers
+    </ng-template>
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner [diameter]="60"></mat-spinner>
+    </div>
+    <!-- already loaded -->
+    <div *ngIf="!loading" class="page-container">
+      <div class="underlined-title">
+        <div class="title-buttons">
+          <h2>Processing Transaction</h2>
+          <div class="title-buttons-right">
+            <button mat-flat-button (click)="createTransaction()">
+              <mat-icon>request_page</mat-icon>
+              Create transaction
+            </button>
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="transactionStates['seller_processing'].data"
+        [totalCount]="transactionStates['seller_processing'].totalCount"
+        [pageSize]="transactionStates['seller_processing'].pageSize"
+        [pageIndex]="transactionStates['seller_processing'].pageIndex"
+        (pageChange)="onPageChange('seller_processing', $event)"
+        [serverSidePagination]="true"
+        [enableSelection]="false"
+        [enableActions]="true"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
+        (action2)="approveTransaction($event)"
+        [action2Icon]="'task_alt'"
+        [action2Tooltip]="'Approve transaction'"
+        [action2Color]="'green'"
+        (action3)="rejectTransaction($event)"
+        [action3Icon]="'block'"
+        [action3Tooltip]="'Reject transaction'"
+        [action3Color]="'red'"
+      >
+      </app-table>
+
+      <div class="underlined-title" style="margin-top: 20px">
+        <div class="title-buttons">
+          <h2>Approved Transaction</h2>
+          <div class="title-buttons-right">
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="transactionStates['seller_approved'].data"
+        [totalCount]="transactionStates['seller_approved'].totalCount"
+        [pageSize]="transactionStates['seller_approved'].pageSize"
+        [pageIndex]="transactionStates['seller_approved'].pageIndex"
+        (pageChange)="onPageChange('seller_approved', $event)"
+        [serverSidePagination]="true"
+        [enableSelection]="false"
+        [enableActions]="true"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
+        (action2)="pendTransaction($event)"
+        [action2Icon]="'hourglass_empty'"
+        [action2Tooltip]="'Change to pending state'"
+        [action2Color]="'orange'"
+        (action3)="approveTransaction($event)"
+        [action3Icon]="'task_alt'"
+        [action3Tooltip]="'Approve transaction'"
+        [action3Color]="'green'"
+      >
+      </app-table>
+      <div class="underlined-title" style="margin-top: 20px">
+        <div class="title-buttons">
+          <h2>Rejected Transaction</h2>
+          <div class="title-buttons-right">
+            <button mat-stroked-button (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Download CSV
+            </button>
+          </div>
+        </div>
+        <hr />
+      </div>
+      <app-table
+        [columns]="columns"
+        [data]="transactionStates['seller_rejected'].data"
+        [totalCount]="transactionStates['seller_rejected'].totalCount"
+        [pageSize]="transactionStates['seller_rejected'].pageSize"
+        [pageIndex]="transactionStates['seller_rejected'].pageIndex"
+        (pageChange)="onPageChange('seller_rejected', $event)"
+        [serverSidePagination]="true"
+        [enableSelection]="false"
+        [enableActions]="true"
+        (action1)="openDetails($event)"
+        [action1Icon]="'visibility'"
+        [action1Tooltip]="'View details'"
+        (action2)="pendTransaction($event)"
+        [action2Icon]="'hourglass_empty'"
+        [action2Tooltip]="'Change to pending state'"
+        [action2Color]="'orange'"
+        (action3)="approveTransaction($event)"
+        [action3Icon]="'task_alt'"
+        [action3Tooltip]="'Approve transaction'"
+        [action3Color]="'green'"
+      >
+      </app-table>
+    </div>
+  </mat-tab>
 </mat-tab-group>

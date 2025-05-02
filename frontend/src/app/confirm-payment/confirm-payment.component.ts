@@ -7,9 +7,9 @@ import { FormsModule } from "@angular/forms";
 import { TransactionsService } from "../services/transactions.service";
 
 @Component({
-  selector: 'app-confirm-payment',
+  selector: "app-confirm-payment",
   imports: [CommonModule, MaterialModule, FormsModule],
-  templateUrl: './confirm-payment.component.html',
+  templateUrl: "./confirm-payment.component.html",
   styleUrls: ["./confirm-payment.component.scss"],
 })
 export class ConfirmPaymentComponent {
@@ -23,12 +23,12 @@ export class ConfirmPaymentComponent {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private router: Router,
-    private transactionService: TransactionsService
+    private transactionService: TransactionsService,
   ) {
-    this.route.queryParams.subscribe(params => {
-      this.email = params['email'] || "";
-      this.receiver = params['receiver'] || "";
-      this.token = params['token'] || "";
+    this.route.queryParams.subscribe((params) => {
+      this.email = params["email"] || "";
+      this.receiver = params["receiver"] || "";
+      this.token = params["token"] || "";
     });
   }
 
@@ -68,7 +68,7 @@ export class ConfirmPaymentComponent {
     const payload = {
       receiver: this.receiver,
       sender: this.email,
-      code: this.confirmationCode
+      code: this.confirmationCode,
     };
     this.transactionService.confirmTransactionCode(payload).subscribe({
       next: () => {
@@ -90,7 +90,7 @@ export class ConfirmPaymentComponent {
           panelClass: ["error-snackbar"],
         });
         console.error(err);
-      }
+      },
     });
   }
 }

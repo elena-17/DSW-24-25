@@ -1,69 +1,67 @@
 <div class="login_form">
-    <mat-card class="login-card">
-      <img
-        mat-card-image
-        src="assets/zap-logo.png"
-        alt="logo"
-        class="logo-image"
-      />
-      <mat-card-header>
-        <mat-card-title>Login</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-          <!-- Email -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Username</mat-label>
-            <input
-              matInput
-              type="text"
-              formControlName="email_id"
-              placeholder="Enter email"
-              required
-              readonly
-            />
-            <mat-error *ngIf="loginForm.get('email_id')?.hasError('required')">
-              Email is required.
-            </mat-error>
-          </mat-form-field>
-  
-          <!-- Password -->
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input
-              matInput
-              [type]="hidePassword ? 'password' : 'text'"
-              formControlName="password"
-              placeholder="Enter password"
-              required
-            />
-            <button
-              mat-icon-button
-              matSuffix
-              (click)="togglePasswordVisibility()"
-              type="button"
-            >
-              <mat-icon>{{
-                hidePassword ? "visibility_off" : "visibility"
-              }}</mat-icon>
-            </button>
-            <mat-error *ngIf="loginForm.get('password')?.invalid">
-              {{ getErrorMessage("password") }}
-            </mat-error>
-          </mat-form-field>
-  
-          <!-- Login Button -->
-          <button
-            mat-raised-button
-            type="submit"
-            class="full-width"
-            [disabled]="loginForm.invalid"
-          >
-            Login
-          </button>
-        </form>
-      </mat-card-content>
-    </mat-card>
-</div> 
+  <mat-card class="login-card">
+    <img
+      mat-card-image
+      src="assets/zap-logo.png"
+      alt="logo"
+      class="logo-image"
+    />
+    <mat-card-header>
+      <mat-card-title>Login</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="email_id"
+            placeholder="Enter email"
+            required
+            readonly
+          />
+          <mat-error *ngIf="loginForm.get('email_id')?.hasError('required')">
+            Email is required.
+          </mat-error>
+        </mat-form-field>
 
-  
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            formControlName="password"
+            placeholder="Enter password"
+            required
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="togglePasswordVisibility()"
+            type="button"
+          >
+            <mat-icon>{{
+              hidePassword ? "visibility_off" : "visibility"
+            }}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.invalid">
+            {{ getErrorMessage("password") }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Login Button -->
+        <button
+          mat-raised-button
+          type="submit"
+          class="full-width"
+          [disabled]="loginForm.invalid"
+        >
+          Login
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -62,7 +62,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: "homepage", component: HomepageComponent },
-      { path: "friends", component: FriendsComponent, canActivate: [AuthGuard], data: { roles: ["user"] } },
+      {
+        path: "friends",
+        component: FriendsComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ["user"] },
+      },
       { path: "profile", component: ProfilePageComponent },
       { path: "help", component: HelppageComponent },
       { path: "transactions", component: TransactionsComponent },

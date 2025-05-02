@@ -9,14 +9,14 @@
   matBadgeOverlap="true"
   matBadgeColor="accent"
   matBadgeSize="large"
-  *ngIf="filtersForm  && role !== 'seller'"
+  *ngIf="filtersForm && role !== 'seller'"
   [matBadgeHidden]="!hasActiveFilters"
 >
   <mat-icon>filter_alt</mat-icon>
 </button>
 
 <!-- Panel de filtros -->
-<div class="filter-overlay" *ngIf="filterOpen" (click)="closeFilters()" >
+<div class="filter-overlay" *ngIf="filterOpen" (click)="closeFilters()">
   <div class="filter-panel" (click)="$event.stopPropagation()">
     <header class="filter-header">
       <h3>Filters</h3>
@@ -116,7 +116,11 @@
         <div class="title-buttons">
           <h2>Create Transaction</h2>
           <div class="money-buttons">
-            <button mat-flat-button *ngIf="role !== 'seller'" (click)="sendTransaction()">
+            <button
+              mat-flat-button
+              *ngIf="role !== 'seller'"
+              (click)="sendTransaction()"
+            >
               <mat-icon>request_page</mat-icon>
               Send Money
             </button>
@@ -124,7 +128,11 @@
               <mat-icon>quiz</mat-icon>
               Ask for Money
             </button>
-            <button mat-stroked-button *ngIf="role !== 'seller'" (click)="requestTransaction(true)">
+            <button
+              mat-stroked-button
+              *ngIf="role !== 'seller'"
+              (click)="requestTransaction(true)"
+            >
               <mat-icon>local_mall</mat-icon>
               Divide Bill
             </button>
@@ -199,7 +207,11 @@
         <div class="title-buttons">
           <h2>Sent Transactions</h2>
           <div class="money-buttons">
-            <button mat-flat-button *ngIf="role !== 'seller'" (click)="sendTransaction()">
+            <button
+              mat-flat-button
+              *ngIf="role !== 'seller'"
+              (click)="sendTransaction()"
+            >
               <mat-icon>request_page</mat-icon>
               Send Money
             </button>
@@ -207,7 +219,11 @@
               <mat-icon>quiz</mat-icon>
               Ask for Money
             </button>
-            <button mat-stroked-button *ngIf="role !== 'seller'" (click)="requestTransaction(true)">
+            <button
+              mat-stroked-button
+              *ngIf="role !== 'seller'"
+              (click)="requestTransaction(true)"
+            >
               <mat-icon>local_mall</mat-icon>
               Divide Bill
             </button>
@@ -251,7 +267,11 @@
         <div class="title-buttons">
           <h2>Received Transactions</h2>
           <div class="money-buttons">
-            <button mat-flat-button *ngIf="role !== 'seller'" (click)="sendTransaction()">
+            <button
+              mat-flat-button
+              *ngIf="role !== 'seller'"
+              (click)="sendTransaction()"
+            >
               <mat-icon>request_page</mat-icon>
               Send Money
             </button>
@@ -259,7 +279,11 @@
               <mat-icon>quiz</mat-icon>
               Ask for Money
             </button>
-            <button mat-stroked-button *ngIf="role !== 'seller'" (click)="requestTransaction(true)">
+            <button
+              mat-stroked-button
+              *ngIf="role !== 'seller'"
+              (click)="requestTransaction(true)"
+            >
               <mat-icon>local_mall</mat-icon>
               Divide Bill
             </button>

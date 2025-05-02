@@ -101,7 +101,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     sessionStorage.clear();
     this.router.navigate([""]);
   }
-
   // Admin
   isAdmin(): boolean {
     return this.role === "admin";

@@ -74,9 +74,8 @@ export class TransactionsComponent implements OnInit {
   hasActiveFilters: boolean = false;
   eventSource!: EventSource;
   activeTab: "sender" | "receiver" | "pending" = "pending";
-  role: string = '';
+  role: string = "";
   selectedTabIndex = 0;
-
 
   constructor(
     private friendshipsService: FriendshipsService,
@@ -90,11 +89,11 @@ export class TransactionsComponent implements OnInit {
 
   ngOnInit() {
     this.role = sessionStorage.getItem("userRole") || "user";
-    if (this.role === 'seller') {
+    if (this.role === "seller") {
       this.selectedTabIndex = 2;
       this.loadTransactions("receiver", false);
     } else {
-      this.selectedTabIndex = 0; 
+      this.selectedTabIndex = 0;
     }
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
@@ -216,7 +215,7 @@ export class TransactionsComponent implements OnInit {
             },
             error: (error) => {
               console.error("Error message:", error.error);
-              
+
               if (
                 error.error?.amount?.includes(
                   "Insufficient balance for this transaction.",
@@ -225,10 +224,11 @@ export class TransactionsComponent implements OnInit {
                 this.notificationService.showErrorMessage(
                   "You don't have enough balance to send this amount",
                 );
-              } else if ( typeof error.error.error === "string" && error.error.error.includes("You are blocked by the recipient")) {
-                this.notificationService.showErrorMessage(
-                  error.error.error,
-                );
+              } else if (
+                typeof error.error.error === "string" &&
+                error.error.error.includes("You are blocked by the recipient")
+              ) {
+                this.notificationService.showErrorMessage(error.error.error);
               } else {
                 this.notificationService.showErrorMessage(
                   `Sent operation could not be completed`,
@@ -275,13 +275,14 @@ export class TransactionsComponent implements OnInit {
             },
             error: (error) => {
               console.error("Error message:", error.error);
-              if ( typeof error.error.error === "string" && error.error.error.includes("You are blocked by the sender")) {
-                this.notificationService.showErrorMessage(
-                  error.error.error,
-                );
+              if (
+                typeof error.error.error === "string" &&
+                error.error.error.includes("You are blocked by the sender")
+              ) {
+                this.notificationService.showErrorMessage(error.error.error);
               } else {
                 this.notificationService.showErrorMessage(
-                `Request operation could not be completed`,
+                  `Request operation could not be completed`,
                 );
               }
             },
@@ -371,12 +372,14 @@ export class TransactionsComponent implements OnInit {
       if (result) {
         this.friendshipsService.blockUser(transaction.sender).subscribe({
           next: (response) => {
-            this.notificationService.showSuccessMessage("User has been blocked.");
+            this.notificationService.showSuccessMessage(
+              "User has been blocked.",
+            );
           },
           error: (error) => {
-            console.error('Error blocking user:', error);
-            this.notificationService.showErrorMessage('Could not block user.');
-          }
+            console.error("Error blocking user:", error);
+            this.notificationService.showErrorMessage("Could not block user.");
+          },
         });
       }
     });

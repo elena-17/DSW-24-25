@@ -30,7 +30,6 @@ export class LoginPaymentComponent {
   hidePassword = true;
   queryParams: any = {};
 
-
   constructor(
     private formBuilder: FormBuilder,
     private fb: FormBuilder,
@@ -38,33 +37,40 @@ export class LoginPaymentComponent {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-    private transactionService: TransactionsService
+    private transactionService: TransactionsService,
   ) {
     this.loginForm = this.formBuilder.group({
       email_id: ["", [Validators.required, this.emailIdValidator()]],
       password: ["", [Validators.required]],
     });
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.queryParams = params;
-    
-      if (params['email']) {
-        this.loginForm.get('email_id')?.setValue(params['email']);
-        this.loginForm.get('email_id')?.disable(); // <- impedir edición
+
+      if (params["email"]) {
+        this.loginForm.get("email_id")?.setValue(params["email"]);
+        this.loginForm.get("email_id")?.disable(); // <- impedir edición
       }
     });
   }
 
   onLogin() {
-    const formEmail = this.loginForm.getRawValue().email_id; 
+    const formEmail = this.loginForm.getRawValue().email_id;
     if (formEmail !== this.queryParams.email) {
-      this.snackBar.open("Email does not match the expected login user.", "Close", {
-        duration: 3000,
-        panelClass: ["error-snackbar"],
-      });
+      this.snackBar.open(
+        "Email does not match the expected login user.",
+        "Close",
+        {
+          duration: 3000,
+          panelClass: ["error-snackbar"],
+        },
+      );
       return;
     }
     this.authService
-      .login(this.loginForm.getRawValue().email_id, this.loginForm.value.password)
+      .login(
+        this.loginForm.getRawValue().email_id,
+        this.loginForm.value.password,
+      )
       .subscribe({
         next: (response) => {
           sessionStorage.setItem("access_token", response.access);
@@ -90,25 +96,31 @@ export class LoginPaymentComponent {
   }
 
   sendConfirmationEmail(senderEmail: string, confirmationToken: string) {
-    this.transactionService.sendConfirmationCode(senderEmail, confirmationToken).subscribe({
-      next: () => {
-        this.snackBar.open("Confirmation code sent to your email.", "Close", {
-          duration: 3000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          panelClass: ["success-snackbar"],
-        });
-      },
-      error: (error) => {
-        console.error("Error sending confirmation code:", error);
-        this.snackBar.open("Failed to send confirmation code. Try again later.", "Close", {
-          duration: 3000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-          panelClass: ["error-snackbar"],
-        });
-      },
-    });
+    this.transactionService
+      .sendConfirmationCode(senderEmail, confirmationToken)
+      .subscribe({
+        next: () => {
+          this.snackBar.open("Confirmation code sent to your email.", "Close", {
+            duration: 3000,
+            horizontalPosition: "center",
+            verticalPosition: "top",
+            panelClass: ["success-snackbar"],
+          });
+        },
+        error: (error) => {
+          console.error("Error sending confirmation code:", error);
+          this.snackBar.open(
+            "Failed to send confirmation code. Try again later.",
+            "Close",
+            {
+              duration: 3000,
+              horizontalPosition: "center",
+              verticalPosition: "top",
+              panelClass: ["error-snackbar"],
+            },
+          );
+        },
+      });
   }
 
   togglePasswordVisibility() {
