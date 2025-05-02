@@ -1,41 +1,58 @@
 <app-toolbar></app-toolbar>
 <div class="page-container">
-  <h1 class="welcome-title">Welcome</h1>
-  <p>Last login {{ dashboardData?.last_login }}</p>
-  <mat-card class="account-balance">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="icon-title">account_balance</mat-icon>
-        Account Balance
-      </mat-card-title>
-    </mat-card-header>
+  <div class="user-home-wrapper">
+    <!-- IZQUIERDA: Welcome y último login -->
+    <div class="welcome-info">
+      <h1 class="welcome-title">Welcome "{{ name }}"</h1>
+      <p class="last-login">Last login: {{ dashboardData?.last_login }}</p>
+    </div>
 
-    <mat-card-content class="balance-content">
-      <div class="balance-info">
-        <h2>{{ balance | number: "1.0-2" }} €</h2>
-      </div>
+    <!-- DERECHA: Account Balance -->
+    <mat-card class="account-balance">
+      <mat-card-header class="balance-header">
+        <mat-card-title>
+          <mat-icon class="balance-icon">account_balance</mat-icon>
+          Account Balance
+        </mat-card-title>
+      </mat-card-header>
 
-      <div class="account-actions">
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="depositFunds()"
-          class="action-button"
-        >
-          <mat-icon>add_circle</mat-icon> Deposit
-        </button>
+      <mat-card-content class="balance-content">
+        <div class="balance-layout">
+          <!-- Balance numérico -->
+          <div class="balance-info">
+            <h2>{{ balance | number: "1.2-2" }} €</h2>
 
-        <button
-          mat-raised-button
-          color="warn"
-          (click)="withdrawFunds()"
-          class="action-button"
-        >
-          <mat-icon>remove_circle</mat-icon> Withdraw
-        </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
+            <!-- Botones a la derecha -->
+            <div class="account-actions">
+              <button
+                mat-stroked-button
+                color="primary"
+                class="action-button"
+                (click)="depositFunds()"
+              >
+                <mat-icon>add_circle</mat-icon> Deposit
+              </button>
+              <button
+                mat-stroked-button
+                color="warn"
+                class="action-button"
+                (click)="withdrawFunds()"
+              >
+                <mat-icon>remove_circle</mat-icon> Withdraw
+              </button>
+            </div>
+          </div>
+          <div class="balance-image">
+            <img
+              src="assets/undraw_pig.svg"
+              alt="Balance"
+              class="balance-img"
+            />
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
   <mat-card style="margin-top: 30px">
     <apx-chart

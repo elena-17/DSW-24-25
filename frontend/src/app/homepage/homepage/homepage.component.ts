@@ -47,6 +47,8 @@ export class HomepageComponent implements OnInit {
     tooltip: { enabled: true },
     plotOptions: {},
   };
+  name = sessionStorage.getItem("userName");
+
   constructor(
     private userService: UserService,
     private dialog: MatDialog,
