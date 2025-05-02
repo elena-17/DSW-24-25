@@ -92,6 +92,7 @@ export class TransactionsComponent implements OnInit {
     this.role = sessionStorage.getItem("userRole") || "user";
     if (this.role === 'seller') {
       this.selectedTabIndex = 2;
+      this.loadTransactions("receiver", false);
     } else {
       this.selectedTabIndex = 0; 
     }
