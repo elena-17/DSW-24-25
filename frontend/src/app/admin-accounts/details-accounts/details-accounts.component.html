@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Edit User Balance</h2>
 
-<form [formGroup]="balanceForm" class="edit-form">
-  <!-- ⚠️ Warning Message -->
+<form [formGroup]="balanceForm" class="edit-form" (ngSubmit)="onSave()">
+  <!-- Warning Message -->
   <mat-card class="warning-card" appearance="outlined">
     <mat-icon color="warn">warning</mat-icon>
     <span class="warning-text">
@@ -34,12 +34,7 @@
   <!-- Actions -->
   <div class="dialog-actions">
     <button mat-stroked-button (click)="onCancel()">Cancel</button>
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="onSave()"
-      [disabled]="balanceForm.invalid"
-    >
+    <button mat-flat-button color="primary" [disabled]="balanceForm.invalid">
       Save
     </button>
   </div>
