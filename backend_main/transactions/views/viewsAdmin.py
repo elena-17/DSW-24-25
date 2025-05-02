@@ -28,6 +28,7 @@ def transaction_list(request):
     if isinstance(data, dict) and "seller" in data:
         if data["seller"]:
             queryset = queryset.filter(sender__role="seller")
+            print(queryset.query)
         else:
             queryset = queryset.exclude(sender__role="seller")
     user_tz_str = request.headers.get("X-Timezone", "UTC")
@@ -41,7 +42,7 @@ def transaction_list(request):
         "min_amount": "amount__gte",
         "max_amount": "amount__lte",
         "title": "title__icontains",
-        "status": "status__in",
+        "status": "status",
     }
 
     for field, lookup in filter_fields.items():
