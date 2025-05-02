@@ -29,8 +29,14 @@ signer = TimestampSigner()
 def register_user(request) -> Response:
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        user = serializer.save()
         email = serializer.validated_data["email"]
+
+        # If the requesting user is an admin, set is_confirmed to True
+        if request.user.is_authenticated and request.user.is_staff:
+            user.is_confirmed = True
+            user.save()
+
         invitation_link = generate_invitation_link(email)
         threading.Thread(target=send_invitation_email, args=(email, invitation_link)).start()
 
