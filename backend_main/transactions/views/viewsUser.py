@@ -152,6 +152,11 @@ def is_seller(email):
         return False
     return User.objects.filter(email=email, role="seller").exists()
 
+def is_admin(email):
+    user = User.objects.filter(email=email).first()
+    if not user:
+        return False
+    return User.objects.filter(email=email, role="admin").exists()
 
 @api_view(["POST"])
 def send_money(request):
@@ -163,12 +168,15 @@ def send_money(request):
     # Verificar si el usuario está bloqueado por cualquiera de los receptores
     for receiver_user in receivers:
         if is_blocked(receiver_user, request.user):
-            print(f"User {request.user} is blocked by {receiver_user}.")
             return Response(
                 {"error": f"You are blocked by the recipient ({receiver_user}). Transaction cannot be completed."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        print(f"User {request.user} is not blocked by {receiver_user}.")
+        if is_seller(receiver_user) or is_admin(receiver_user):
+            return Response(
+                {"error": f"You cannot send money to a seller or admin ({receiver_user}). Transaction cannot be completed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
     serializer = SendTransactionSerializer(data=request_data, context={"request": request})
 
     if serializer.is_valid():
@@ -195,6 +203,11 @@ def request_money(request):
         if is_blocked(sender_user, request.user):
             return Response(
                 {"error": f"You are blocked by the sender ({sender_user}). Transaction cannot be completed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if is_seller(sender_user) or is_admin(sender_user):
+            return Response(
+                {"error": f"You cannot request money from a seller or admin ({sender_user}). Transaction cannot be completed."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -243,9 +256,8 @@ def handle_seller_request(transactions):
 def generate_payment_link(receiver_email: str, sender_email: str, confirmation_token: str) -> str:
     encoded_email = quote(sender_email)
     encoded_receiver_email = quote(receiver_email)
-    token = signer.sign(sender_email)  # signed token with timestamp
     payment_link = (
-        f"http://localhost:4200/loginPayment/?email={encoded_email}&token={token}&receiver={encoded_receiver_email}&confirmation_token={confirmation_token}"
+        f"http://localhost:4200/loginPayment/?email={encoded_email}&receiver={encoded_receiver_email}&confirmation_token={confirmation_token}"
     )
     return payment_link
 
@@ -269,11 +281,6 @@ def send_seller_transaction_email(sender_email: str, receiver_email: str, amount
 
 def generate_code(length=6):
     return "".join(random.choices(string.digits, k=length))
-
-
-def store_code(email: str, code: str) -> None:
-    confirmation_codes[email] = code
-
 
 @api_view(["POST"])
 def send_confirmation_code(request):
