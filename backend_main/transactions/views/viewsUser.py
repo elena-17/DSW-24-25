@@ -1,13 +1,11 @@
 import random
 import string
 import threading
+import uuid
 
 from datetime import datetime, time
 from email.utils import quote
-import uuid
 from zoneinfo import ZoneInfo
-
-from itsdangerous import BadSignature
 
 from blocks.models import Block
 from django.conf import settings
@@ -15,6 +13,7 @@ from django.core.mail import send_mail
 from django.core.signing import TimestampSigner
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
+from itsdangerous import BadSignature
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -152,11 +151,13 @@ def is_seller(email):
         return False
     return User.objects.filter(email=email, role="seller").exists()
 
+
 def is_admin(email):
     user = User.objects.filter(email=email).first()
     if not user:
         return False
     return User.objects.filter(email=email, role="admin").exists()
+
 
 @api_view(["POST"])
 def send_money(request):
@@ -173,7 +174,9 @@ def send_money(request):
             )
         if is_seller(receiver_user) or is_admin(receiver_user):
             return Response(
-                {"error": f"You cannot send money to a seller or admin ({receiver_user}). Transaction cannot be completed."},
+                {
+                    "error": f"You cannot send money to a seller or admin ({receiver_user}). Transaction cannot be completed."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
     serializer = SendTransactionSerializer(data=request_data, context={"request": request})
@@ -206,7 +209,9 @@ def request_money(request):
             )
         if is_seller(sender_user) or is_admin(sender_user):
             return Response(
-                {"error": f"You cannot request money from a seller or admin ({sender_user}). Transaction cannot be completed."},
+                {
+                    "error": f"You cannot request money from a seller or admin ({sender_user}). Transaction cannot be completed."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -248,27 +253,27 @@ def handle_seller_request(transactions):
 
         threading.Thread(
             target=send_seller_transaction_email,
-            args=(sender_email, receiver_email, transaction.amount, signed_token),
+            args=(sender_email, receiver_email, transaction.amount, transaction.title, signed_token),
         ).start()
 
 
 def generate_payment_link(receiver_email: str, sender_email: str, confirmation_token: str) -> str:
     encoded_email = quote(sender_email)
     encoded_receiver_email = quote(receiver_email)
-    payment_link = (
-        f"http://localhost:4200/loginPayment/?email={encoded_email}&receiver={encoded_receiver_email}&confirmation_token={confirmation_token}"
-    )
+    payment_link = f"http://localhost:4200/loginPayment/?email={encoded_email}&receiver={encoded_receiver_email}&confirmation_token={confirmation_token}"
     return payment_link
 
 
-def send_seller_transaction_email(sender_email: str, receiver_email: str, amount: float, confirmation_token: str) -> None:
+def send_seller_transaction_email(
+    sender_email: str, receiver_email: str, amount: float, title: str, confirmation_token: str
+) -> None:
     payment_link = generate_payment_link(receiver_email, sender_email, confirmation_token)
 
     subject = "You have a new payment request on ZAP"
     message = f"""
         <html>
         <body>
-            <p><strong>{receiver_email}</strong> has requested a payment of <strong>${amount}</strong>.</p>
+            <p><strong>{receiver_email}</strong> has requested a payment of <strong>{amount}€</strong> with concept <strong>{title}</strong>.</p>
             <p>Please log in to the platform to review and approve the request:</p>
             <a href="{payment_link}" style="background-color:#00b8c4;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Review Request</a>
             <p>If you were not expecting this, please contact support or ignore this email.</p>
@@ -281,6 +286,7 @@ def send_seller_transaction_email(sender_email: str, receiver_email: str, amount
 def generate_code(length=6):
     return "".join(random.choices(string.digits, k=length))
 
+
 @api_view(["POST"])
 def send_confirmation_code(request):
     email = request.data.get("email")
@@ -291,18 +297,16 @@ def send_confirmation_code(request):
             {"error": "Both email and confirmationToken are required."},
             status=status.HTTP_400_BAD_REQUEST,
         )
-    
+
     try:
         raw = signer.unsign(confirmation_token)
         email, confirmation_token = raw.split(":")
     except BadSignature:
         return Response({"error": "Invalid or tampered token."}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     try:
         transaction = Transaction.objects.get(
-            sender__email=email,
-            confirmation_token=confirmation_token,
-            status="processing"
+            sender__email=email, confirmation_token=confirmation_token, status="processing"
         )
     except Transaction.DoesNotExist:
         return Response(
@@ -335,6 +339,7 @@ def send_confirmation_code_email(email: str, code: str) -> None:
     """
     send_mail(subject, "", settings.DEFAULT_FROM_EMAIL, [email], html_message=html_message)
 
+
 @api_view(["POST"])
 def confirm_transaction_code(request):
     receiver_email = request.data.get("receiver")
@@ -346,13 +351,12 @@ def confirm_transaction_code(request):
 
     try:
         transaction = Transaction.objects.get(
-            sender__email=sender_email,
-            receiver__email=receiver_email,
-            confirmation_code=code,
-            status="processing"
+            sender__email=sender_email, receiver__email=receiver_email, confirmation_code=code, status="processing"
         )
     except Transaction.DoesNotExist:
-        return Response({"error": "No matching transaction found or code is invalid."}, status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"error": "No matching transaction found or code is invalid."}, status=status.HTTP_404_NOT_FOUND
+        )
 
     transaction.approveRequest()  # Actualiza saldos, cambia estado a "approved", guarda
     transaction.confirmation_code = None  # Limpiamos el código
@@ -360,10 +364,10 @@ def confirm_transaction_code(request):
 
     serialized = TransactionSerializer(transaction)
 
-    return Response({
-        "message": "Transaction approved successfully.",
-        "transaction": serialized.data
-    }, status=status.HTTP_200_OK)
+    return Response(
+        {"message": "Transaction approved successfully.", "transaction": serialized.data}, status=status.HTTP_200_OK
+    )
+
 
 @api_view(["PUT"])
 def update_transaction_status(request, id):

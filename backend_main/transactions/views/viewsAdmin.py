@@ -14,6 +14,7 @@ from transactions.models import Transaction
 from transactions.serializers.filter import TransactionFilterSerializer
 from transactions.serializers.status import TransactionStatusUpdateSerializer
 from transactions.serializers.transactions import TransactionSerializer
+from transactions.views.viewsUser import handle_seller_request
 
 
 @api_view(["GET"])
@@ -97,13 +98,18 @@ def transaction_create(request):
         if sender.role == "seller":
             raise ValidationError({"detail": "Sellers cannot send money."})
 
+        if receiver.role == "seller" and type_transaction == "send":
+            raise ValidationError({"detail": "This type of transaction is not allowed for sellers."})
+
         if type_transaction == "send":
             if sender.account.balance < serializer.validated_data["amount"]:
                 raise ValidationError({"amount": "Sender insufficient balance for this transaction."})
             sender.account.balance -= serializer.validated_data["amount"]
             sender.account.save()
 
-        serializer.save()
+        transaction = serializer.save()
+        if receiver.role == "seller":
+            handle_seller_request([transaction])
         topic = f"user/{receiver}" if type_transaction == "send" else f"user/{sender}"
         publish_to_mercure(topic, serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
