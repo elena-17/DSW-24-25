@@ -33,7 +33,7 @@ def register_user(request) -> Response:
         email = serializer.validated_data["email"]
 
         # If the requesting user is an admin, set is_confirmed to True
-        if request.user.is_authenticated and request.user.is_staff:
+        if request.user.is_authenticated and request.user.role == "admin":
             user.is_confirmed = True
             user.save()
 
