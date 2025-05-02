@@ -165,7 +165,6 @@ def send_money(request):
     receivers = request_data.get("receivers")
     print(f"Receivers: {receivers}")
 
-    # Verificar si el usuario está bloqueado por cualquiera de los receptores
     for receiver_user in receivers:
         if is_blocked(receiver_user, request.user):
             return Response(
