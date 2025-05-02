@@ -106,11 +106,11 @@ def transaction_create(request):
                 raise ValidationError({"amount": "Sender insufficient balance for this transaction."})
             sender.account.balance -= serializer.validated_data["amount"]
             sender.account.save()
-
         transaction = serializer.save()
         if receiver.role == "seller":
             handle_seller_request([transaction])
-        topic = f"user/{receiver}" if type_transaction == "send" else f"user/{sender}"
-        publish_to_mercure(topic, serializer.data)
+        else:
+            topic = f"user/{receiver}" if type_transaction == "send" else f"user/{sender}"
+            publish_to_mercure(topic, serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
