@@ -63,6 +63,7 @@ export class AuthService {
     id_number: string,
     pwd1: string,
     role: string,
+    is_confirmed: boolean = false,
   ) {
     let info = {
       email: email,
@@ -71,6 +72,7 @@ export class AuthService {
       id_number: id_number,
       role: role,
       password: pwd1,
+      is_confirmed: is_confirmed,
     };
     return this.http.post<any>(this.urlRegister, info);
   }

@@ -188,6 +188,7 @@ export class AdminUsersComponent implements AfterViewInit, OnInit {
             result.id_number,
             result.password,
             result.role,
+            true,
           )
           .subscribe({
             next: (response) => {
