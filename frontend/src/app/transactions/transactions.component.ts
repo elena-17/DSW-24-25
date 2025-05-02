@@ -75,6 +75,8 @@ export class TransactionsComponent implements OnInit {
   eventSource!: EventSource;
   activeTab: "sender" | "receiver" | "pending" = "pending";
   role: string = '';
+  selectedTabIndex = 0;
+
 
   constructor(
     private friendshipsService: FriendshipsService,
@@ -88,6 +90,11 @@ export class TransactionsComponent implements OnInit {
 
   ngOnInit() {
     this.role = sessionStorage.getItem("userRole") || "user";
+    if (this.role === 'seller') {
+      this.selectedTabIndex = 2;
+    } else {
+      this.selectedTabIndex = 0; 
+    }
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
     this.eventSource = new EventSource(

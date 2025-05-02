@@ -9,14 +9,14 @@
   matBadgeOverlap="true"
   matBadgeColor="accent"
   matBadgeSize="large"
-  *ngIf="filtersForm"
+  *ngIf="filtersForm  && role !== 'seller'"
   [matBadgeHidden]="!hasActiveFilters"
 >
   <mat-icon>filter_alt</mat-icon>
 </button>
 
 <!-- Panel de filtros -->
-<div class="filter-overlay" *ngIf="filterOpen" (click)="closeFilters()">
+<div class="filter-overlay" *ngIf="filterOpen" (click)="closeFilters()" >
   <div class="filter-panel" (click)="$event.stopPropagation()">
     <header class="filter-header">
       <h3>Filters</h3>
@@ -93,10 +93,11 @@
 </div>
 <mat-tab-group
   animationDuration="500ms"
+  [selectedIndex]="selectedTabIndex"
   (selectedIndexChange)="onTabChange($event)"
 >
   <!-- tab 1 - pending transactions -->
-  <mat-tab>
+  <mat-tab [disabled]="role === 'seller'">
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon" style="color: #e38100fe"
         >hourglass_empty</mat-icon
@@ -182,7 +183,7 @@
   </mat-tab>
 
   <!-- tab 2 - sender transactions -->
-  <mat-tab>
+  <mat-tab [disabled]="role === 'seller'">
     <ng-template mat-tab-label>
       <mat-icon class="example-tab-icon" style="color: #f44336"
         >call_made</mat-icon
