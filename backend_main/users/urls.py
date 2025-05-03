@@ -38,4 +38,5 @@ urlpatterns = [
     ),
     path("reset-password/", send_reset_password_email, name="send_reset_password_email"),
     path("reset-password-confirm/", confirm_change_password, name="confirm_change_password"),
+    path("users/add-user/", UserViewSet.as_view({"post": "register_user"}), name="admin_register_user"),
 ]

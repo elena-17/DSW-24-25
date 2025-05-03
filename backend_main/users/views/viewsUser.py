@@ -33,12 +33,14 @@ def register_user(request) -> Response:
         email = serializer.validated_data["email"]
 
         # If the requesting user is an admin, set is_confirmed to True
-        if request.user.is_authenticated and request.user.role == "admin":
+        if request.user.is_authenticated and getattr(request.user, "role", None) == "admin":
             user.is_confirmed = True
             user.save()
-
-        invitation_link = generate_invitation_link(email)
-        threading.Thread(target=send_invitation_email, args=(email, invitation_link)).start()
+        else:
+            user.is_confirmed = False
+            user.save()
+            invitation_link = generate_invitation_link(email)
+            threading.Thread(target=send_invitation_email, args=(email, invitation_link)).start()
 
         return Response(
             {"message": "User registered successfully, invitation email sent!"}, status=status.HTTP_201_CREATED
