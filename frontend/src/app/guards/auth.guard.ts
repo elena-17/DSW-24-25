@@ -7,9 +7,7 @@ import {
 } from "@angular/router";
 import { AuthService } from "../services/auth.service";
 
-@Injectable({
-  providedIn: "root",
-})
+@Injectable({ providedIn: "root" })
 export class AuthGuard implements CanActivate {
   constructor(
     private authService: AuthService,
@@ -20,18 +18,22 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
   ): boolean {
-    const role = sessionStorage.getItem("userRole");
-    if (this.authService.isAuthenticated()) {
-      const allowedRoles = route.data["roles"] as string[] | undefined;
-      if (allowedRoles && (!role || !allowedRoles.includes(role))) {
-        this.router.navigate(["error-page"]);
-        return false;
-      }
+    const isAuth = this.authService.isAuthenticated();
+    const allowedRoles = route.data["roles"] as string[] | undefined;
+    const userRole = sessionStorage.getItem("userRole");
 
-      return true;
-    } else {
-      this.router.navigate(["error-page"]);
+    if (!isAuth) {
+      this.router.navigate(["/login"], {
+        queryParams: { returnUrl: state.url },
+      });
       return false;
     }
+
+    if (allowedRoles && (!userRole || !allowedRoles.includes(userRole))) {
+      this.router.navigate(["/error-page"]);
+      return false;
+    }
+
+    return true;
   }
 }
