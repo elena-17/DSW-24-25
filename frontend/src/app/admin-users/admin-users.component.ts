@@ -100,7 +100,6 @@ export class AdminUsersComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.adminUsersService.getUsers().subscribe((all_users) => {
-      console.log("Users:", all_users);
       this.dataSource.data = all_users;
     });
   }
@@ -179,16 +178,14 @@ export class AdminUsersComponent implements AfterViewInit, OnInit {
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log("User added:", result);
-        this.authService
-          .register(
+        this.adminUsersService
+          .adminRegister(
             result.email,
             result.phone,
             result.name,
             result.id_number,
             result.password,
             result.role,
-            true,
           )
           .subscribe({
             next: (response) => {
