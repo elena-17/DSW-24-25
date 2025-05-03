@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.models import User
 from users.serializers.bulkDelete import BulkDeleteSerializer
+from users.serializers.register import RegisterSerializer
 from users.serializers.token import CustomTokenObtainPairSerializer
 from users.serializers.user import UserProfileSerializer
 
@@ -71,7 +72,7 @@ def register_user_admin(request):
     if request.user.role != "admin":
         return Response({"detail": "Permission denied."}, status=status.HTTP_403_FORBIDDEN)
 
-    serializer = UserProfileSerializer(data=request.data)
+    serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
         user.is_confirmed = True
