@@ -13,12 +13,10 @@ tz = get_current_timezone()
 
 @api_view(["GET"])
 def user_dashboard(request):
-    last_login = ((request.user.last_login.strftime("%d %b %Y %H:%M") if request.user.last_login else "Never"),)
-
     return Response(
         {
             "balance_chart": generate_data_chart(request.user),
-            "last_login": last_login,
+            "last_login": request.user.last_login.isoformat() if request.user.last_login else None,
             "monthly_chart": get_monthly_chart(request.user),
         },
         status=status.HTTP_200_OK,
