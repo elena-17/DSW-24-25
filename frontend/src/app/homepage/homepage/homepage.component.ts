@@ -106,9 +106,9 @@ export class HomepageComponent implements OnInit {
     this.dashboardService.getUserDashboard().subscribe({
       next: (data) => {
         this.dashboardData = data;
-        this.dashboardData.last_login = new Date(
-          this.dashboardData.last_login,
-        ).toLocaleString();
+        this.dashboardData.last_login = this.dashboardData.last_login
+          ? new Date(this.dashboardData.last_login).toLocaleString()
+          : "Never";
         this.isLoading = false;
         this.loadChartData();
         console.log(this.dashboardData);
