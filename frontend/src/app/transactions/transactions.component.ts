@@ -196,18 +196,6 @@ export class TransactionsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              this.transactionsArray["sender"].data = [
-                ...response.transactions,
-                ...this.transactionsArray["sender"].data,
-              ];
-              this.transactionsArray["sender"].totalCount += response.count;
-              this.transactionsArray["pendingOthers"].data = [
-                ...response.transactions,
-                ...this.transactionsArray["pendingOthers"].data,
-              ];
-              this.transactionsArray["pendingOthers"].totalCount +=
-                response.count;
-
               this.notificationService.showSuccessMessage(
                 "Transaction sent successfully",
               );
@@ -257,17 +245,6 @@ export class TransactionsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              this.transactionsArray["receiver"].data = [
-                ...response.transactions,
-                ...this.transactionsArray["receiver"].data,
-              ];
-              this.transactionsArray["receiver"].totalCount += response.count;
-              this.transactionsArray["pendingOthers"].data = [
-                ...response.transactions,
-                ...this.transactionsArray["pendingOthers"].data,
-              ];
-              this.transactionsArray["pendingOthers"].totalCount +=
-                response.count;
               this.notificationService.showSuccessMessage(
                 "Transaction requested successfully",
               );
@@ -455,6 +432,9 @@ export class TransactionsComponent implements OnInit {
   }
 
   filterData() {
+    if (this.role === "seller") {
+      this.activeTab = "receiver";
+    }
     const filters = this.transformFilters();
     if (this.activeTab === "pending") {
       this.loadTransactions(this.activeTab, false, filters);

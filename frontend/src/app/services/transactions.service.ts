@@ -16,8 +16,6 @@ interface Transaction {
   providedIn: "root",
 })
 export class TransactionsService {
-  private sender = new BehaviorSubject<any>(null);
-  private receiver = new BehaviorSubject<any>(null);
   private loading = new BehaviorSubject<boolean>(false);
 
   private baseApiUrl = "http://localhost:8000/transactions";
@@ -52,7 +50,7 @@ export class TransactionsService {
         httpParams = httpParams.set(key, value);
       }
     });
-    return this.http.get<any>(this.baseApiUrl, {
+    return this.http.get<any>(`${this.baseApiUrl}/`, {
       params: httpParams,
       withCredentials: true,
     });

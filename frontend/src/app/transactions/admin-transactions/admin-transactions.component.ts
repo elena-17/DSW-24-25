@@ -266,22 +266,25 @@ export class AdminTransactionsComponent implements OnInit {
   filterData(status?: string) {
     const transformedFilters = this.transformFilters();
 
-    if (status) {
-      if (status == "seller") {
-        this.loadTransactionsByStatus("seller_processing", transformedFilters);
-        this.loadTransactionsByStatus("seller_approved", transformedFilters);
-        this.loadTransactionsByStatus("seller_rejected", transformedFilters);
-        return;
-      }
-      this.loadTransactionsByStatus(status, transformedFilters);
+    if ((status && status == "seller") || this.currentTab == 3) {
+      this.loadTransactionsByStatus("seller_processing", transformedFilters);
+      this.loadTransactionsByStatus("seller_approved", transformedFilters);
+      this.loadTransactionsByStatus("seller_rejected", transformedFilters);
       return;
     }
-    this.loadTransactionsByStatus("pending", transformedFilters);
-    this.loadTransactionsByStatus("approved", transformedFilters);
-    this.loadTransactionsByStatus("rejected", transformedFilters);
-    this.loadTransactionsByStatus("seller_processing", transformedFilters);
-    this.loadTransactionsByStatus("seller_approved", transformedFilters);
-    this.loadTransactionsByStatus("seller_rejected", transformedFilters);
+    let current = "pending";
+    switch (this.currentTab) {
+      case 0:
+        current = "pending";
+        break;
+      case 1:
+        current = "approved";
+        break;
+      case 2:
+        current = "rejected";
+        break;
+    }
+    this.loadTransactionsByStatus(current, transformedFilters);
     this.hasActiveFilters = hasActiveFilters(this.filtersForm);
   }
 
@@ -312,6 +315,13 @@ export class AdminTransactionsComponent implements OnInit {
     } else if (this.currentTab === 2) {
       data = this.transactionStates["rejected"].data;
       title = "Rejected";
+    } else if (this.currentTab === 3) {
+      data = [
+        ...this.transactionStates["seller_processing"].data,
+        ...this.transactionStates["seller_approved"].data,
+        ...this.transactionStates["seller_rejected"].data,
+      ];
+      title = "Seller";
     }
 
     const csv = Papa.unparse(data);
