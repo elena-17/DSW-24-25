@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from .views.viewsAdmin import UserViewSet
+from .views.viewsAdmin import UserViewSet, register_user_admin
 from .views.viewsUser import (
     CustomTokenObtainPairView,
     change_user_password,
@@ -30,6 +30,7 @@ urlpatterns = [
     path("profile/update/", update_user_profile, name="update_user_profile"),
     path("profile/password/", change_user_password, name="change_user_password"),
     path("profile/delete/", delete_user_account, name="delete_user_account"),
+    path("users/add-user/", register_user_admin, name="add_user_admin"),
     path("", include(router.urls)),
     path("users/delete/<str:email>/", UserViewSet.as_view({"delete": "delete_by_email"}), name="user-delete"),
     # path("users/get/<str:email>/", UserViewSet.as_view({"get": "get_user_by_email"}), name="user-get-by-email"), # Delete in future if not needed, cause we are not using it in frontend
@@ -38,5 +39,4 @@ urlpatterns = [
     ),
     path("reset-password/", send_reset_password_email, name="send_reset_password_email"),
     path("reset-password-confirm/", confirm_change_password, name="confirm_change_password"),
-    path("users/add-user/", UserViewSet.as_view({"post": "register_user"}), name="admin_register_user"),
 ]
