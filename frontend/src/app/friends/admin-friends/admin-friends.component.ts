@@ -58,11 +58,8 @@ export class AdminFriendsComponent {
   }
 
   onTabChange(event: any): void {
-    if (event.index === 1) {
-      this.newRelation = { user: "", favorite_user: "" };
-    } else if (event.index === 3) {
-      this.newBlockRelation = { user: "", blocked_user: "" };
-    }
+    this.newRelation = { user: "", favorite_user: "" };
+    this.newBlockRelation = { user: "", blocked_user: "" };
   }
 
   loadAllUsers(): void {

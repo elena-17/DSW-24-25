@@ -66,40 +66,16 @@ export class FriendsComponent {
 
   // Clear the filter when the user changes the tab
   onTabChange(event: MatTabChangeEvent): void {
-    if (event.index === 0) {
-      // Favorites tab
-      this.inputFavorites.nativeElement.value = ""; // Clear the input field for available users
-      console.log(
-        "Favorites list filtered loaded successfully",
-        this.filteredFavoriteUsers,
-      );
-    } else if (event.index === 1) {
-      // Available tab
-      this.inputAddFavorites.nativeElement.value = ""; // Clear the input field for available users
-      console.log(
-        "Available users filtered loaded successfully",
-        this.filteredAvailableUsers,
-      );
-      console.log("Available users loaded successfully", this.availableUsers);
-      this.updateSearchFilterAvailable({ target: { value: "" } }); // Restablecer la búsqueda de disponibles
-    } else if (event.index === 2) {
-      // Blocked tab
-      this.inputBlocked.nativeElement.value = ""; // Clear the input field for blocked users
-      this.filteredUnblockedUsers = []; // Clear the filtered unblocked users
-      console.log(
-        "Blocked users list filtered loaded successfully",
-        this.filteredBlockedUsers,
-      );
-    } else if (event.index === 3) {
-      // Add Blocked tab
-      this.inputAddBlocked.nativeElement.value = ""; // Clear the input field for add blocked users
-      console.log(
-        "Unblocked users list filtered loaded successfully",
-        this.filteredUnblockedUsers,
-      );
-      console.log("Unblocked users loaded successfully", this.unblockedUsers);
-      this.updateSearchFilterBlocked({ target: { value: "" } }); // Reset search filter for unblocked users
-    }
+    if (this.inputFavorites) this.inputFavorites.nativeElement.value = "";
+    if (this.inputAddFavorites) this.inputAddFavorites.nativeElement.value = "";
+    if (this.inputBlocked) this.inputBlocked.nativeElement.value = "";
+    if (this.inputAddBlocked) this.inputAddBlocked.nativeElement.value = "";
+  
+    this.updateSearchFilterFavorites({ target: { value: "" } });
+    this.updateSearchFilterAvailable({ target: { value: "" } });
+    this.updateSearchFilterBlocked({ target: { value: "" } });
+    this.updateSearchFilterUnblocked({ target: { value: "" } });
+  
   }
 
   loadFriendships(): void {
