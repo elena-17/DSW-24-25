@@ -257,7 +257,7 @@ class TransactionAPI(APITestCase):
         response = self.client.post(url, data=payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        # Verificar token and transactions
+        # Verify token and transactions
         self.assertIn("token", response.data)
         self.assertIn("transactions", response.data)
         self.assertEqual(len(response.data["transactions"]), 1)
@@ -270,7 +270,7 @@ class TransactionAPI(APITestCase):
         self.assertEqual(transaction["status"], "processing")
         self.assertEqual(transaction["type"], "request")
 
-        # confirming the transaction is created in the database
+        # Confirming the transaction is created in the database
         tr_db = Transaction.objects.get(id=transaction["id"])
         self.assertEqual(tr_db.receiver, seller)
         self.assertEqual(tr_db.sender, self.user1)
