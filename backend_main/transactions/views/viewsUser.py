@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 
 from blocks.models import Block
 from django.conf import settings
+from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from django.core.signing import TimestampSigner
 from django.db.models import Q
@@ -16,9 +17,11 @@ from django.shortcuts import get_object_or_404
 from itsdangerous import BadSignature
 from mercure.mercure import publish_to_mercure
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 
 from transactions.models import Transaction
@@ -388,4 +391,73 @@ def update_transaction_status(request, id):
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def login_and_request_money(request):
+    email = request.data.get("email")
+    password = request.data.get("password")
+    senders = request.data.get("senders")
+    title = request.data.get("title")
+    amount = request.data.get("amount")
+    if not all([email, password, senders, title, amount]):
+        return Response({"error": "Missing required fields."}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 1. Authenticate user
+    user = authenticate(request, email=email, password=password)
+    if not user:
+        return Response({"error": "Invalid email or password."}, status=status.HTTP_401_UNAUTHORIZED)
+    if not user.is_confirmed:
+        return Response({"error": "User is not confirmed."}, status=status.HTTP_403_FORBIDDEN)
+    if not is_seller(user):
+        return Response({"error": "Only sellers can use this endpoint."}, status=status.HTTP_403_FORBIDDEN)
+
+    # 2. Generate token JWT
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+
+    # 3. Simulate request data
+    request_data = {
+        "senders": senders,
+        "title": title,
+        "amount": amount,
+        "receiver": user.email,
+    }
+    request._full_data = request_data
+    request.user = user
+
+    # 4. Validate if the sender is blocked or is a seller/admin
+    for sender_email in senders:
+        if is_blocked(sender_email, user):
+            return Response(
+                {"error": f"You are blocked by the sender ({sender_email}). Transaction cannot be completed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if is_seller(sender_email) or is_admin(sender_email):
+            return Response(
+                {
+                    "error": f"You cannot request money from a seller or admin ({sender_email}). Transaction cannot be completed."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    # 5. Create transaction
+    serializer = RequestTransactionSerializer(data=request_data, context={"request": request})
+    if serializer.is_valid():
+        transactions = serializer.save()
+        tr_serialized = TransactionSerializer(transactions, many=True)
+        handle_seller_request(transactions)
+        return Response(
+            {
+                "message": "Login successful. Payment request sent.",
+                "token": {
+                    "access": access_token,
+                    "refresh": str(refresh),
+                },
+                "transactions": tr_serialized.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
