@@ -31,7 +31,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("role", "admin")
-        extra_fields.setdefault("is_confirmed", True)  # Asegúrate de que el superusuario esté confirmado
+        extra_fields.setdefault("is_confirmed", True)
         return self.create_user(id_number, email, phone, password, **extra_fields)
 
 
@@ -41,9 +41,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=15, unique=True)
     name = models.CharField(max_length=100)
     role = models.CharField(max_length=10, choices=USER_ROLES)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_confirmed = models.BooleanField(default=False)  # Nuevo campo
+    is_active = models.BooleanField(default=True)  # django default
+    is_staff = models.BooleanField(default=False)  # django default
+    is_confirmed = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
