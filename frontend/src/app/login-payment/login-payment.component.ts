@@ -32,7 +32,6 @@ export class LoginPaymentComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private fb: FormBuilder,
     private authService: AuthService,
     private snackBar: MatSnackBar,
     private router: Router,
