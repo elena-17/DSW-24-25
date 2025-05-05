@@ -6,15 +6,18 @@ from transactions.views.viewsAdmin import (
     transaction_update,
 )
 from transactions.views.viewsUser import (
+    confirm_transaction_code,
     get_all_transactions,
     get_transaction,
+    login_and_request_money,
     number_pending,
     request_money,
+    send_confirmation_code,
     send_money,
     update_transaction_status,
 )
 
-# url pattern = /transaction/....
+# url pattern = /transactions/....
 urlpatterns = [
     path("admin/", transaction_list, name="transaction_list"),
     path("admin/<int:id>/", transaction_update, name="transaction_update"),
@@ -25,4 +28,7 @@ urlpatterns = [
     path("pending/", number_pending, name="number_pending"),
     path("<int:id>/", get_transaction, name="get_transaction"),
     path("<int:id>/update-status/", update_transaction_status, name="update_transaction_status"),
+    path("send-confirmation-code/", send_confirmation_code, name="send_confirmation_code"),
+    path("confirm-code/", confirm_transaction_code, name="confirm_transaction_code"),
+    path("login-and-request-money/", login_and_request_money, name="login_and_request_money"),
 ]

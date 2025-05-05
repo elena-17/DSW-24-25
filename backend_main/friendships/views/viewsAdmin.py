@@ -50,6 +50,18 @@ def admin_add_favorite_relation(request):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if user.role == "admin" or favorite_user.role == "admin":
+            return Response(
+                {"error": "An admin cannot be added as a favorite."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if user.role == "seller" or favorite_user.role == "seller":
+            return Response(
+                {"error": "A seller cannot be added as a favorite."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Si no existe, se crea
         favorite = Favorite.objects.create(user=user, favorite_user=favorite_user)
         FavoriteSerializer(favorite)

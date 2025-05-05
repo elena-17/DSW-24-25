@@ -14,6 +14,7 @@ from transactions.models import Transaction
 from transactions.serializers.filter import TransactionFilterSerializer
 from transactions.serializers.status import TransactionStatusUpdateSerializer
 from transactions.serializers.transactions import TransactionSerializer
+from transactions.views.viewsUser import handle_seller_request
 
 
 @api_view(["GET"])
@@ -23,7 +24,14 @@ def transaction_list(request):
     if not filter_serializer.is_valid():
         return Response(filter_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     data = filter_serializer.validated_data
+
     queryset = Transaction.objects.select_related("sender", "receiver").all()
+
+    if "seller" in data:
+        if data["seller"]:
+            queryset = queryset.filter(receiver__role="seller")
+        else:
+            queryset = queryset.filter(~Q(receiver__role="seller"))
     user_tz_str = request.headers.get("X-Timezone", "UTC")
 
     try:
@@ -79,20 +87,30 @@ def transaction_update(request, id):
 def transaction_create(request):
     serializer = TransactionSerializer(data=request.data)
     if serializer.is_valid():
+
+        sender = serializer.validated_data["sender"]
+        receiver = serializer.validated_data["receiver"]
         type_transaction = serializer.validated_data["type"]
+
+        if sender.role == "admin" or receiver.role == "admin":
+            raise ValidationError({"detail": "Neither sender nor receiver can be an admin."})
+
+        if sender.role == "seller":
+            raise ValidationError({"detail": "Sellers cannot send money."})
+
+        if receiver.role == "seller" and type_transaction == "send":
+            raise ValidationError({"detail": "This type of transaction is not allowed for sellers."})
+
         if type_transaction == "send":
-            sender = serializer.validated_data["sender"]
             if sender.account.balance < serializer.validated_data["amount"]:
                 raise ValidationError({"amount": "Sender insufficient balance for this transaction."})
             sender.account.balance -= serializer.validated_data["amount"]
             sender.account.save()
-
-        serializer.save()
-        topic = (
-            f"user/{serializer.validated_data['receiver']}"
-            if type_transaction == "send"
-            else f"user/{serializer.validated_data['sender']}"
-        )
-        publish_to_mercure(topic, serializer.data)
+        transaction = serializer.save()
+        if receiver.role == "seller":
+            handle_seller_request([transaction])
+        else:
+            topic = f"user/{receiver}" if type_transaction == "send" else f"user/{sender}"
+            publish_to_mercure(topic, serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

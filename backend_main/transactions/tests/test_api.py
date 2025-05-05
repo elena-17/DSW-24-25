@@ -229,3 +229,48 @@ class TransactionAPI(APITestCase):
         self.transaction.refresh_from_db()
         self.assertEqual(self.transaction.status, "rejected")
         self.assertEqual(str(self.transaction.receiver.account.balance), "1000.00")
+
+    def test_login_and_request_money(self):
+        # Create a seller
+        seller = User.objects.create_user(
+            email="seller@test.com",
+            phone="555555555",
+            name="Seller User",
+            id_number="333333333",
+            password=self.password,
+            is_confirmed=True,
+            role="seller",
+        )
+        seller.account.balance = 0
+        seller.account.save()
+
+        # Payload login + request money
+        url = reverse("login_and_request_money")
+        payload = {
+            "email": seller.email,
+            "password": self.password,
+            "senders": [self.user1.email],
+            "title": "Cobro por servicio",
+            "amount": 100,
+        }
+
+        response = self.client.post(url, data=payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Verify token and transactions
+        self.assertIn("token", response.data)
+        self.assertIn("transactions", response.data)
+        self.assertEqual(len(response.data["transactions"]), 1)
+
+        transaction = response.data["transactions"][0]
+        self.assertEqual(transaction["sender"], self.user1.email)
+        self.assertEqual(transaction["receiver"], seller.email)
+        self.assertEqual(transaction["amount"], "100.00")
+        self.assertEqual(transaction["title"], "Cobro por servicio")
+        self.assertEqual(transaction["status"], "processing")
+        self.assertEqual(transaction["type"], "request")
+
+        # Confirming the transaction is created in the database
+        tr_db = Transaction.objects.get(id=transaction["id"])
+        self.assertEqual(tr_db.receiver, seller)
+        self.assertEqual(tr_db.sender, self.user1)

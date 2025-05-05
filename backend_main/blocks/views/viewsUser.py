@@ -23,7 +23,11 @@ def get_blocked_users(request):
 def get_non_blocked_users(request):
     current_user = request.user
     non_blocked_users = User.objects.exclude(
-        Q(blocked_by__user=current_user) | Q(email=current_user.email) | Q(role__iexact="admin") | Q(is_superuser=True)
+        Q(blocked_by__user=current_user)
+        | Q(email=current_user.email)
+        | Q(role__iexact="admin")
+        | Q(role__iexact="seller")
+        | Q(is_superuser=True)
     ).order_by("name")
     serializer = UserProfileSerializer(non_blocked_users, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

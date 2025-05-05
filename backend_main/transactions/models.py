@@ -22,6 +22,7 @@ class Transaction(models.Model):
         ("pending", "Pending"),
         ("approved", "Approved"),
         ("rejected", "Rejected"),
+        ("processing", "Processing"),
     ]
 
     TYPE_CHOICES = [
@@ -39,6 +40,8 @@ class Transaction(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
     updated_at = models.DateTimeField(auto_now=True)
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="send")
+    confirmation_code = models.CharField(max_length=6, null=True, blank=True)
+    confirmation_token = models.CharField(max_length=64, null=True, blank=True)
 
     def approveSend(self):
         if self.status == "rejected":
