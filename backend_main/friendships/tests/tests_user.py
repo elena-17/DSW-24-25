@@ -92,7 +92,7 @@ class FavoriteTest(APITestCase):
 
     def test_remove_from_favorites(self):
         """Test that user1 can remove user2 from their favorites"""
-        favorite = Favorite.objects.create(user=self.user1, favorite_user=self.user2)
+        Favorite.objects.create(user=self.user1, favorite_user=self.user2)
         response = self.client.delete(self.remove_from_favorites_url, data={"email": self.user2.email})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Verify that the favorite relationship was deleted

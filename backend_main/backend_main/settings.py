@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "friendships",
     "blocks",
     "drf_spectacular",
+    "dashboard",
 ]
 
 MIDDLEWARE = [
@@ -184,6 +185,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+    "UPDATE_LAST_LOGIN": True,
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
     "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
