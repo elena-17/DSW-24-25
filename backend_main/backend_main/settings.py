@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     "creditcard",
     "friendships",
     "blocks",
-    "drf_spectacular",
     "dashboard",
 ]
 
@@ -204,11 +203,3 @@ EMAIL_USE_TLS = True  # Secure connection
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
-
-
-SPECTACULAR_SETTINGS = {
-    "TITLE": "Tu API",
-    "DESCRIPTION": "Documentación de la API para tu proyecto.",
-    "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,
-}

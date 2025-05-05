@@ -18,7 +18,7 @@ def user_dashboard(request):
         last_login_formatted = None
     else:
         last_login_formatted = last_login.isoformat()
-    
+
     return Response(
         {
             "balance_chart": generate_data_chart(request.user),
