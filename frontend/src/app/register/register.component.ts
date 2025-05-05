@@ -60,6 +60,7 @@ export class RegisterComponent {
           ],
         ],
         pwd2: ["", []],
+        role: ["user", Validators.required],
       },
       {
         validators: PasswordValidators.passwordMismatchValidator(
@@ -158,7 +159,7 @@ export class RegisterComponent {
         this.registerForm.value.name,
         this.registerForm.value.id_number.toUpperCase(),
         this.registerForm.value.pwd1,
-        "user",
+        this.registerForm.value.role,
       )
       .subscribe({
         next: (response) => {

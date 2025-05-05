@@ -42,7 +42,10 @@ export class ManageUserComponent {
     // Create the registration form
     this.isEditMode = !!this.data.user;
     this.manageUserForm = this.formBuilder.group({
-      email: [data.user?.email, [Validators.required, Validators.email]],
+      email: [
+        { value: data.user?.email, disabled: this.isEditMode },
+        [Validators.required, Validators.email],
+      ],
       phone: [
         data.user?.phone,
         [Validators.required, Validators.pattern(/^\d{9}$/)],
@@ -55,14 +58,15 @@ export class ManageUserComponent {
       pwd1: [
         "",
         this.isEditMode
-          ? []
+          ? [PasswordValidators.conditionalPasswordValidator()]
           : [
               Validators.required,
               Validators.minLength(8),
               PasswordValidators.passwordStrengthValidator,
             ],
-      ], // Only required in create mode
+      ],
       role: [data.user?.role, [Validators.required]],
+      is_confirmed: [this.isEditMode ? data.user?.is_confirmed : true],
     });
   }
 

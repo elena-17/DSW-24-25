@@ -29,6 +29,7 @@ export interface User {
   email: string;
   role: string;
   phone: string;
+  is_confirmed: boolean;
 }
 
 @Component({
@@ -47,7 +48,6 @@ export class AdminUsersComponent implements AfterViewInit, OnInit {
   constructor(
     private dialog: MatDialog,
     private adminUsersService: AdminUsersService,
-    private authService: AuthService,
     private snackBar: MatSnackBar,
   ) {}
 
@@ -100,7 +100,6 @@ export class AdminUsersComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.adminUsersService.getUsers().subscribe((all_users) => {
-      console.log("Users:", all_users);
       this.dataSource.data = all_users;
     });
   }
@@ -175,13 +174,12 @@ export class AdminUsersComponent implements AfterViewInit, OnInit {
     const dialogRef = this.dialog.open(ManageUserComponent, {
       data: { title: "Add User" },
       width: "75%",
-      height: "60%",
+      height: "70%",
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log("User added:", result);
-        this.authService
-          .register(
+        this.adminUsersService
+          .adminRegister(
             result.email,
             result.phone,
             result.name,
@@ -254,7 +252,7 @@ export class AdminUsersComponent implements AfterViewInit, OnInit {
     const dialogRef = this.dialog.open(ManageUserComponent, {
       data: { title: "Update User", user: row },
       width: "75%",
-      height: "60%",
+      height: "70%",
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {

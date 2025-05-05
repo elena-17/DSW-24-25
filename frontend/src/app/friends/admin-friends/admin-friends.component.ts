@@ -65,7 +65,9 @@ export class AdminFriendsComponent {
   loadAllUsers(): void {
     this.adminUsersService.getUsers().subscribe({
       next: (response) => {
-        this.allUsers = response.filter((user: any) => user.role !== "admin");
+        this.allUsers = response.filter(
+          (user: any) => user.role !== "admin" && user.role !== "seller",
+        );
       },
       error: () => {
         this.notificationService.showErrorMessage("Error loading users.");

@@ -107,6 +107,15 @@
           </mat-form-field>
         </div>
 
+        <!-- Role selection -->
+        <div class="role-selection">
+          <label class="role-label">Registering as:</label>
+          <mat-radio-group formControlName="role" class="role-radio-group">
+            <mat-radio-button value="user">User</mat-radio-button>
+            <mat-radio-button value="seller">Seller</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
         <!-- Register Button -->
         <button
           mat-raised-button

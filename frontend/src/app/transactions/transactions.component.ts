@@ -74,6 +74,8 @@ export class TransactionsComponent implements OnInit {
   hasActiveFilters: boolean = false;
   eventSource!: EventSource;
   activeTab: "sender" | "receiver" | "pending" = "pending";
+  role: string = "";
+  selectedTabIndex = 0;
 
   constructor(
     private friendshipsService: FriendshipsService,
@@ -86,6 +88,13 @@ export class TransactionsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.role = sessionStorage.getItem("userRole") || "user";
+    if (this.role === "seller") {
+      this.selectedTabIndex = 2;
+      this.loadTransactions("receiver", false);
+    } else {
+      this.selectedTabIndex = 0;
+    }
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
     this.eventSource = new EventSource(
@@ -187,18 +196,6 @@ export class TransactionsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              this.transactionsArray["sender"].data = [
-                ...response.transactions,
-                ...this.transactionsArray["sender"].data,
-              ];
-              this.transactionsArray["sender"].totalCount += response.count;
-              this.transactionsArray["pendingOthers"].data = [
-                ...response.transactions,
-                ...this.transactionsArray["pendingOthers"].data,
-              ];
-              this.transactionsArray["pendingOthers"].totalCount +=
-                response.count;
-
               this.notificationService.showSuccessMessage(
                 "Transaction sent successfully",
               );
@@ -248,17 +245,6 @@ export class TransactionsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              this.transactionsArray["receiver"].data = [
-                ...response.transactions,
-                ...this.transactionsArray["receiver"].data,
-              ];
-              this.transactionsArray["receiver"].totalCount += response.count;
-              this.transactionsArray["pendingOthers"].data = [
-                ...response.transactions,
-                ...this.transactionsArray["pendingOthers"].data,
-              ];
-              this.transactionsArray["pendingOthers"].totalCount +=
-                response.count;
               this.notificationService.showSuccessMessage(
                 "Transaction requested successfully",
               );
@@ -446,6 +432,9 @@ export class TransactionsComponent implements OnInit {
   }
 
   filterData() {
+    if (this.role === "seller") {
+      this.activeTab = "receiver";
+    }
     const filters = this.transformFilters();
     if (this.activeTab === "pending") {
       this.loadTransactions(this.activeTab, false, filters);

@@ -16,12 +16,15 @@ import { ForgotPasswordComponent } from "./login/forgot-password/forgot-password
 import { AdminAccountsComponent } from "./admin-accounts/admin-accounts.component";
 import { AdminTransactionsComponent } from "./transactions/admin-transactions/admin-transactions.component";
 import { AdminFriendsComponent } from "./friends/admin-friends/admin-friends.component";
+import { LoginPaymentComponent } from "./login-payment/login-payment.component";
+import { ConfirmPaymentComponent } from "./confirm-payment/confirm-payment.component";
 
 export const routes: Routes = [
   { path: "", component: LoginComponent },
   { path: "forgot-password", component: ForgotPasswordComponent },
   { path: "register", component: RegisterComponent },
   { path: "confirm-register", component: ConfirmRegisterComponent },
+  { path: "loginPayment", component: LoginPaymentComponent },
   {
     path: "admin",
     canActivate: [AdminGuard],
@@ -59,10 +62,16 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: "homepage", component: HomepageComponent },
-      { path: "friends", component: FriendsComponent },
+      {
+        path: "friends",
+        component: FriendsComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ["user"] },
+      },
       { path: "profile", component: ProfilePageComponent },
       { path: "help", component: HelppageComponent },
       { path: "transactions", component: TransactionsComponent },
+      { path: "confirm-payment", component: ConfirmPaymentComponent },
     ],
   },
   { path: "**", component: Error404Component },

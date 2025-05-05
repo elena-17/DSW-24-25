@@ -12,6 +12,7 @@ export function createFilters(formBuilder: FormBuilder): FormGroup {
       pending: [true],
       approved: [true],
       rejected: [true],
+      processing: [true],
     }),
     amount: formBuilder.group({
       min: [0],

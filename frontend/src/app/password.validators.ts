@@ -1,4 +1,4 @@
-import { AbstractControl, ValidationErrors } from "@angular/forms";
+import { AbstractControl, ValidationErrors, ValidatorFn } from "@angular/forms";
 
 export class PasswordValidators {
   // Validate password strength (uppercase, lowercase, numeric)
@@ -32,6 +32,26 @@ export class PasswordValidators {
         group.get(confirmPasswordField)?.setErrors(null);
         return null;
       }
+    };
+  }
+  static conditionalPasswordValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value) return null; // No validar si está vacío
+
+      const errors: ValidationErrors = {};
+
+      if (value.length < 8) {
+        errors["minlength"] = { requiredLength: 8, actualLength: value.length };
+      }
+
+      const strengthError =
+        PasswordValidators.passwordStrengthValidator(control);
+      if (strengthError) {
+        errors["passwordStrength"] = true;
+      }
+
+      return Object.keys(errors).length > 0 ? errors : null;
     };
   }
 }

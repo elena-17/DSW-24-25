@@ -101,7 +101,6 @@ export class ToolbarComponent implements OnInit, OnDestroy {
     sessionStorage.clear();
     this.router.navigate([""]);
   }
-
   // Admin
   isAdmin(): boolean {
     return this.role === "admin";
@@ -111,5 +110,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
   goToAccounts(): void {
     this.router.navigate(["/admin/accounts"]);
+  }
+
+  // Seller
+  isSeller(): boolean {
+    return this.role === "seller";
   }
 }
