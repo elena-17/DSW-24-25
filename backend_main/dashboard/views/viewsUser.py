@@ -38,14 +38,18 @@ def generate_data_chart(user):
 
     # quiero un grafico que me muestre el dinero enviado por dia y el recibido
     raw_data_sender = (
-        Transaction.objects.filter(created_at__gte=start_datetime, created_at__lt=end_datetime, sender=user)
+        Transaction.objects.filter(
+            created_at__gte=start_datetime, created_at__lt=end_datetime, sender=user, status="approved"
+        )
         .annotate(day=TruncDay("created_at"))
         .values("day")
         .annotate(money_sender=models.Sum("amount"))
         .order_by("day")
     )
     raw_data_receiver = (
-        Transaction.objects.filter(created_at__gte=start_datetime, created_at__lt=end_datetime, receiver=user)
+        Transaction.objects.filter(
+            created_at__gte=start_datetime, created_at__lt=end_datetime, receiver=user, status="approved"
+        )
         .annotate(day=TruncDay("created_at"))
         .values("day")
         .annotate(money_receiver=models.Sum("amount"))
@@ -83,7 +87,9 @@ def get_monthly_chart(user):
 
     # Enviados por mes (negativos)
     sent_data = (
-        Transaction.objects.filter(created_at__gte=start_datetime, created_at__lt=end_datetime, sender=user)
+        Transaction.objects.filter(
+            created_at__gte=start_datetime, created_at__lt=end_datetime, sender=user, status="approved"
+        )
         .annotate(month=TruncMonth("created_at"))
         .values("month")
         .annotate(total=models.Sum("amount"))
@@ -92,7 +98,9 @@ def get_monthly_chart(user):
 
     # Recibidos por mes (positivos)
     received_data = (
-        Transaction.objects.filter(created_at__gte=start_datetime, created_at__lt=end_datetime, receiver=user)
+        Transaction.objects.filter(
+            created_at__gte=start_datetime, created_at__lt=end_datetime, receiver=user, status="approved"
+        )
         .annotate(month=TruncMonth("created_at"))
         .values("month")
         .annotate(total=models.Sum("amount"))
