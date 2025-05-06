@@ -32,8 +32,6 @@ export class AuthorComponent implements OnInit {
     } else {
       this.fetchAuthor();
     }
-    console.log("AuthorComponent initialized with username:", this.username);
-    console.log("Cached author data:", cachedAuthor);
   }
 
   fetchAuthor(): void {

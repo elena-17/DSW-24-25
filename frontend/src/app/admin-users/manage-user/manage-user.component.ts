@@ -70,15 +70,6 @@ export class ManageUserComponent {
     });
   }
 
-  logFormErrors() {
-    Object.keys(this.manageUserForm.controls).forEach((key) => {
-      const controlErrors = this.manageUserForm.get(key)?.errors;
-      if (controlErrors) {
-        console.log("Key:", key, "Errors:", controlErrors);
-      }
-    });
-  }
-
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;
   }

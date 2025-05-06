@@ -111,7 +111,6 @@ export class HomepageComponent implements OnInit {
           : "Never";
         this.isLoading = false;
         this.loadChartData();
-        console.log(this.dashboardData);
       },
       error: (error) => {
         console.error("Error fetching user dashboard data:", error);
@@ -147,7 +146,6 @@ export class HomepageComponent implements OnInit {
       },
     };
     const monthly = this.dashboardData.monthly_chart;
-    console.log(monthly);
     this.chart_monthly.series = [
       {
         name: "Total Amount",

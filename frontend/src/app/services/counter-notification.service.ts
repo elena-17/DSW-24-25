@@ -31,7 +31,6 @@ export class CounterNotificationService {
         this.notificationService.showSuccessMessage(
           "New transaction request received. Check transactions menu.",
         );
-        console.log("Notification received:", data);
       });
     };
 

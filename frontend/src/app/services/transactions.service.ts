@@ -73,11 +73,9 @@ export class TransactionsService {
       description,
     };
 
-    return this.http.post<any>(this.urlSendMoney, payload).pipe(
-      tap((response) => {
-        console.log("Money sent successfully:", response);
-      }),
-    );
+    return this.http
+      .post<any>(this.urlSendMoney, payload)
+      .pipe(tap((response) => {}));
   }
 
   requestMoney(
@@ -100,11 +98,7 @@ export class TransactionsService {
     const payload = { status };
     return this.http
       .put<any>(`${this.baseApiUrl}/${transactionId}/update-status/`, payload)
-      .pipe(
-        tap((response) => {
-          console.log("Transaction updated successfully:", response);
-        }),
-      );
+      .pipe(tap((response) => {}));
   }
 
   getAdminTransactions(params: {

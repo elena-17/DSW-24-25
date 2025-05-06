@@ -189,7 +189,6 @@ export class AdminTransactionsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              console.log("Transaction created:", response);
               this.notificationService.showSuccessMessage(
                 "Transaction created",
               );
@@ -295,7 +294,6 @@ export class AdminTransactionsComponent implements OnInit {
   }
 
   onPageChange(status: string, event: PageEvent, seller?: boolean) {
-    console.log("event", event);
     const state = this.transactionStates[seller ? `seller_${status}` : status];
     state.pageIndex = event.pageIndex;
     state.pageSize = event.pageSize;

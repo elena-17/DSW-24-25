@@ -82,7 +82,6 @@ export class FriendsComponent {
       next: (response) => {
         this.data = response;
         this.filteredFavoriteUsers = [...this.data];
-        console.log("Friendships loaded successfully", this.data);
       },
       error: (error) => {
         this.notificationService.showErrorMessage(
@@ -97,7 +96,6 @@ export class FriendsComponent {
       next: (response) => {
         this.availableUsers = response;
         this.filteredAvailableUsers = []; // Initialize filtered available users empty array
-        console.log("Available users loaded successfully.", this.data);
       },
       error: (error) => {
         this.notificationService.showErrorMessage(
