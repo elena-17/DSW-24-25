@@ -47,6 +47,7 @@ export class ProfilePageComponent {
   hideConfirmPassword = true;
   creditCards: any[] = [];
   activeSection: string = "profile"; // 'profile' default
+  isAdmin: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -87,6 +88,7 @@ export class ProfilePageComponent {
   ngOnInit(): void {
     this.loadUserInfo();
     this.loadCreditCards();
+    this.isAdmin = sessionStorage.getItem("userRole") == "admin";
     this.settingsForm.valueChanges.subscribe(() => {
       this.checkFormChanges();
     });
@@ -225,9 +227,7 @@ export class ProfilePageComponent {
         window.dispatchEvent(new Event("userNameUpdated"));
       },
       error: () => {
-        this.notificationService.showErrorMessage(
-          "Failed to save changes.",
-        );
+        this.notificationService.showErrorMessage("Failed to save changes.");
       },
     });
   }
