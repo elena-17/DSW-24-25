@@ -14,13 +14,11 @@ import {
   Validators,
   FormsModule,
 } from "@angular/forms";
-import { AuthService } from "../services/auth.service";
 import { UserService } from "../services/user.service";
 import { PasswordValidators } from "../password.validators";
-import { Router } from "@angular/router";
 import { MaterialModule } from "../material.module";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatTabsModule } from "@angular/material/tabs";
+import { NotificationService } from "../services/notification.service";
 
 @Component({
   selector: "app-profile-page",
@@ -53,10 +51,8 @@ export class ProfilePageComponent {
   constructor(
     private dialog: MatDialog,
     private formBuilder: FormBuilder,
-    private authService: AuthService,
     private userService: UserService,
-    private router: Router,
-    private snackBar: MatSnackBar,
+    private notificationService: NotificationService,
   ) {
     // profile settings form
     this.settingsForm = this.formBuilder.group({
@@ -86,28 +82,6 @@ export class ProfilePageComponent {
         ),
       },
     );
-
-    //Create an example for credit cards
-    /*this.creditCards = [
-      {
-        number: "1234567890123456",
-        owner_name: "John Doe",
-        expiration_date: "12/25",
-        card_alias: "Personal Card",
-      },
-      {
-        number: "9876543210987654",
-        owner_name: "Jane Smith",
-        expiration_date: "11/24",
-        card_alias: "Business Card",
-      },
-      {
-        number: "5555 4444 3333 2222",
-        owner_name: "Alice Johnson",
-        expiration_date: "10/23",
-        card_alias: "Travel Card",
-      },
-    ];*/
   }
 
   ngOnInit(): void {
@@ -192,11 +166,9 @@ export class ProfilePageComponent {
         this.isFormModified = false;
       },
       error: () => {
-        this.snackBar.open("Failed to load user data.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showErrorMessage(
+          "Failed to load user information.",
+        );
       },
     });
   }
@@ -208,11 +180,9 @@ export class ProfilePageComponent {
         this.creditCards.sort((a, b) => a.number.localeCompare(b.number));
       },
       error: () => {
-        this.snackBar.open("Failed to load credit cards.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showErrorMessage(
+          "Failed to load credit cards.",
+        );
       },
     });
   }
@@ -245,11 +215,9 @@ export class ProfilePageComponent {
     updatedData.role = sessionStorage.getItem("userRole");
     this.userService.updateUserProfile(updatedData).subscribe({
       next: () => {
-        this.snackBar.open("Changes saved successfully!", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showSuccessMessage(
+          "Changes saved successfully!",
+        );
         delete updatedData.role;
         this.userData = { ...updatedData };
         this.isFormModified = false;
@@ -257,11 +225,9 @@ export class ProfilePageComponent {
         window.dispatchEvent(new Event("userNameUpdated"));
       },
       error: () => {
-        this.snackBar.open("Failed to save changes.", "Close", {
-          duration: 2000,
-          horizontalPosition: "center",
-          verticalPosition: "top",
-        });
+        this.notificationService.showErrorMessage(
+          "Failed to save changes.",
+        );
       },
     });
   }
@@ -277,20 +243,16 @@ export class ProfilePageComponent {
       .changeUserPassword({ currentPassword, password })
       .subscribe({
         next: () => {
-          this.snackBar.open("Password changed successfully!", "Close", {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          });
+          this.notificationService.showSuccessMessage(
+            "Password changed successfully!",
+          );
           this.showPasswordForm = false;
           this.passwordForm.reset();
         },
         error: (errorMessage) => {
-          this.snackBar.open(errorMessage.error?.error, "Close", {
-            duration: 2000,
-            horizontalPosition: "center",
-            verticalPosition: "top",
-          });
+          this.notificationService.showErrorMessage(
+            errorMessage.error?.error || "Failed to change password.",
+          );
         },
       });
   }
