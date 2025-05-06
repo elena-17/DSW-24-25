@@ -70,12 +70,11 @@ export class FriendsComponent {
     if (this.inputAddFavorites) this.inputAddFavorites.nativeElement.value = "";
     if (this.inputBlocked) this.inputBlocked.nativeElement.value = "";
     if (this.inputAddBlocked) this.inputAddBlocked.nativeElement.value = "";
-  
+
     this.updateSearchFilterFavorites({ target: { value: "" } });
     this.updateSearchFilterAvailable({ target: { value: "" } });
     this.updateSearchFilterBlocked({ target: { value: "" } });
     this.updateSearchFilterUnblocked({ target: { value: "" } });
-  
   }
 
   loadFriendships(): void {
