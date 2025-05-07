@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: "__API_URL__", // ng build --prod
-  mercure: "__MERCURE_URL__",
-  bankUrl: "__BANK_URL__",
+  apiUrl: (window as any).__env?.API_URL,
+  mercure: (window as any).__env?.MERCURE_URL,
+  bankUrl: (window as any).__env?.BANK_URL
 };
