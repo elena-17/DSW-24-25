@@ -12,7 +12,7 @@
         >Profile</a
       >
       <a
-        *ngIf="this.isAdmin"
+        *ngIf="!isAdmin"
         mat-list-item
         (click)="setActiveSection('creditCards')"
         [class.active]="activeSection === 'creditCards'"
