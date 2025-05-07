@@ -35,26 +35,9 @@ services:
       timeout: 5s
       retries: 5
 
-  bank:
-    container_name: zap-bank
-    build:
-      context: backend_bank
-      dockerfile: Dockerfile
-    depends_on:
-      db_bank:
-        condition: service_healthy
-    environment:
-      SECRET_KEY: "${SECRET_KEY_BANK}"
-      DEBUG: False
-      POSTGRES_DB_BANK: "${POSTGRES_DB_BANK}"
-      POSTGRES_USER_BANK: "${POSTGRES_USER_BANK}"
-      POSTGRES_PASSWORD_BANK: "${POSTGRES_PASSWORD_BANK}"
-      POSTGRES_HOST_BANK: "zap-postgres-bank"
-    ports:
-      - "8080:8000"
-
   mercure:
     image: dunglas/mercure:v0.18
+    container_name: zap-mercure
     restart: unless-stopped
     environment:
       # Uncomment the following line to disable HTTPS
@@ -62,10 +45,10 @@ services:
       MERCURE_PUBLISHER_JWT_KEY: "${FIELD_ENCRYPTION_KEY}"
       MERCURE_SUBSCRIBER_JWT_KEY: "${FIELD_ENCRYPTION_KEY}"
     # Uncomment the following line to enable the development mode
-    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
+    # command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "https://localhost/healthz"]
-      timeout: 5s
+      timeout: 10s
       retries: 5
       start_period: 60s
     ports:
@@ -73,6 +56,33 @@ services:
     volumes:
       - mercure_data:/data
       - mercure_config:/config
+
+  backend:
+    container_name: zap-backend
+    build:
+      context: backend_main
+      dockerfile: Dockerfile
+    depends_on:
+      db_main:
+        condition: service_healthy
+      mercure:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      -.env
+    environment:
+      MERCURE_URL: "http://mercure:80/.well-known/mercure"
+      POSTGRES_HOST: "db_main"
+      POSTGRES_PORT: "5432"
+      DEBUG: False
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
 
 volumes:
   postgres_main_data:

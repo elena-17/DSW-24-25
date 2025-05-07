@@ -10,9 +10,10 @@ class TransactionFilterSerializer(serializers.Serializer):
     user = serializers.EmailField(required=False)
     date_start = serializers.DateField(required=False, input_formats=["%d-%m-%Y"])
     date_end = serializers.DateField(required=False, input_formats=["%d-%m-%Y"])
+    seller = serializers.BooleanField(required=False, default=False)
 
     def validate_status(self, value):
-        valid_statuses = {"pending", "approved", "rejected"}
+        valid_statuses = {"pending", "approved", "rejected", "processing"}
         statuses = value.split(",")
         for status in statuses:
             if status not in valid_statuses:
