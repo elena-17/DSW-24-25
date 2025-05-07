@@ -11,7 +11,7 @@ import { MaterialModule } from "../material.module"; // Asegúrate de tener Mate
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatDialog } from "@angular/material/dialog";
 import { ReactiveFormsModule } from "@angular/forms";
-import { getFriendshipsColumns } from "./config/friendships-columns.config"; // Define las columnas de la tabla
+import { getFriendshipsColumns } from "./config/relationships-columns.config"; // Define las columnas de la tabla
 import { FriendshipsService } from "../services/friendships.service"; // Servicio para obtener la lista de amigos/favoritos
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -37,12 +37,20 @@ export class FriendsComponent {
   @ViewChild("inputFavorites") inputFavorites!: ElementRef<HTMLInputElement>;
   @ViewChild("inputAddFavorites")
   inputAddFavorites!: ElementRef<HTMLInputElement>;
+  @ViewChild("inputBlocked") inputBlocked!: ElementRef<HTMLInputElement>;
+  @ViewChild("inputAddBlocked") inputAddBlocked!: ElementRef<HTMLInputElement>;
 
   columns: any[] = [];
   data: any[] = [];
   availableUsers: any[] = [];
   filteredFavoriteUsers: any[] = [];
   filteredAvailableUsers: any[] = [];
+
+  blockedUsers: any[] = [];
+  filteredBlockedUsers: any[] = [];
+  unblockedUsers: any[] = [];
+  filteredUnblockedUsers: any[] = [];
+
   constructor(
     private friendshipsService: FriendshipsService,
     private cdr: ChangeDetectorRef,
@@ -52,27 +60,21 @@ export class FriendsComponent {
     this.columns = getFriendshipsColumns();
     this.loadFriendships(); // Charge the data of the friends (favorites)
     this.loadNonFriendships(); // Charge the data of the available users (non-favorites)
+    this.loadBlockedUsers(); // Charge the data of the blocked users
+    this.loadUnblockedUsers(); // Charge the data of the unblocked users
   }
 
   // Clear the filter when the user changes the tab
   onTabChange(event: MatTabChangeEvent): void {
-    if (event.index === 0) {
-      // Favorites tab
-      this.inputFavorites.nativeElement.value = ""; // Clear the input field for available users
-      console.log(
-        "Favorites list filtered loaded successfully",
-        this.filteredFavoriteUsers,
-      );
-    } else if (event.index === 1) {
-      // Available tab
-      this.inputAddFavorites.nativeElement.value = ""; // Clear the input field for available users
-      console.log(
-        "Available users filtered loaded successfully",
-        this.filteredAvailableUsers,
-      );
-      console.log("Available users loaded successfully", this.availableUsers);
-      this.updateSearchFilterAvailable({ target: { value: "" } }); // Restablecer la búsqueda de disponibles
-    }
+    if (this.inputFavorites) this.inputFavorites.nativeElement.value = "";
+    if (this.inputAddFavorites) this.inputAddFavorites.nativeElement.value = "";
+    if (this.inputBlocked) this.inputBlocked.nativeElement.value = "";
+    if (this.inputAddBlocked) this.inputAddBlocked.nativeElement.value = "";
+
+    this.updateSearchFilterFavorites({ target: { value: "" } });
+    this.updateSearchFilterAvailable({ target: { value: "" } });
+    this.updateSearchFilterBlocked({ target: { value: "" } });
+    this.updateSearchFilterUnblocked({ target: { value: "" } });
   }
 
   loadFriendships(): void {
@@ -80,7 +82,6 @@ export class FriendsComponent {
       next: (response) => {
         this.data = response;
         this.filteredFavoriteUsers = [...this.data];
-        console.log("Friendships loaded successfully", this.data);
       },
       error: (error) => {
         this.notificationService.showErrorMessage(
@@ -95,11 +96,38 @@ export class FriendsComponent {
       next: (response) => {
         this.availableUsers = response;
         this.filteredAvailableUsers = []; // Initialize filtered available users empty array
-        console.log("Available users loaded successfully.", this.data);
       },
       error: (error) => {
         this.notificationService.showErrorMessage(
           error.error.error || "Can't load available users.",
+        );
+      },
+    });
+  }
+
+  loadBlockedUsers(): void {
+    this.friendshipsService.getBlockedUsers().subscribe({
+      next: (response) => {
+        this.blockedUsers = response;
+        this.filteredBlockedUsers = [...this.blockedUsers];
+      },
+      error: (error) => {
+        this.notificationService.showErrorMessage(
+          error.error.error || "Error loading blocked users",
+        );
+      },
+    });
+  }
+
+  loadUnblockedUsers(): void {
+    this.friendshipsService.getUnblockedUsers().subscribe({
+      next: (response) => {
+        this.unblockedUsers = response;
+        this.filteredUnblockedUsers = [];
+      },
+      error: (error) => {
+        this.notificationService.showErrorMessage(
+          error.error.error || "Error loading unblocked users",
         );
       },
     });
@@ -135,6 +163,36 @@ export class FriendsComponent {
   clearFilterAvailable(input: HTMLInputElement): void {
     input.value = "";
     this.filteredAvailableUsers = [];
+  }
+
+  updateSearchFilterBlocked(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+    this.filteredBlockedUsers = this.blockedUsers.filter((user) =>
+      user.email.toLowerCase().includes(searchTerm),
+    );
+    this.cdr.detectChanges();
+  }
+
+  clearFilterBlocked(input: HTMLInputElement): void {
+    input.value = "";
+    this.filteredBlockedUsers = [...this.blockedUsers];
+  }
+
+  updateSearchFilterUnblocked(event: any): void {
+    const searchTerm = event.target.value.toLowerCase();
+    if (searchTerm === "") {
+      this.filteredUnblockedUsers = [];
+    } else {
+      this.filteredUnblockedUsers = this.unblockedUsers.filter((user) =>
+        user.email.toLowerCase().includes(searchTerm),
+      );
+    }
+    this.cdr.detectChanges();
+  }
+
+  clearFilterUnblocked(input: HTMLInputElement): void {
+    input.value = "";
+    this.filteredUnblockedUsers = [];
   }
 
   // Add an user to favorites
@@ -176,6 +234,43 @@ export class FriendsComponent {
         this.notificationService.showErrorMessage(
           "Can't remove user from favorites.",
         );
+      },
+    });
+  }
+
+  blockUser(user: any): void {
+    this.friendshipsService.blockUser(user.email).subscribe({
+      next: () => {
+        this.notificationService.showSuccessMessage(
+          `${user.email} has been blocked.`,
+        );
+        this.unblockedUsers = this.unblockedUsers.filter(
+          (u) => u.email !== user.email,
+        );
+        this.filteredUnblockedUsers = this.filteredUnblockedUsers.filter(
+          (u) => u.email !== user.email,
+        );
+        this.filteredBlockedUsers = [...this.filteredBlockedUsers, user];
+      },
+      error: () => {
+        this.notificationService.showErrorMessage("Can't block user.");
+      },
+    });
+  }
+
+  unblockUser(user: any): void {
+    this.friendshipsService.unblockUser(user.email).subscribe({
+      next: () => {
+        this.notificationService.showSuccessMessage(
+          `${user.email} has been unblocked.`,
+        );
+        this.filteredBlockedUsers = this.filteredBlockedUsers.filter(
+          (u) => u.email !== user.email,
+        );
+        this.unblockedUsers = [...this.unblockedUsers, user];
+      },
+      error: () => {
+        this.notificationService.showErrorMessage("Can't unblock user.");
       },
     });
   }

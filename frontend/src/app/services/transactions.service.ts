@@ -16,8 +16,6 @@ interface Transaction {
   providedIn: "root",
 })
 export class TransactionsService {
-  private sender = new BehaviorSubject<any>(null);
-  private receiver = new BehaviorSubject<any>(null);
   private loading = new BehaviorSubject<boolean>(false);
 
   private baseApiUrl = "http://localhost:8000/transactions";
@@ -27,28 +25,10 @@ export class TransactionsService {
   private urlAdminTransactions = `${this.baseApiUrl}/admin/`;
   private urlPendingTransactions = `${this.baseApiUrl}/pending/`;
   private urlAdminCreateTransaction = `${this.baseApiUrl}/admin/create/`;
+  private urlReceiveCode = `${this.baseApiUrl}/send-confirmation-code/`;
+  private urlConfirmCode = `${this.baseApiUrl}/confirm-code/`;
 
   constructor(private http: HttpClient) {}
-
-  // fetch(refresh: boolean = true): Observable<any> {
-  //   this.loading.next(true);
-
-  //   return forkJoin({
-  //     receiver: this.http.get<Transaction[]>(this.urlReceiver),
-  //     sender: this.http.get<Transaction[]>(this.urlSender),
-  //   }).pipe(
-  //     tap({
-  //       next: ({ receiver, sender }) => {
-  //         this.receiver.next([...receiver]);
-  //         this.sender.next([...sender]);
-  //         this.loading.next(false);
-  //       },
-  //       complete: () => {
-  //         this.loading.next(false);
-  //       },
-  //     }),
-  //   );
-  // }
 
   getTransactions(params: {
     status?: string;
@@ -70,8 +50,7 @@ export class TransactionsService {
         httpParams = httpParams.set(key, value);
       }
     });
-
-    return this.http.get<any>(this.baseApiUrl, {
+    return this.http.get<any>(`${this.baseApiUrl}/`, {
       params: httpParams,
       withCredentials: true,
     });
@@ -94,11 +73,9 @@ export class TransactionsService {
       description,
     };
 
-    return this.http.post<any>(this.urlSendMoney, payload).pipe(
-      tap((response) => {
-        console.log("Money sent successfully:", response);
-      }),
-    );
+    return this.http
+      .post<any>(this.urlSendMoney, payload)
+      .pipe(tap((response) => {}));
   }
 
   requestMoney(
@@ -121,14 +98,11 @@ export class TransactionsService {
     const payload = { status };
     return this.http
       .put<any>(`${this.baseApiUrl}/${transactionId}/update-status/`, payload)
-      .pipe(
-        tap((response) => {
-          console.log("Transaction updated successfully:", response);
-        }),
-      );
+      .pipe(tap((response) => {}));
   }
 
   getAdminTransactions(params: {
+    seller?: boolean;
     status?: string;
     type?: string;
     min_amount?: number;
@@ -191,5 +165,20 @@ export class TransactionsService {
     return this.http.post<any>(this.urlAdminCreateTransaction, transaction, {
       withCredentials: true,
     });
+  }
+
+  sendConfirmationCode(email: string, confirmationToken: string) {
+    return this.http.post<any>(this.urlReceiveCode, {
+      email,
+      confirmationToken,
+    });
+  }
+
+  confirmTransactionCode(data: {
+    receiver: string;
+    sender: string;
+    code: string;
+  }) {
+    return this.http.post(this.urlConfirmCode, data);
   }
 }

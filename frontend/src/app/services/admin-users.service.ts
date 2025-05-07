@@ -12,6 +12,7 @@ export class AdminUsersService {
   private urlDeleteUser = `${this.baseApiUrl}/users/delete/`;
   private urlUpdateUser = `${this.baseApiUrl}/users/update/`;
   private urlDeleteSeveralUsers = `${this.baseApiUrl}/users/bulk-delete/`;
+  private urlRegister = `${this.baseApiUrl}/users/add-user/`;
 
   constructor(private http: HttpClient) {}
 
@@ -38,5 +39,24 @@ export class AdminUsersService {
     return this.http.put<any>(`${this.urlUpdateUser}${email}/`, data, {
       withCredentials: true,
     });
+  }
+
+  adminRegister(
+    email: string,
+    phone_number: string,
+    name: string,
+    id_number: string,
+    pwd1: string,
+    role: string,
+  ) {
+    let info = {
+      email: email,
+      phone: phone_number,
+      name: name,
+      id_number: id_number,
+      role: role,
+      password: pwd1,
+    };
+    return this.http.post<any>(this.urlRegister, info);
   }
 }

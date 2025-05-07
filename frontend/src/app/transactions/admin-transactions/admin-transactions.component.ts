@@ -63,6 +63,9 @@ export class AdminTransactionsComponent implements OnInit {
     approved: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
     pending: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
     rejected: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
+    seller_processing: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
+    seller_approved: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
+    seller_rejected: { data: [], totalCount: 0, pageIndex: 0, pageSize: 5 },
   };
 
   constructor(
@@ -73,7 +76,6 @@ export class AdminTransactionsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(this.currentTab);
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
     // this.loadTransactions(); //not necessary bc in ngAfterViewInit it calls filterData()
@@ -91,11 +93,16 @@ export class AdminTransactionsComponent implements OnInit {
   }
 
   loadTransactionsByStatus(status: string, filters: any = {}) {
+    var seller = false;
+    if (status.startsWith("seller_")) {
+      seller = true;
+    }
     const state = this.transactionStates[status];
     const offset = state.pageIndex * state.pageSize;
     const params = {
       ...filters,
-      status,
+      status: seller ? status.replace("seller_", "") : status,
+      seller: seller,
       limit: state.pageSize.toString(),
       offset: offset.toString(),
     };
@@ -147,7 +154,6 @@ export class AdminTransactionsComponent implements OnInit {
       .updateAdminTransaction(transaction.id, status)
       .subscribe({
         next: (response) => {
-          console.log(`Transaction ${status}`, response);
           this.notificationService.showSuccessMessage(`Transaction ${status}`);
           this.filterData();
         },
@@ -183,15 +189,22 @@ export class AdminTransactionsComponent implements OnInit {
           )
           .subscribe({
             next: (response) => {
-              console.log("Transaction created:", response);
               this.notificationService.showSuccessMessage(
                 "Transaction created",
               );
-              this.transactionStates["pending"].data = [
-                response,
-                ...this.transactionStates["pending"].data,
-              ];
-              this.transactionStates["pending"].totalCount++;
+              if (response.status == "pending") {
+                this.transactionStates["pending"].data = [
+                  response,
+                  ...this.transactionStates["pending"].data,
+                ];
+                this.transactionStates["pending"].totalCount++;
+              } else if (response.status == "processing") {
+                this.transactionStates["seller_processing"].data = [
+                  response,
+                  ...this.transactionStates["seller_processing"].data,
+                ];
+                this.transactionStates["seller_processing"].totalCount++;
+              }
             },
             error: (error) => {
               console.error("Error creating transaction:", error);
@@ -251,32 +264,39 @@ export class AdminTransactionsComponent implements OnInit {
 
   filterData(status?: string) {
     const transformedFilters = this.transformFilters();
-    if (status) {
-      this.loadTransactionsByStatus(status, transformedFilters);
+
+    if ((status && status == "seller") || this.currentTab == 3) {
+      this.loadTransactionsByStatus("seller_processing", transformedFilters);
+      this.loadTransactionsByStatus("seller_approved", transformedFilters);
+      this.loadTransactionsByStatus("seller_rejected", transformedFilters);
       return;
     }
-    this.loadTransactionsByStatus("pending", transformedFilters);
-    this.loadTransactionsByStatus("approved", transformedFilters);
-    this.loadTransactionsByStatus("rejected", transformedFilters);
-    // this.loadTransactions(transformedFilters);
+    let current = "pending";
+    switch (this.currentTab) {
+      case 0:
+        current = "pending";
+        break;
+      case 1:
+        current = "approved";
+        break;
+      case 2:
+        current = "rejected";
+        break;
+    }
+    this.loadTransactionsByStatus(current, transformedFilters);
     this.hasActiveFilters = hasActiveFilters(this.filtersForm);
   }
 
   onChangeTab(index: number) {
     this.currentTab = index;
-    sessionStorage.setItem("currentTab", index.toString());
-    const status = ["pending", "approved", "rejected"][index];
-    // Always reload data to handle real-time changes
-    //this.loadTransactionsByStatus(status);
+    const status = ["pending", "approved", "rejected", "seller"][index];
     this.filterData(status);
   }
 
-  onPageChange(status: string, event: PageEvent) {
-    console.log("event", event);
-    const state = this.transactionStates[status];
+  onPageChange(status: string, event: PageEvent, seller?: boolean) {
+    const state = this.transactionStates[seller ? `seller_${status}` : status];
     state.pageIndex = event.pageIndex;
     state.pageSize = event.pageSize;
-    //this.loadTransactionsByStatus(status);
     this.filterData();
   }
 
@@ -293,6 +313,13 @@ export class AdminTransactionsComponent implements OnInit {
     } else if (this.currentTab === 2) {
       data = this.transactionStates["rejected"].data;
       title = "Rejected";
+    } else if (this.currentTab === 3) {
+      data = [
+        ...this.transactionStates["seller_processing"].data,
+        ...this.transactionStates["seller_approved"].data,
+        ...this.transactionStates["seller_rejected"].data,
+      ];
+      title = "Seller";
     }
 
     const csv = Papa.unparse(data);

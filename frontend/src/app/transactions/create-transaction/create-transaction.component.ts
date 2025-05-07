@@ -9,7 +9,6 @@ import {
 } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
-
 import { MaterialModule } from "../../material.module";
 import { MatSelectModule } from "@angular/material/select";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
@@ -17,6 +16,8 @@ import { MatChipsModule } from "@angular/material/chips";
 import { MatStepperModule } from "@angular/material/stepper";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 import { MatRadioModule } from "@angular/material/radio";
+import { FriendshipsService } from "../../services/friendships.service";
+import { map, Observable, of, startWith } from "rxjs";
 
 @Component({
   selector: "app-create-transaction",
@@ -46,12 +47,16 @@ export class CreateTransactionComponent {
   dialogTitle: string;
   emailCtrl = new FormControl("", [Validators.email]);
   emails: string[] = [];
+  favorites: any[] = [];
+  filteredFavorites!: Observable<any[]>;
+  selectedContacts: string[] = [];
   admin: boolean = false;
   isDivide: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<CreateTransactionComponent>,
     private formBuilder: FormBuilder,
+    private friendsService: FriendshipsService,
     @Inject(MAT_DIALOG_DATA)
     public data: { title: string; admin: boolean; divide: boolean },
   ) {
@@ -65,9 +70,14 @@ export class CreateTransactionComponent {
         receiver: ["", [Validators.required, Validators.email]],
       });
     } else {
-      this.contactForm = this.formBuilder.group({
-        contact: ["", [Validators.required, Validators.email]],
-      });
+      this.contactForm = this.formBuilder.group(
+        {
+          contact: [""],
+        },
+        {
+          validators: this.validateAtLeastOneContact,
+        },
+      );
     }
     this.amountForm = this.formBuilder.group({
       amount: [
@@ -94,6 +104,84 @@ export class CreateTransactionComponent {
     });
   }
 
+  validateAtLeastOneContact = () => {
+    return this.selectedContacts.length < 1
+      ? { noContactSelected: true }
+      : null;
+  };
+
+  ngOnInit() {
+    if (!this.admin) {
+      this.friendsService.getAllFriendships().subscribe((res) => {
+        this.favorites = res;
+      });
+
+      // Filtrar los favoritos mientras escribimos
+      this.contactForm
+        .get("contact")
+        ?.valueChanges.pipe(
+          startWith(""),
+          map((value) => this._filterFavorites(value)),
+        )
+        .subscribe((filtered) => {
+          this.filteredFavorites = of(filtered);
+        });
+    }
+  }
+
+  private _filterFavorites(value: string): any[] {
+    const filterValue = value;
+    return this.favorites.filter(
+      (user) =>
+        user.email.includes(filterValue) ||
+        user.name.includes(filterValue) ||
+        user.phone.includes(filterValue),
+    );
+  }
+
+  // Agregar más usuarios
+  addMoreContacts(selectedEmail: string) {
+    if (
+      selectedEmail &&
+      Validators.email(new FormControl(selectedEmail)) === null &&
+      !this.selectedContacts.includes(selectedEmail)
+    ) {
+      this.selectedContacts.push(selectedEmail);
+      this.contactForm.reset();
+    }
+  }
+
+  // Cuando seleccionas un contacto del autocompletado o presionas Enter
+  onAutocompleteSelect(event: any) {
+    this.addMoreContacts(event.option.value);
+    this.filteredFavorites = (
+      this.contactForm.get("contact")?.valueChanges || of("")
+    ).pipe(
+      startWith(""),
+      map((value) => this._filterFavorites(value || "")),
+    );
+  }
+
+  onEnterPressed(event: KeyboardEvent) {
+    event.preventDefault();
+    const inputValue = this.contactForm.get("contact")?.value;
+    if (inputValue) {
+      this.addMoreContacts(inputValue);
+    }
+  }
+
+  onBlurInput() {
+    const inputValue = this.contactForm.get("contact")?.value;
+    if (inputValue) {
+      this.addMoreContacts(inputValue);
+    }
+  }
+
+  // Eliminar un contacto de la lista seleccionada
+  removeContact(email: any) {
+    this.selectedContacts = this.selectedContacts.filter((e) => e !== email);
+  }
+
   onCancel() {
     this.form.reset();
     this.contactForm.reset();
@@ -114,7 +202,7 @@ export class CreateTransactionComponent {
               sender: this.contactForm.value.sender,
               receiver: this.contactForm.value.receiver,
             }
-          : { user: [this.contactForm.value.contact] }),
+          : { user: this.selectedContacts }),
       };
       this.dialogRef.close(formData);
     }
@@ -129,13 +217,7 @@ export class CreateTransactionComponent {
   }
 
   get splitCount() {
-    if (!this.isDivide) {
-      return 1;
-    }
-    if (this.contactForm.get("contact")?.value) {
-      return 1 + 1;
-    }
-    return 0;
+    return this.isDivide ? this.selectedContacts.length + 1 : 1;
   }
 
   get amountPerPerson() {

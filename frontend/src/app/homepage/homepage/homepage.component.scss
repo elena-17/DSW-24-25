@@ -50,16 +50,46 @@
   align-items: center;
 }
 
-.account-actions .action-button {
-  width: 250px;
-  font-size: 1.1rem;
-  font-weight: 500;
-  padding: 12px 20px;
-  border-radius: 8px;
-}
-
 .account-actions mat-icon {
   margin-right: 8px;
+}
+
+.user-home-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 24px;
+  gap: 24px;
+}
+
+.last-login {
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.balance-img {
+  width: 150px;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.balance-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  gap: 30px;
 }
 
 @media (min-width: 768px) {

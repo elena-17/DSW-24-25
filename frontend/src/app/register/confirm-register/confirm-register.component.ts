@@ -32,12 +32,9 @@ export class ConfirmRegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log("ConfirmRegisterComponent initialized");
     this.route.queryParams.subscribe((params) => {
       this.email = params["email"];
       this.token = params["token"];
-      console.log("Token from query params:", this.token);
-      console.log("Email from query params:", this.email);
     });
   }
 

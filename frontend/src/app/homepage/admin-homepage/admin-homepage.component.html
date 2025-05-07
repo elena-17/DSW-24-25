@@ -1,30 +1,148 @@
 <app-toolbar></app-toolbar>
+
 <div class="page-container">
-  <h1>Welcome Admin ........ WIP</h1>
+  <h1 class="welcome-title">Welcome, Admin</h1>
 
-  <div class="underlined-title">
-    <h2>User Stats</h2>
-    <h4>See how your clients are doing</h4>
-    <hr />
-  </div>
+  <!-- USER STATS -->
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>User Stats</h2>
+      <p>See how your clients are doing</p>
+      <hr />
+    </div>
 
-  <mat-card appearance="outlined">
-    <mat-card-content>Active users X</mat-card-content>
-  </mat-card>
+    <div class="card-grid">
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon primary">groups</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">{{ dashboardData?.total_users }}</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </mat-card>
 
-  <mat-card appearance="outlined">
-    <mat-card-content>Number of friendships X</mat-card-content>
-  </mat-card>
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon accent">favorite</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">{{ dashboardData?.favorites }}</div>
+          <div class="stat-label">Favorite relationships</div>
+        </div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon accent">block</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">{{ dashboardData?.blocks }}</div>
+          <div class="stat-label">Blocked relationships</div>
+        </div>
+      </mat-card>
+    </div>
+  </section>
 
-  <div class="underlined-title">
-    <h2>Transactions Stats</h2>
-    <h4>Transactions status...</h4>
-    <hr />
-  </div>
-  <mat-card appearance="outlined">
-    <mat-card-content>Number transactions made X</mat-card-content>
-  </mat-card>
-  <mat-card appearance="outlined">
-    <mat-card-content>Requests pending X</mat-card-content>
-  </mat-card>
+  <!-- TRANSACTION STATS -->
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Transaction Stats</h2>
+      <p>Monitor transaction flow</p>
+      <hr />
+    </div>
+
+    <div class="card-grid">
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon primary">sync_alt</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">{{ dashboardData?.total_transactions }}</div>
+          <div class="stat-label">Total Transactions</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon warn">hourglass_empty</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">
+            {{ dashboardData?.pending_transactions }}
+          </div>
+          <div class="stat-label">Pending Transactions</div>
+        </div>
+      </mat-card>
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon warn">task_alt</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">
+            {{ dashboardData?.approved_transactions }}
+          </div>
+          <div class="stat-label">Approved Transactions</div>
+        </div>
+      </mat-card>
+    </div>
+  </section>
+
+  <!-- ACCOUNTS STATS -->
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Account Stats</h2>
+      <p>Monitor account balances</p>
+      <hr />
+    </div>
+
+    <div class="card-grid">
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon accent">savings</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">
+            {{ dashboardData?.total_money_in_accounts | number: "1.0-2" }}€
+          </div>
+          <div class="stat-label">Total Money</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon accent">show_chart</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">
+            {{ dashboardData?.average_account_balance | number: "1.0-2" }}€
+          </div>
+          <div class="stat-label">Avg. Balance</div>
+        </div>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-icon class="stat-icon primary">credit_card</mat-icon>
+        <div class="stat-text">
+          <div class="stat-value">{{ dashboardData?.num_credit_cards }}</div>
+          <div class="stat-label">Num. Credit Cards</div>
+        </div>
+      </mat-card>
+    </div>
+  </section>
+
+  <section class="dashboard-section">
+    <div class="section-header">
+      <h2>Insights & Recent Activity</h2>
+      <p>This section will hold charts and user movements</p>
+      <hr />
+    </div>
+
+    <mat-card>
+      <apx-chart
+        [series]="chartOptions_count.series"
+        [chart]="chartOptions_count.chart"
+        [xaxis]="chartOptions_count.xaxis"
+        [title]="chartOptions_count.title"
+        [stroke]="chartOptions_count.stroke"
+        [dataLabels]="chartOptions_count.dataLabels"
+        [tooltip]="chartOptions_count.tooltip"
+      ></apx-chart>
+    </mat-card>
+
+    <mat-card style="margin-top: 35px">
+      <apx-chart
+        [series]="chartOptions_money.series"
+        [chart]="chartOptions_money.chart"
+        [xaxis]="chartOptions_money.xaxis"
+        [title]="chartOptions_money.title"
+        [stroke]="chartOptions_money.stroke"
+        [dataLabels]="chartOptions_money.dataLabels"
+        [tooltip]="chartOptions_money.tooltip"
+      ></apx-chart>
+    </mat-card>
+  </section>
 </div>
