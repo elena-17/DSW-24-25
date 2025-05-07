@@ -77,12 +77,25 @@ services:
       POSTGRES_HOST: "db_main"
       POSTGRES_PORT: "5432"
       DEBUG: False
+      FRONTEND_BASE_URL: "http://frontend:80"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
       interval: 30s
       timeout: 5s
       retries: 5
 
+  frontend:
+    container_name: zap-frontend
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    
 
 volumes:
   postgres_main_data:
