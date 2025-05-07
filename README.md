@@ -67,7 +67,7 @@ A web application for managing transactions and friendships, built with Django a
     ```
 
 4. Access the application:
-    - Frontend: `http://localhost:4200`
+    - Frontend: `http://localhost:80`
     - Backend: `http://localhost:8000`
     - Bank: `http://localhost:8080`
 

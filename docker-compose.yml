@@ -35,6 +35,24 @@ services:
       timeout: 5s
       retries: 5
 
+  bank:
+    container_name: zap-bank
+    build:
+      context: backend_bank
+      dockerfile: Dockerfile
+    depends_on:
+      db_bank:
+        condition: service_healthy
+    environment:
+      SECRET_KEY: "${SECRET_KEY_BANK}"
+      DEBUG: False
+      POSTGRES_DB_BANK: "${POSTGRES_DB_BANK}"
+      POSTGRES_USER_BANK: "${POSTGRES_USER_BANK}"
+      POSTGRES_PASSWORD_BANK: "${POSTGRES_PASSWORD_BANK}"
+      POSTGRES_HOST_BANK: "zap-postgres-bank"
+    ports:
+      - "8080:8000"
+
   mercure:
     image: dunglas/mercure:v0.18
     container_name: zap-mercure
@@ -89,13 +107,17 @@ services:
     build:
       context: frontend
       dockerfile: Dockerfile
+      args:
+        - API_URL=http://backend:8000
+        - MERCURE_URL=http://mercure:3000
+        - BANK_URL=http://bank:8080
     depends_on:
       backend:
         condition: service_healthy
     restart: unless-stopped
     ports:
       - "80:80"
-    
+
 
 volumes:
   postgres_main_data:
