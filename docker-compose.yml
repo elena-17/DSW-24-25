@@ -109,9 +109,9 @@ services:
       context: frontend
       dockerfile: Dockerfile
       args:
-        - API_URL=http://backend:8000
-        - MERCURE_URL=http://mercure:3000
-        - BANK_URL=http://bank:8080
+        - API_URL=http://localhost:8000
+        - MERCURE_URL=http://localhost:3000
+        - BANK_URL=http://localhost:8080
     depends_on:
       backend:
         condition: service_healthy
