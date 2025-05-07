@@ -63,9 +63,9 @@ services:
       MERCURE_PUBLISHER_JWT_KEY: "${FIELD_ENCRYPTION_KEY}"
       MERCURE_SUBSCRIBER_JWT_KEY: "${FIELD_ENCRYPTION_KEY}"
     # Uncomment the following line to enable the development mode
-    # command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
+    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "https://localhost/healthz"]
+      test: ["CMD", "sh", "-c", "wget -q -O /dev/null http://localhost/healthz"]
       timeout: 10s
       retries: 5
       start_period: 60s
@@ -87,9 +87,9 @@ services:
         condition: service_healthy
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8000:8000"
     env_file:
-      -.env
+      - .env
     environment:
       MERCURE_URL: "http://mercure:80/.well-known/mercure"
       POSTGRES_HOST: "db_main"
@@ -97,7 +97,7 @@ services:
       DEBUG: False
       FRONTEND_BASE_URL: "http://frontend:80"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      test: curl --fail http://localhost:8000/healthz/ || exit 1
       interval: 30s
       timeout: 5s
       retries: 5

@@ -163,7 +163,11 @@ CORS_ALLOW_CREDENTIALS = True
 # Origenes permitidos
 CORS_ALLOWED_ORIGINS = [
     os.getenv("FRONTEND_BASE_URL", "http://localhost:4200"),
+    "http://localhost",
+    "http://127.0.0.1",
 ]
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "x-timezone",  # Permitir el header X-Timezone
@@ -180,7 +184,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
