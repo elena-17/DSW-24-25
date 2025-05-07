@@ -67,10 +67,10 @@ export class FriendsComponent {
 
   // Clear the filter when the user changes the tab
   onTabChange(event: MatTabChangeEvent): void {
-    this.inputAddBlocked.nativeElement.value = ""; // Clear the input field for blocked users
-    this.inputBlocked.nativeElement.value = ""; // Clear the input field for blocked users
-    this.inputFavorites.nativeElement.value = ""; // Clear the input field for favorite users
-    this.inputAddFavorites.nativeElement.value = ""; // Clear the input field for available users
+    this.inputAddBlocked.nativeElement.value = ""; 
+    this.inputBlocked.nativeElement.value = ""; 
+    this.inputFavorites.nativeElement.value = ""; 
+    this.inputAddFavorites.nativeElement.value = ""; 
     this.updateSearchFilterFavorites({ target: { value: "" } });
     this.updateSearchFilterAvailable({ target: { value: "" } });
     this.updateSearchFilterBlocked({ target: { value: "" } });
@@ -142,11 +142,6 @@ export class FriendsComponent {
     this.cdr.detectChanges();
   }
 
-  clearFilterFavorites(input: HTMLInputElement): void {
-    input.value = "";
-    this.filteredFavoriteUsers = [...this.favoriteUsers];
-  }
-
   // Filter available users by email while typing
   updateSearchFilterAvailable(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
@@ -160,22 +155,12 @@ export class FriendsComponent {
     this.cdr.detectChanges();
   }
 
-  clearFilterAvailable(input: HTMLInputElement): void {
-    input.value = "";
-    this.filteredAvailableUsers = [];
-  }
-
   updateSearchFilterBlocked(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
     this.filteredBlockedUsers = this.blockedUsers.filter((user) =>
       user.email.toLowerCase().includes(searchTerm),
     );
     this.cdr.detectChanges();
-  }
-
-  clearFilterBlocked(input: HTMLInputElement): void {
-    input.value = "";
-    this.filteredBlockedUsers = [...this.blockedUsers];
   }
 
   updateSearchFilterUnblocked(event: any): void {
@@ -188,11 +173,6 @@ export class FriendsComponent {
       );
     }
     this.cdr.detectChanges();
-  }
-
-  clearFilterUnblocked(input: HTMLInputElement): void {
-    input.value = "";
-    this.filteredUnblockedUsers = [];
   }
 
   // Add an user to favorites
@@ -209,6 +189,9 @@ export class FriendsComponent {
         this.filteredAvailableUsers = this.availableUsers;
         this.favoriteUsers = [...this.favoriteUsers, user];
         this.filteredFavoriteUsers = this.favoriteUsers;
+        this.inputAddFavorites.nativeElement.value = ""; 
+        this.updateSearchFilterAvailable({ target: { value: "" } });
+        
       },
       error: () => {
         this.notificationService.showErrorMessage(
@@ -230,6 +213,8 @@ export class FriendsComponent {
         this.filteredFavoriteUsers = this.favoriteUsers;
         this.availableUsers = [...this.availableUsers, user];
         this.filteredAvailableUsers = this.availableUsers;
+        this.inputFavorites.nativeElement.value = ""; 
+        this.updateSearchFilterFavorites({ target: { value: "" } });
       },
       error: () => {
         this.notificationService.showErrorMessage(
@@ -251,6 +236,9 @@ export class FriendsComponent {
         this.filteredUnblockedUsers = this.unblockedUsers
         this.blockedUsers = [...this.blockedUsers, user];
         this.filteredBlockedUsers = this.blockedUsers;
+        this.inputAddBlocked.nativeElement.value = ""; 
+        this.updateSearchFilterUnblocked({ target: { value: "" } });
+
       },
       error: () => {
         this.notificationService.showErrorMessage("Can't block user.");
@@ -270,6 +258,8 @@ export class FriendsComponent {
         this.filteredBlockedUsers = this.blockedUsers;
         this.unblockedUsers = [...this.unblockedUsers, user];
         this.filteredUnblockedUsers = this.unblockedUsers;
+        this.inputBlocked.nativeElement.value = ""; 
+        this.updateSearchFilterBlocked({ target: { value: "" } });
       },
       error: () => {
         this.notificationService.showErrorMessage("Can't unblock user.");
