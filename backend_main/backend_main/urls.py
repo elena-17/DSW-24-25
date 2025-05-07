@@ -27,4 +27,5 @@ urlpatterns = [
     path("favorites/", include("friendships.urls")),
     path("blocks/", include("blocks.urls")),
     path("dashboard/", include("dashboard.urls")),
+    path("healthz/", include("healthz.urls")),
 ]
