@@ -3,7 +3,7 @@ DB_NAME="zap_db_bank"
 DB_USER="zap_admin"
 FILE="dump_bank_20250506_225051.sql"
 FILE_PATH="/tmp/$FILE"
-DECOMPRESSED_FILE="/tmp/dump.sql"
+DECOMPRESSED_FILE="/tmp/dump"
 
 echo "Checking container '$CONTAINER_NAME'..."
 if ! docker ps | grep -q "$CONTAINER_NAME"; then
