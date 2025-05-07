@@ -27,7 +27,8 @@ export class AuthInterceptor implements HttpInterceptor {
     if (
       req.url.includes("login") ||
       req.url.includes("register") ||
-      req.url.includes("token/refresh")
+      req.url.includes("token/refresh") ||
+      req.url.includes("api.github.com")
     ) {
       return next.handle(req);
     }
