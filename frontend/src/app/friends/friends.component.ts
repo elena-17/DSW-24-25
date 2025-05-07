@@ -41,7 +41,8 @@ export class FriendsComponent {
   @ViewChild("inputAddBlocked") inputAddBlocked!: ElementRef<HTMLInputElement>;
 
   columns: any[] = [];
-  data: any[] = [];
+
+  favoriteUsers: any[] = [];
   availableUsers: any[] = [];
   filteredFavoriteUsers: any[] = [];
   filteredAvailableUsers: any[] = [];
@@ -66,11 +67,10 @@ export class FriendsComponent {
 
   // Clear the filter when the user changes the tab
   onTabChange(event: MatTabChangeEvent): void {
-    if (this.inputFavorites) this.inputFavorites.nativeElement.value = "";
-    if (this.inputAddFavorites) this.inputAddFavorites.nativeElement.value = "";
-    if (this.inputBlocked) this.inputBlocked.nativeElement.value = "";
-    if (this.inputAddBlocked) this.inputAddBlocked.nativeElement.value = "";
-
+    this.inputAddBlocked.nativeElement.value = ""; // Clear the input field for blocked users
+    this.inputBlocked.nativeElement.value = ""; // Clear the input field for blocked users
+    this.inputFavorites.nativeElement.value = ""; // Clear the input field for favorite users
+    this.inputAddFavorites.nativeElement.value = ""; // Clear the input field for available users
     this.updateSearchFilterFavorites({ target: { value: "" } });
     this.updateSearchFilterAvailable({ target: { value: "" } });
     this.updateSearchFilterBlocked({ target: { value: "" } });
@@ -80,8 +80,8 @@ export class FriendsComponent {
   loadFriendships(): void {
     this.friendshipsService.getAllFriendships().subscribe({
       next: (response) => {
-        this.data = response;
-        this.filteredFavoriteUsers = [...this.data];
+        this.favoriteUsers = response;
+        this.filteredFavoriteUsers = [...this.favoriteUsers];
       },
       error: (error) => {
         this.notificationService.showErrorMessage(
@@ -136,7 +136,7 @@ export class FriendsComponent {
   // Filter favorite users by email while typing
   updateSearchFilterFavorites(event: any): void {
     const searchTerm = event.target.value.toLowerCase();
-    this.filteredFavoriteUsers = this.data.filter((user) =>
+    this.filteredFavoriteUsers = this.favoriteUsers.filter((user) =>
       user.email.toLowerCase().includes(searchTerm),
     );
     this.cdr.detectChanges();
@@ -144,7 +144,7 @@ export class FriendsComponent {
 
   clearFilterFavorites(input: HTMLInputElement): void {
     input.value = "";
-    this.filteredFavoriteUsers = [...this.data];
+    this.filteredFavoriteUsers = [...this.favoriteUsers];
   }
 
   // Filter available users by email while typing
@@ -206,10 +206,9 @@ export class FriendsComponent {
         this.availableUsers = this.availableUsers.filter(
           (u) => u.email !== user.email,
         );
-        this.filteredAvailableUsers = this.filteredAvailableUsers.filter(
-          (u) => u.email !== user.email,
-        );
-        this.filteredFavoriteUsers = [...this.filteredFavoriteUsers, user];
+        this.filteredAvailableUsers = this.availableUsers;
+        this.favoriteUsers = [...this.favoriteUsers, user];
+        this.filteredFavoriteUsers = this.favoriteUsers;
       },
       error: () => {
         this.notificationService.showErrorMessage(
@@ -225,10 +224,12 @@ export class FriendsComponent {
         this.notificationService.showSuccessMessage(
           `${user.email} has been removed from favorites.`,
         );
-        this.filteredFavoriteUsers = this.filteredFavoriteUsers.filter(
+        this.favoriteUsers = this.favoriteUsers.filter(
           (u) => u.email !== user.email,
         );
+        this.filteredFavoriteUsers = this.favoriteUsers;
         this.availableUsers = [...this.availableUsers, user];
+        this.filteredAvailableUsers = this.availableUsers;
       },
       error: () => {
         this.notificationService.showErrorMessage(
@@ -247,10 +248,9 @@ export class FriendsComponent {
         this.unblockedUsers = this.unblockedUsers.filter(
           (u) => u.email !== user.email,
         );
-        this.filteredUnblockedUsers = this.filteredUnblockedUsers.filter(
-          (u) => u.email !== user.email,
-        );
-        this.filteredBlockedUsers = [...this.filteredBlockedUsers, user];
+        this.filteredUnblockedUsers = this.unblockedUsers
+        this.blockedUsers = [...this.blockedUsers, user];
+        this.filteredBlockedUsers = this.blockedUsers;
       },
       error: () => {
         this.notificationService.showErrorMessage("Can't block user.");
@@ -264,10 +264,12 @@ export class FriendsComponent {
         this.notificationService.showSuccessMessage(
           `${user.email} has been unblocked.`,
         );
-        this.filteredBlockedUsers = this.filteredBlockedUsers.filter(
+        this.blockedUsers = this.blockedUsers.filter(
           (u) => u.email !== user.email,
         );
+        this.filteredBlockedUsers = this.blockedUsers;
         this.unblockedUsers = [...this.unblockedUsers, user];
+        this.filteredUnblockedUsers = this.unblockedUsers;
       },
       error: () => {
         this.notificationService.showErrorMessage("Can't unblock user.");
