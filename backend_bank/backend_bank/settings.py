@@ -14,6 +14,8 @@ import os
 
 from pathlib import Path
 
+from corsheaders.defaults import default_headers
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -141,6 +143,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CORS
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-timezone",
+]
 
 # Rest Framework
 REST_FRAMEWORK = {}
