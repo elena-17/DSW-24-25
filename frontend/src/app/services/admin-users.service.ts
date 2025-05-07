@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: "root",
 })
 export class AdminUsersService {
-  private baseApiUrl = "http://localhost:8000/user";
+  private baseApiUrl = environment.apiUrl + "/user";
   private urlGetUsers = `${this.baseApiUrl}/users/`;
 
   private urlDeleteUser = `${this.baseApiUrl}/users/delete/`;

@@ -1,24 +1,14 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { BehaviorSubject, Observable, combineLatest, forkJoin } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { tap } from "rxjs/operators";
-
-interface Transaction {
-  id: number;
-  user: string; //name or email
-  date: string;
-  amount: number;
-  title: string;
-  status: string;
-}
-
+import { environment } from "../../environments/environment";
 @Injectable({
   providedIn: "root",
 })
 export class TransactionsService {
   private loading = new BehaviorSubject<boolean>(false);
-
-  private baseApiUrl = "http://localhost:8000/transactions";
+  private baseApiUrl = environment.apiUrl + "/transactions";
 
   private urlSendMoney = `${this.baseApiUrl}/send-money/`;
   private urlRequestMoney = `${this.baseApiUrl}/request-money/`;

@@ -1,78 +1,138 @@
 import { Routes } from "@angular/router";
-import { LoginComponent } from "./login/login.component";
-import { RegisterComponent } from "./register/register.component";
-import { HomepageComponent } from "./homepage/homepage/homepage.component";
-import { FriendsComponent } from "./friends/friends.component";
-import { HelppageComponent } from "./helppage/helppage.component";
-import { TransactionsComponent } from "./transactions/transactions.component";
-import { Error404Component } from "./error404/error404.component";
-import { AdminHomepageComponent } from "./homepage/admin-homepage/admin-homepage.component";
 import { AdminGuard } from "./guards/admin.guard";
-import { AdminUsersComponent } from "./admin-users/admin-users.component";
-import { ProfilePageComponent } from "./profile-page/profile-page.component";
 import { AuthGuard } from "./guards/auth.guard";
-import { ConfirmRegisterComponent } from "./register/confirm-register/confirm-register.component";
-import { ForgotPasswordComponent } from "./login/forgot-password/forgot-password.component";
-import { AdminAccountsComponent } from "./admin-accounts/admin-accounts.component";
-import { AdminTransactionsComponent } from "./transactions/admin-transactions/admin-transactions.component";
-import { AdminFriendsComponent } from "./friends/admin-friends/admin-friends.component";
-import { LoginPaymentComponent } from "./login-payment/login-payment.component";
-import { ConfirmPaymentComponent } from "./confirm-payment/confirm-payment.component";
 
 export const routes: Routes = [
-  { path: "", component: LoginComponent },
-  { path: "forgot-password", component: ForgotPasswordComponent },
-  { path: "register", component: RegisterComponent },
-  { path: "confirm-register", component: ConfirmRegisterComponent },
-  { path: "loginPayment", component: LoginPaymentComponent },
+  {
+    path: "",
+    loadComponent: () =>
+      import("./login/login.component").then((m) => m.LoginComponent),
+  },
+  {
+    path: "forgot-password",
+    loadComponent: () =>
+      import("./login/forgot-password/forgot-password.component").then(
+        (m) => m.ForgotPasswordComponent
+      ),
+  },
+  {
+    path: "register",
+    loadComponent: () =>
+      import("./register/register.component").then((m) => m.RegisterComponent),
+  },
+  {
+    path: "confirm-register",
+    loadComponent: () =>
+      import("./register/confirm-register/confirm-register.component").then(
+        (m) => m.ConfirmRegisterComponent
+      ),
+  },
+  {
+    path: "loginPayment",
+    loadComponent: () =>
+      import("./login-payment/login-payment.component").then(
+        (m) => m.LoginPaymentComponent
+      ),
+  },
   {
     path: "admin",
     canActivate: [AdminGuard],
     children: [
       {
         path: "home",
-        component: AdminHomepageComponent,
+        loadComponent: () =>
+          import("./homepage/admin-homepage/admin-homepage.component").then(
+            (m) => m.AdminHomepageComponent
+          ),
         data: { role: "admin" },
       },
       {
         path: "users",
-        component: AdminUsersComponent,
+        loadComponent: () =>
+          import("./admin-users/admin-users.component").then(
+            (m) => m.AdminUsersComponent
+          ),
         data: { role: "admin" },
       },
       {
         path: "accounts",
-        component: AdminAccountsComponent,
+        loadComponent: () =>
+          import("./admin-accounts/admin-accounts.component").then(
+            (m) => m.AdminAccountsComponent
+          ),
         data: { role: "admin" },
       },
       {
         path: "transactions",
-        component: AdminTransactionsComponent,
+        loadComponent: () =>
+          import("./transactions/admin-transactions/admin-transactions.component").then(
+            (m) => m.AdminTransactionsComponent
+          ),
         data: { role: "admin" },
       },
       {
         path: "friends",
-        component: AdminFriendsComponent,
+        loadComponent: () =>
+          import("./friends/admin-friends/admin-friends.component").then(
+            (m) => m.AdminFriendsComponent
+          ),
         data: { role: "admin" },
       },
     ],
   },
-
   {
     path: "",
     canActivate: [AuthGuard],
     children: [
-      { path: "homepage", component: HomepageComponent },
+      {
+        path: "homepage",
+        loadComponent: () =>
+          import("./homepage/homepage/homepage.component").then(
+            (m) => m.HomepageComponent
+          ),
+      },
       {
         path: "friends",
-        component: FriendsComponent,
+        loadComponent: () =>
+          import("./friends/friends.component").then((m) => m.FriendsComponent),
         canActivate: [AuthGuard],
         data: { roles: ["user"] },
       },
-      { path: "profile", component: ProfilePageComponent },
-      { path: "help", component: HelppageComponent },
-      { path: "transactions", component: TransactionsComponent },
-      { path: "confirm-payment", component: ConfirmPaymentComponent },
+      {
+        path: "profile",
+        loadComponent: () =>
+          import("./profile-page/profile-page.component").then(
+            (m) => m.ProfilePageComponent
+          ),
+      },
+      {
+        path: "help",
+        loadComponent: () =>
+          import("./helppage/helppage.component").then(
+            (m) => m.HelppageComponent
+          ),
+      },
+      {
+        path: "transactions",
+        loadComponent: () =>
+          import("./transactions/transactions.component").then(
+            (m) => m.TransactionsComponent
+          ),
+      },
+      {
+        path: "confirm-payment",
+        loadComponent: () =>
+          import("./confirm-payment/confirm-payment.component").then(
+            (m) => m.ConfirmPaymentComponent
+          ),
+      },
     ],
   },
-  { path: "**", component: Error404Component },
+  {
+    path: "**",
+    loadComponent: () =>
+      import("./error404/error404.component").then(
+        (m) => m.Error404Component
+      ),
+  },
 ];

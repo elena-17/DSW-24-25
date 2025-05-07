@@ -36,6 +36,7 @@ import { CounterNotificationService } from "../services/counter-notification.ser
 import { TransactionData } from "./config/transaction-state.config";
 import { PageEvent } from "@angular/material/paginator";
 import { FriendshipsService } from "../services/friendships.service";
+import { environment } from "../../environments/environment";
 
 @Component({
   selector: "app-transactions",
@@ -98,7 +99,7 @@ export class TransactionsComponent implements OnInit {
     this.columns = getTransactionColumns(this.datePipe);
     this.initFilters();
     this.eventSource = new EventSource(
-      `http://localhost:3000/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
+      `${environment.mercure}/.well-known/mercure?topic=user/${sessionStorage.getItem("userEmail")}`,
     );
     this.eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data);
