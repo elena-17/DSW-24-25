@@ -91,7 +91,7 @@ DATABASES = {
         "USER": os.getenv("POSTGRES_USER_BANK", "zap_admin"),
         "PASSWORD": os.getenv("POSTGRES_PASSWORD_BANK", "zap_admin"),
         "HOST": os.getenv("POSTGRES_HOST_BANK", "localhost"),
-        "PORT": "5433",
+        "PORT": os.getenv("POSTGRES_PORT_BANK", "5433"),
     },
 }
 

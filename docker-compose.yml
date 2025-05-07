@@ -50,6 +50,7 @@ services:
       POSTGRES_USER_BANK: "${POSTGRES_USER_BANK}"
       POSTGRES_PASSWORD_BANK: "${POSTGRES_PASSWORD_BANK}"
       POSTGRES_HOST_BANK: "zap-postgres-bank"
+      POSTGRES_PORT_BANK: "5432"
     ports:
       - "8080:8000"
 
