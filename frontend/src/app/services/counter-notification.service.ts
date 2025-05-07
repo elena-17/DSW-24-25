@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { NotificationService } from "./notification.service";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: "root",
@@ -8,6 +9,7 @@ import { NotificationService } from "./notification.service";
 export class CounterNotificationService {
   private _pendingCount = new BehaviorSubject<number>(0);
   public pendingCount$ = this._pendingCount.asObservable();
+  private mercureUrl = environment.mercure;
 
   private eventSource?: EventSource;
 
@@ -21,7 +23,7 @@ export class CounterNotificationService {
     if (!userEmail) return;
 
     this.eventSource = new EventSource(
-      `http://localhost:3000/.well-known/mercure?topic=user/${userEmail}`,
+      `${this.mercureUrl}/.well-known/mercure?topic=user/${userEmail}`,
     );
 
     this.eventSource.onmessage = (event) => {

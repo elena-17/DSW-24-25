@@ -1,12 +1,14 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
+
 @Injectable({
   providedIn: "root",
 })
 export class FriendshipsService {
-  private baseApiUrlFavs = "http://localhost:8000/favorites";
-  private baseApiUrlBlocks = "http://localhost:8000/blocks";
+  private baseApiUrlFavs = environment.apiUrl + "/favorites";
+  private baseApiUrlBlocks = environment.apiUrl + "/blocks";
 
   private urlGetNotFavs = `${this.baseApiUrlFavs}/non-favorites/`;
   private urlGetFavs = `${this.baseApiUrlFavs}/`;

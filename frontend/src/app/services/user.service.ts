@@ -1,18 +1,17 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { HttpHeaders } from "@angular/common/http";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: "root",
 })
 export class UserService {
-  private baseApiUrl = "http://localhost:8000/user";
-  private creditApiUrl = "http://localhost:8000/creditcards";
-  private accountApiUrl = "http://localhost:8000/account";
-
+  private baseApiUrl = environment.apiUrl + "/user";
+  private creditApiUrl = environment.apiUrl + "/creditcards";
+  private accountApiUrl = environment.apiUrl + "/account";
   // URL for validation in bank
-  private urlValidateCard = "http://localhost:8080/api/validate/";
+  private urlValidateCard = environment.bankUrl + "/api/validate/";
 
   // URL for user profile
   private urlUserProfile = `${this.baseApiUrl}/profile/`;

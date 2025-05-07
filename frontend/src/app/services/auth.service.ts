@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({
   providedIn: "root",
 })
 export class AuthService {
-  private baseApiUrl = "http://localhost:8000/user";
+  private baseApiUrl = environment.apiUrl + "/user";
   private urlTokenRefresh = `${this.baseApiUrl}/token/refresh/`;
   private urlRegister = `${this.baseApiUrl}/register/`;
   private urlLogin = `${this.baseApiUrl}/login/`;

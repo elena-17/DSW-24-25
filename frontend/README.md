@@ -18,7 +18,7 @@ This project is the frontend for the ZAP application, built with Angular. It pro
 Before starting, make sure you have the following installed:
 
 - [Angular CLI](https://angular.io/cli) (version 19.2)
-- [Node.js](https://nodejs.org/) (version 22)
+- [Node.js](https://nodejs.org/) (version 22.14)
 
 ---
 
