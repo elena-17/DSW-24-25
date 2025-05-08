@@ -64,6 +64,27 @@
   color: #1976d2;
 }
 
+.role-selection {
+  text-align: left;
+  margin-bottom: 20px;
+
+  .role-label {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .role-radio-group {
+    display: flex;
+    gap: 20px;
+
+    mat-radio-button {
+      font-size: 14px;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .register-card {
     width: 90%;

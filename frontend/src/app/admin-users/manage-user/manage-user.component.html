@@ -74,13 +74,15 @@
             Please select a role.
           </mat-error>
         </mat-form-field>
+        <mat-checkbox formControlName="is_confirmed" [checked]="true">
+          Is email confirmed
+        </mat-checkbox>
       </div>
 
       <!-- Save and Cancel Buttons -->
       <div class="form-buttons">
         <button
           mat-stroked-button
-          color="warn"
           type="button"
           class="cancel-button"
           (click)="onCancel()"
@@ -89,7 +91,6 @@
         </button>
         <button
           mat-flat-button
-          color="primary"
           type="submit"
           class="save-button"
           [disabled]="manageUserForm.invalid"

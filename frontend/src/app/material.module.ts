@@ -19,6 +19,8 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatSelectModule } from "@angular/material/select";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatRadioModule } from "@angular/material/radio";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+
 @NgModule({
   imports: [
     MatCardModule,
@@ -40,6 +42,7 @@ import { MatRadioModule } from "@angular/material/radio";
     MatSelectModule,
     MatSidenavModule,
     MatRadioModule,
+    MatAutocompleteModule,
   ],
   exports: [
     MatCardModule,
@@ -61,6 +64,7 @@ import { MatRadioModule } from "@angular/material/radio";
     MatSelectModule,
     MatSidenavModule,
     MatRadioModule,
+    MatAutocompleteModule,
   ],
 })
 export class MaterialModule {}

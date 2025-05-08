@@ -1,19 +1,30 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
+
 @Injectable({
   providedIn: "root",
 })
 export class FriendshipsService {
-  private baseApiUrl = "http://localhost:8000/favorites";
+  private baseApiUrlFavs = environment.apiUrl + "/favorites";
+  private baseApiUrlBlocks = environment.apiUrl + "/blocks";
 
-  private urlGetNotFavs = `${this.baseApiUrl}/non-favorites/`;
-  private urlGetFavs = `${this.baseApiUrl}/`;
-  private urlAddFav = `${this.baseApiUrl}/add/`;
-  private urlRemoveFav = `${this.baseApiUrl}/remove/`;
-  private urlGetAllRelations = `${this.baseApiUrl}/admin/all/`;
-  private urlAddRelation = `${this.baseApiUrl}/admin/add/`;
-  private urlRemoveRelation = `${this.baseApiUrl}/admin/remove/`;
+  private urlGetNotFavs = `${this.baseApiUrlFavs}/non-favorites/`;
+  private urlGetFavs = `${this.baseApiUrlFavs}/`;
+  private urlAddFav = `${this.baseApiUrlFavs}/add/`;
+  private urlRemoveFav = `${this.baseApiUrlFavs}/remove/`;
+  private urlGetAllRelations = `${this.baseApiUrlFavs}/admin/all/`;
+  private urlAddRelation = `${this.baseApiUrlFavs}/admin/add/`;
+  private urlRemoveRelation = `${this.baseApiUrlFavs}/admin/remove/`;
+
+  private urlGetNotBlocks = `${this.baseApiUrlBlocks}/non-blocked/`;
+  private urlGetBlocks = `${this.baseApiUrlBlocks}/`;
+  private urlAddBlock = `${this.baseApiUrlBlocks}/block/`;
+  private urlRemoveBlock = `${this.baseApiUrlBlocks}/unblock/`;
+  private urlGetAllBlocks = `${this.baseApiUrlBlocks}/admin/all/`;
+  private urlAddBlockRelation = `${this.baseApiUrlBlocks}/admin/add/`;
+  private urlRemoveBlockRelation = `${this.baseApiUrlBlocks}/admin/remove/`;
 
   constructor(private http: HttpClient) {}
 
@@ -72,6 +83,66 @@ export class FriendshipsService {
     favorite_user: string;
   }): Observable<any> {
     return this.http.request<any>("delete", this.urlRemoveRelation, {
+      body: data,
+      withCredentials: true,
+    });
+  }
+
+  getBlockedUsers(): Observable<any> {
+    return this.http.get<any>(this.urlGetBlocks, {
+      withCredentials: true,
+    });
+  }
+
+  getUnblockedUsers(): Observable<any> {
+    return this.http.get<any>(this.urlGetNotBlocks, {
+      withCredentials: true,
+    });
+  }
+
+  blockUser(email: string): Observable<any> {
+    return this.http.post<any>(
+      this.urlAddBlock,
+      { email },
+      { withCredentials: true },
+    );
+  }
+
+  unblockUser(email: string): Observable<any> {
+    return this.http.request<any>("delete", this.urlRemoveBlock, {
+      body: { email },
+      withCredentials: true,
+    });
+  }
+
+  getAllBlocks(
+    pageIndex: number,
+    pageSize: number,
+  ): Observable<{ data: any[]; total: number }> {
+    const params = {
+      offset: (pageIndex * pageSize).toString(),
+      limit: pageSize.toString(),
+    };
+    return this.http.get<{ data: any[]; total: number }>(this.urlGetAllBlocks, {
+      params,
+      withCredentials: true,
+    });
+  }
+
+  addBlockRelation(data: {
+    user: string;
+    blocked_user: string;
+  }): Observable<any> {
+    return this.http.post<any>(this.urlAddBlockRelation, data, {
+      withCredentials: true,
+    });
+  }
+
+  removeAddRelation(data: {
+    user: string;
+    blocked_user: string;
+  }): Observable<any> {
+    return this.http.request<any>("delete", this.urlRemoveBlockRelation, {
       body: data,
       withCredentials: true,
     });

@@ -23,6 +23,31 @@ This backend is designed to handle:
 - 💳 Credit card validation and operations.
 - 🤝 Friendships and favorite users.
 
+This is the backend for the DSW-24-25 project, built with Django. It provides APIs for managing transactions, user accounts, friendships, and credit card operations. The backend also integrates with external services like Mercure for real-time notifications and Stripe for payment processing. For authentication, it uses JWT (JSON Web Tokens) to secure API endpoints and email confirmation.
+
+
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Folder Structure](#folder-structure)
+- [Setup and Installation](#setup-and-installation)
+- [Running the Server](#running-the-server)
+- [Environment Variables](#environment-variables)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
+- [Dependencies](#dependencies)
+
+
+---
+
+## Project Overview
+
+This backend is designed to handle:
+- User authentication and account management.
+- Transactions (sending, receiving, and requesting money).
+- Real-time notifications using Mercure.
+- Credit card validation and operations.
+- Friendships and favorite users.
+
 This project was generated using:
 
 ```bash
@@ -31,35 +56,37 @@ django-admin startproject backend_main
 
 ---
 
-## Folder Structure 📂
+## Folder Structure
 
 ```
-  backend_main/
-  ├── account/               # Handles user account-related logic
-  ├── backend_main/          # Main Django project directory
-  ├── creditcard/            # Handles credit card-related logic
-  ├── friendships/           # Handles friendships and favorite users
-  ├── mercure/               # Handles Mercure real-time notifications
-  ├── transactions/          # Handles transactions logic
-  ├── manage.py              # Django's command-line utility
-  ├── requirements.txt       # Python dependencies
-  └── README.md              # Project documentation
+    backend_main/
+    ├── account/               # Handles user account-related logic
+    ├── backend_main/          # Main Django project directory
+    ├── creditcard/            # Handles credit card-related logic
+    ├── friendships/           # Handles friendships and favorite users
+    ├── blocks/                # Handles blocked users
+    ├── mercure/               # Handles Mercure real-time notifications
+    ├── transactions/          # Handles transactions logic
+    ├── manage.py              # Django's command-line utility
+    ├── requirements.txt       # Python dependencies
+    └── README.md              # Project documentation
 ```
 
 ---
 
-## Setup and Installation ⚙️
 
-### Prerequisites ✅
-- 🐍 Python 3.12 or higher
-- 🐘 PostgreSQL
-- 🌐 Django 4.2 or higher
-- ✉️ Brevo credentials (for email sending)
-- 💳 Stripe credentials (for payment processing)
+## Setup and Installation
 
-All the dependencies are in the `requirements.txt` file.
+### Prerequisites
+- Python 3.12 or higher
+- PostgreSQL
+- Django 4.2 or higher
+- Brevo credentials (for email sending)
+- Stripe credentials (for payment processing)
 
-### Steps 🛠️
+all the dependencies are in the `requirements.txt` file.
+
+### Steps
 1. Clone the repository:
    ```bash
    git clone https://github.com/elena/DSW-24-25.git
@@ -89,7 +116,7 @@ All the dependencies are in the `requirements.txt` file.
 
 ---
 
-## Running the Server 🖥️
+## Running the Server
 
 To start the development server, run:
 
@@ -114,73 +141,72 @@ Run PostgreSQL using Docker:
 ```bash
 docker run -d -p 5432:5432 --name postgres -e POSTGRES_USER=your_user -e POSTGRES_PASSWORD=your_password -e POSTGRES_DB=your_db postgres
 ```
-
-## Running PostgreSQL Locally (Without Docker) 🐘
+## Running PostgreSQL Locally (Without Docker)
 
 If you prefer to run PostgreSQL without Docker, follow these steps:
 
 1. **Install PostgreSQL**:
-  - On Windows: Download and install PostgreSQL from [https://www.postgresql.org/download/](https://www.postgresql.org/download/).
-  - On macOS: Use Homebrew:
-    ```bash
-    brew install postgresql
-    ```
-  - On Linux (Ubuntu/Debian):
-    ```bash
-    sudo apt update
-    sudo apt install postgresql postgresql-contrib
-    ```
+    - On Windows: Download and install PostgreSQL from [https://www.postgresql.org/download/](https://www.postgresql.org/download/).
+    - On macOS: Use Homebrew:
+      ```bash
+      brew install postgresql
+      ```
+    - On Linux (Ubuntu/Debian):
+      ```bash
+      sudo apt update
+      sudo apt install postgresql postgresql-contrib
+      ```
 
 2. **Start PostgreSQL**:
-  - On Windows: Use the PostgreSQL service manager or run:
-    ```bash
-    pg_ctl -D "C:\Program Files\PostgreSQL\<version>\data" start
-    ```
-  - On macOS/Linux:
-    ```bash
-    sudo service postgresql start
-    ```
+    - On Windows: Use the PostgreSQL service manager or run:
+      ```bash
+      pg_ctl -D "C:\Program Files\PostgreSQL\<version>\data" start
+      ```
+    - On macOS/Linux:
+      ```bash
+      sudo service postgresql start
+      ```
 
 3. **Create a Database and User**:
-  - Access the PostgreSQL shell:
-    ```bash
-    psql -U postgres
-    ```
-  - Create a new database:
-    ```sql
-    CREATE DATABASE your_db;
-    ```
-  - Create a new user with a password:
-    ```sql
-    CREATE USER your_user WITH PASSWORD 'your_password';
-    ```
-  - Grant privileges to the user:
-    ```sql
-    GRANT ALL PRIVILEGES ON DATABASE your_db TO your_user;
-    ```
+    - Access the PostgreSQL shell:
+      ```bash
+      psql -U postgres
+      ```
+    - Create a new database:
+      ```sql
+      CREATE DATABASE your_db;
+      ```
+    - Create a new user with a password:
+      ```sql
+      CREATE USER your_user WITH PASSWORD 'your_password';
+      ```
+    - Grant privileges to the user:
+      ```sql
+      GRANT ALL PRIVILEGES ON DATABASE your_db TO your_user;
+      ```
 
 4. **Update `settings.py`**:
-  Configure your Django project to connect to the PostgreSQL database:
-  ```python
-  DATABASES = {
-     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'your_db',
-        'USER': 'your_user',
-        'PASSWORD': 'your_password',
-        'HOST': 'localhost',
-        'PORT': '5432',
-     }
-  }
-  ```
+    Configure Django project to connect to the PostgreSQL database:
+    ```python
+    DATABASES = {
+         'default': {
+              'ENGINE': 'django.db.backends.postgresql',
+              'NAME': 'your_db',
+              'USER': 'your_user',
+              'PASSWORD': 'your_password',
+              'HOST': 'localhost',
+              'PORT': '5432',
+         }
+    }
+    ```
 
 5. **Apply Migrations**:
-  Run the following command to set up the database schema:
-  ```bash
-  python manage.py migrate
-  ```
+    Run the following command to set up the database schema:
+    ```bash
+    python manage.py migrate
+    ```
 
-## Environment Variables 🌍
+## Environment Variables
 
 The following environment variables are required for the project:
 
@@ -199,12 +225,13 @@ The following environment variables are required for the project:
 - `EMAIL_HOST_PASSWORD`: Password for the email address.
 - `DEFAULT_FROM_EMAIL`: Default sender email address.
 - `SECRET_KEY_STRIPE`: Secret key for Stripe API.
+- `MERCURE_URL`: URL for the Mercure server.
 
 You can define these variables in a `.env` file in the root directory.
 
 ---
 
-## Testing 🧪
+## Testing
 
 To run tests, use the following command:
 

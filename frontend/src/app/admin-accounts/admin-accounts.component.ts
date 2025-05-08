@@ -56,8 +56,7 @@ export class AdminAccountsComponent implements OnInit {
     this.accountService.getAllAccounts().subscribe({
       next: (response) => {
         this.data = response;
-        this.filteredData = [...this.data]; // Initialize filteredData with the full list of users
-        console.log("Accounts loaded successfully", this.data);
+        this.filteredData = [...this.data];
       },
       error: (error) => {
         this.snackBar.open(
