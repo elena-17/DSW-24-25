@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv("SECRET_KEY_BANK", "django-insecure-^io3t4yt_omrm($mp2-jv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG_BANK", "") != "False"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
 
 
 # Application definition

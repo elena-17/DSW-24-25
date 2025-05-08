@@ -165,6 +165,8 @@ CORS_ALLOW_CREDENTIALS = True
 # Origenes permitidos
 CORS_ALLOWED_ORIGINS = [
     os.getenv("FRONTEND_BASE_URL", "http://localhost:4200"),
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
     "http://localhost",
     "http://127.0.0.1",
 ]

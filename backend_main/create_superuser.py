@@ -2,6 +2,10 @@
 
 import os
 from django.contrib.auth import get_user_model
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend_main.settings")
+
+import django
+django.setup()
 
 User = get_user_model()
 
