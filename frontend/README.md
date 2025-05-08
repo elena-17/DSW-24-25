@@ -62,10 +62,13 @@ Before starting, make sure you have the following installed:
      |   │   ├── app.routes.ts         # Application routes configuration
      |   │   ├── material.module.ts    # Angular Material configuration
      │   └── ...
-     ├── assets/                   # Static assets like images and themes
-     │   └── zap-logo.png          # Application logo
-     ├── styles.scss               # Global application styles
-     └── index.html                # Main HTML file
+     ├── assets/                       # Static assets like images and themes
+     │   └── zap-logo.png              # Application logo
+     ├── environments/ 
+     |   ├── environment.ts            # Development environment configuration
+     │   └── environment.prod.ts       # Production environment configuration
+     ├── styles.scss                   # Global application styles
+     └── index.html                    # Main HTML file
      ```
 
 ## Available Scripts 📜
@@ -74,9 +77,6 @@ In the `package.json` file, you can find the following scripts:
 
 - `ng serve`: Starts the development server.
 - `ng build`: Builds the application for production.
-- `ng test`: Runs unit tests.
-- `ng lint`: Lints the code using TSLint.
-- `ng e2e`: Runs end-to-end tests.
 
 ## Technologies Used 💻
 

@@ -44,7 +44,7 @@ To set up the PostgreSQL database for the project, follow these steps:
 2. **Create a Database**
     Create a new database for the project:
     ```sql
-    CREATE DATABASE backend_bank;
+    CREATE DATABASE zap_db_bank;
     ```
 
 3. **Configure Database Settings**
@@ -61,14 +61,7 @@ To set up the PostgreSQL database for the project, follow these steps:
 4. **Apply Migrations**
     Run the following commands to apply the database migrations:
     ```bash
-    python manage.py makemigrations
     python manage.py migrate
-    ```
-
-5. **Verify the Setup**
-    Use the following command to check if the database is connected and functioning correctly:
-    ```bash
-    python manage.py dbshell
     ```
 
 Now your database is ready to be used with the project!
@@ -81,38 +74,7 @@ To start the development server, use the following command:
 python manage.py runserver 8080
 ```
 
-The server will be available at `http://127.0.0.1:8080/`.
-
-### 🐳 Docker Setup
-
-To run the project using Docker, follow these steps:
-
-1. Build the Docker image:
-     ```bash
-     docker build -t backend_bank .
-     ```
-2. Run the Docker container:
-     ```bash
-    docker run -it --rm \
-    -v $(pwd)/backend_bank:/app \
-    -w /app \
-    -e DJANGO_SETTINGS_MODULE=backend_bank.settings \
-    -e POSTGRES_DB=bank_db \
-    -e POSTGRES_USER=bank_user \
-    -e POSTGRES_PASSWORD=bank_pass \
-    -e POSTGRES_HOST=postgres \
-    -e POSTGRES_PORT=5432 \
-    --network bank_network \
-    --name backend_bank_container \
-    backend_bank_image \
-    python manage.py runserver 0.0.0.0:8000
-    ```
-3. Access the application at `http://localhost:8080/`.
-4. To stop the container, use:
-    ```bash
-    docker stop backend_bank_container
-    ```
----
+The server will be available at `http://localhost:8080/`.
 
 ## 🔑 Admin Interface
 
@@ -122,7 +84,20 @@ To access the Django admin interface, create a superuser with the following comm
 python manage.py createsuperuser
 ```
 
-Then, navigate to `http://127.0.0.1:8080/admin/` and log in with the superuser credentials.
+or use the predifined superuser credentials:
+
+```bash
+DJANGO_SUPERUSER_USERNAME="admin@example.com" 
+DJANGO_SUPERUSER_PASSWORD="SecurePassword1" 
+```
+	
+And execute: 
+
+```bash
+python create_superuser.py
+```
+
+Then, navigate to `http://localhost:8080/admin/` and log in with the superuser credentials.
 You can manage the database models directly from the admin interface.
 
 ## 📡 API Endpoints
@@ -171,8 +146,12 @@ You can manage the database models directly from the admin interface.
 The following environment variables can be configured for the project:
 
 - `DJANGO_SECRET_KEY`: The secret key for the Django application.
-- `DATABASE_URL`: The database connection string.
 - `DEBUG`: Set to `True` for development or `False` for production.
+- `POSTGRES_DB_BANK`: The name of the PostgreSQL database.
+- `POSTGRES_USER_BANK`: The PostgreSQL user for the database.
+- `POSTGRES_PASSWORD_BANK`: The password for the PostgreSQL user.
+- `POSTGRES_HOST_BANK`: The host for the PostgreSQL database.
+- `POSTGRES_PORT_BANK`: The port for the PostgreSQL database (default is `5433`).
 
 ---
 

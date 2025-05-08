@@ -18,6 +18,7 @@ A web application for managing transactions and friendships, built with Django a
 📂 .
     ├── 📂 backend_bank
     ├── 📂 backend_main
+    ├── 📂 dumps_and_scripts
     ├── 📂 frontend
     ├── 📄 .env
     ├── 📄 .gitignore
@@ -26,8 +27,9 @@ A web application for managing transactions and friendships, built with Django a
     └── 📄 README.md
 ```
 
-- **`backend_bank`** 🏦: Contains the credit card backend to simulate a bank.
+- **`backend_bank`** 🏦: Contains the credit card backend to simulate a bank API.
 - **`backend_main`** 🔧: Contains the main backend with core functionality for the application.
+- **`dumps_and_scripts`** 📂: Contains scripts and database dumps for easy setup.
 - **`frontend`** 🌐: Contains the Angular frontend application .
 
 ---
@@ -44,7 +46,7 @@ A web application for managing transactions and friendships, built with Django a
 
 ---
 
-## 🐋 Run with Docker (TODO)
+## 🐋 Run with Docker (Recommended)
 
 ### Prerequisites
 
@@ -54,7 +56,7 @@ A web application for managing transactions and friendships, built with Django a
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/elena/DSW-24-25.git
+    git clone "https://github.com/elena/DSW-24-25.git"
     cd DSW-24-25
     ```
 
