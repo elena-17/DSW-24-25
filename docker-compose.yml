@@ -92,7 +92,7 @@ services:
     env_file:
       - .env
     environment:
-      MERCURE_URL: "http://mercure:80/.well-known/mercure"
+      MERCURE_URL: "http://mercure:80"
       POSTGRES_HOST: "db_main"
       POSTGRES_PORT: "5432"
       DEBUG: False
