@@ -6,6 +6,8 @@
 
 
 [![Django Tests Backend Main](https://github.com/elena-17/DSW-24-25/actions/workflows/django-tests.yml/badge.svg)](https://github.com/elena-17/DSW-24-25/actions/workflows/django-tests.yml)
+![Django](https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-0F0F11?style=flat&logo=angular&logoColor=white)
 
 <h1 align="center">Zap</h1>
 A web application for managing transactions and friendships, built with Django and Angular.
