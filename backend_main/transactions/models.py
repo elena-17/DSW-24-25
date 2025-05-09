@@ -45,8 +45,6 @@ class Transaction(models.Model):
 
     def approveSend(self):
         if self.status == "rejected":
-            # if self.sender.account.balance < self.amount:
-            #     raise ValidationError("Insufficient balance for this transaction.")
             self.sender.account.balance -= self.amount
             self.sender.account.save()
 
@@ -58,8 +56,6 @@ class Transaction(models.Model):
 
     def rejectSend(self):
         if self.status == "approved":
-            # if self.receiver.account.balance < self.amount:
-            #     raise ValidationError("Insufficient balance for this transaction.")
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
 
@@ -69,9 +65,6 @@ class Transaction(models.Model):
         self.save()
 
     def approveRequest(self):
-        # if self.sender.account.balance < self.amount:
-        #     raise ValidationError("Insufficient balance for this transaction.")
-        # Actualizar los saldos
         self.sender.account.balance -= self.amount
         self.sender.account.save()
 
@@ -83,8 +76,6 @@ class Transaction(models.Model):
 
     def rejectRequest(self):
         if self.status == "approved":
-            # if self.receiver.account.balance < self.amount:
-            #     raise ValidationError("Insufficient balance for this transaction.")
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
             self.sender.account.balance += self.amount
@@ -95,13 +86,9 @@ class Transaction(models.Model):
 
     def pendingSend(self):
         if self.status == "approved":
-            # if self.receiver.account.balance < self.amount:
-            #     raise ValidationError("Insufficient balance for this transaction.")
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
         if self.status == "rejected":
-            # if self.sender.account.balance < self.amount:
-            #     raise ValidationError("Insufficient balance for this transaction.")
             self.sender.account.balance -= self.amount
             self.sender.account.save()
         self.status = "pending"
@@ -109,8 +96,6 @@ class Transaction(models.Model):
 
     def pendingRequest(self):
         if self.status == "approved":
-            # if self.receiver.account.balance < self.amount:
-            #     raise ValidationError("Insufficient balance for this transaction.")
             self.receiver.account.balance -= self.amount
             self.receiver.account.save()
 
