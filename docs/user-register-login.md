@@ -26,7 +26,6 @@ After registering, users will receive a **confirmation email**. Without confirma
 
 To log in, users need to provide their **email** and **password**. The login button activates when both are filled.
 
-![Login Form](./images/login.png)
 
 For password recovery, click on **"Forgot password"**, and you will receive an email with a link to reset your password.
 

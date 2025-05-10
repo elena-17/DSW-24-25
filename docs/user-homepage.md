@@ -6,7 +6,8 @@ The homepage allows deposits or withdrawals using a credit card.
 
 Steps:
 1. Click **Deposit** or **Withdraw**.
-2. Select the **amount**.
+2. Select the **amount**.  
+
 ![Deposit-Amount](./images/deposit1.png)
 
 3. Choose a **credit card** and enter the **CVV**.
@@ -29,6 +30,6 @@ Define into main backend, in the **.env** file
 SECRET_KEY_STRIPE=your-stripe-secret-key
 ```
 Define in the frontend the public key, in the **.envirnonment** file
-```
+```env
 PUBLIC_STRIPE_KEY=your-stripe-public-key
 ```
