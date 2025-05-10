@@ -89,6 +89,7 @@ django-admin startproject backend_main
 - Django 4.2 or higher
 - Brevo credentials (for email sending)
 - Stripe credentials (for payment processing)
+- Mercure server (for real-time notifications)
 
 All the dependencies are in the `requirements.txt` file.
 
@@ -138,7 +139,7 @@ The server will be available at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 Also, it needs Mercure and PostgreSQL to be running. You can run Mercure using Docker:
 
 ```bash
-docker run -d --name zap-mercure -e SERVER_NAME=":80" -e MERCURE_PUBLISHER_JWT_KEY="<BACKEND FIELD ENCRYPTION KEY>"  -e MERCURE_SUBSCRIBER_JWT_KEY="<BACKEND FIELD ENCRYPTION KEY>"   -p 3000:80 -v mercure_data:/data -v mercure_config:/config dunglas/mercure:v0.18  /usr/bin/caddy run –config /etc/caddy/dev.Caddyfile 
+docker run -d --name zap-mercure -e SERVER_NAME=":80" -e MERCURE_PUBLISHER_JWT_KEY="<BACKEND FIELD ENCRYPTION KEY>"  -e MERCURE_SUBSCRIBER_JWT_KEY="<BACKEND FIELD ENCRYPTION KEY>"   -p 3000:80 -v mercure_data:/data -v mercure_config:/config dunglas/mercure:v0.18  /usr/bin/caddy run –config /etc/caddy/dev.Caddyfile
 ```
 
 Run PostgreSQL using Docker:

@@ -31,6 +31,8 @@ Before starting, make sure you have the following installed:
 
 ## Running the Project ▶️
 
+Before running the project, ensure that the backend server is running. After that, you can run the frontend application:
+
 1. Start the development server:
    ```bash
    ng serve
@@ -64,7 +66,7 @@ Before starting, make sure you have the following installed:
      │   └── ...
      ├── assets/                       # Static assets like images and themes
      │   └── zap-logo.png              # Application logo
-     ├── environments/ 
+     ├── environments/
      |   ├── environment.ts            # Development environment configuration
      │   └── environment.prod.ts       # Production environment configuration
      ├── styles.scss                   # Global application styles

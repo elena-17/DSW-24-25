@@ -75,6 +75,18 @@ A web application for managing transactions and friendships, built with Django a
     - Backend: `http://localhost:8000`
     - Bank: `http://localhost:8080`
 
+5. Remember default admin credentials are:
+    - **Username**: `admin@example.com`
+    - **Password**: `SecurePassword1`
+
+## 📝 Run without Docker
+
+Check each service's README for specific instructions.
+
+## User's Guide
+
+Go to [User's Guide](docs/README.md) for detailed instructions on how to use the application.
+
 
 ## 🧹 Code Quality with Pre-Commit
 

@@ -52,7 +52,6 @@ def subtracting_money(request):
 @api_view(["PUT"])
 def paymentRequest(request):
     stripe.api_key = settings.SECRET_KEY_STRIPE
-    print(stripe.api_key)
     try:
         amount = Decimal(request.data.get("amount"))
         if amount <= 0:

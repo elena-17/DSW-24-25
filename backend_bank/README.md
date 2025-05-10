@@ -32,9 +32,45 @@ To create a new app (a module within the project), use:
 python manage.py startapp <app_name>
 ```
 
+### Prerequisites
+- Python 3.12 or higher
+- PostgreSQL
+- Django 4.2 or higher
+
+All the dependencies are in the `requirements.txt` file.
+
+### Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/elena/DSW-24-25.git
+   cd backend_bank
+   ```
+
+2. Create a virtual environment and activate it:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
 ---
 
 ## 🗄️ Database Setup
+
+### Docker Setup
+
+To set up the PostgreSQL database using Docker, run the following command:
+
+```bash
+docker run -d -p 5433:5432 --name postgres -e POSTGRES_USER=your_user -e POSTGRES_PASSWORD=your_password -e POSTGRES_DB=your_db postgres:14.17
+```
+
+
+### Manual Setup
 
 To set up the PostgreSQL database for the project, follow these steps:
 
@@ -87,11 +123,11 @@ python manage.py createsuperuser
 or use the predifined superuser credentials:
 
 ```bash
-DJANGO_SUPERUSER_USERNAME="admin@example.com" 
-DJANGO_SUPERUSER_PASSWORD="SecurePassword1" 
+DJANGO_SUPERUSER_USERNAME="admin@example.com"
+DJANGO_SUPERUSER_PASSWORD="SecurePassword1"
 ```
-	
-And execute: 
+
+And execute:
 
 ```bash
 python create_superuser.py
